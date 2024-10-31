@@ -50,7 +50,7 @@ Base Url REST API
 </p>
 
 ## Author
-[Karel Kalata][link-author]
+[Karel Kalata](https://github.com/karelkalata)
 
 
 ## License
