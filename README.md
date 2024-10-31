@@ -19,11 +19,11 @@ With InvoiceDesigner, customizing your invoice print form is super easy. You can
 </p>
 
 ## Features
-No hosting required - works locally/lan
-Customizable PDF invoice
-Manage your Clients
-Invoice Management
-Customer Management
+- No hosting required - works locally/lan
+- Customizable PDF invoice
+- Manage your Clients
+- Invoice Management
+- Customer Management
 
 ## Development Environment
 - Microsoft Visual Studio 2022 Community Edition (https://visualstudio.microsoft.com/vs/community/)
@@ -44,9 +44,13 @@ Base Url REST API
     "BaseUrl": "https://localhost:7048/"
   }
 ``` 
+## Launching
+<p align="center">
+  <img src="screenshot4.png"  />
+</p>
 
 ## Author
-- [Karel Kalata][link-author]
+[Karel Kalata][link-author]
 
 ## License
 InvoiceDesigner is licensed under the MIT license, an open-source software license.
