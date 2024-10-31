@@ -1,14 +1,13 @@
-
-#InvoiceDesigner
+# InvoiceDesigner
 With InvoiceDesigner, customizing your invoice print form is super easy. You can add, move around, and tweak elements in the layout, all without touching any code. Want to include extra info or some custom fields? No problem! 
 
-##Technical Features
+## Technical Features
  - No JavaScript/TypeScript/React/Angular/Vuejs and other frontend framework
  - No npm dependencies
  - C#
  - MudBlazor UI
  
-##Screenshots
+## Screenshots
 <p align="center">
   <img src="screenshot1.png"  />
 </p>
@@ -19,24 +18,24 @@ With InvoiceDesigner, customizing your invoice print form is super easy. You can
   <img src="screenshot3.png"  />
 </p>
 
-##Features
+## Features
 No hosting required - works locally/lan
 Customizable PDF invoice
 Manage your Clients
 Invoice Management
 Customer Management
 
-##Development Environment
- - Microsoft Visual Studio 2022 Community Edition (https://visualstudio.microsoft.com/vs/community/)
- - Sqlite
- - Nuget Package
+## Development Environment
+- Microsoft Visual Studio 2022 Community Edition (https://visualstudio.microsoft.com/vs/community/)
+- Sqlite
+- Nuget Package
   - Microsoft.EntityFrameworkCore
   - Microsoft.EntityFrameworkCore.Sqlite
   - Microsoft.EntityFrameworkCore.Design
   - AutoMapper
   - QuestPDF
 
-##Config WebApp
+## Config WebApp
 Base Url REST API
 **InvoiceDesigner\InvoiceDesigner.WebApp\appsettings.json**
 
