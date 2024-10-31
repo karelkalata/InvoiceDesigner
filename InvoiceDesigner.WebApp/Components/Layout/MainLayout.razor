@@ -1,0 +1,40 @@
+﻿@inherits LayoutComponentBase
+
+
+<MudThemeProvider />
+<MudPopoverProvider />
+<MudSnackbarProvider />
+<MudDialogProvider />
+
+<MudLayout>
+	<MudAppBar>
+		<MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(()=> DrawlerToggle())" />
+		<MudSpacer />
+		<MudIconButton Href="https://github.com/karelkalata/InvoiceDesigner" Target="_blank" Icon="@Icons.Material.Filled.ContactSupport" Color="Color.Inherit" Edge="Edge.End" />
+	</MudAppBar>
+	<MudDrawer @bind-Open="@_drawlerOpen" Elevation="5">
+		
+		<MudNavMenu Bordered="true">
+			<MudText Typo="Typo.h6" Class="px-4 pt-2">Invoice Designer</MudText>
+			<MudNavLink Icon="@Icons.Material.Filled.House" Href="/" Match="NavLinkMatch.All">Home</MudNavLink>
+			<MudNavLink Icon="@Icons.Material.Filled.Group" Href="/Customers" Match="NavLinkMatch.Prefix">Customers</MudNavLink>
+			<MudNavLink Icon="@Icons.Material.Filled.ListAlt" Href="/Products" Match="NavLinkMatch.Prefix">Products</MudNavLink>
+			<MudNavLink Icon="@Icons.Material.Filled.AccountBalance" Href="/Banks" Match="NavLinkMatch.Prefix">Bank Accounts</MudNavLink>
+			<MudNavLink Icon="@Icons.Material.Filled.CurrencyExchange" Href="/Currencies" Match="NavLinkMatch.Prefix">Currencies</MudNavLink>
+			<MudNavLink Icon="@Icons.Material.Filled.MiscellaneousServices" Href="/Companies" Match="NavLinkMatch.Prefix">Companies</MudNavLink>
+			<MudNavLink Icon="@Icons.Material.Filled.DesignServices" Href="/FormDesigner/0" Match="NavLinkMatch.Prefix">Form Designer</MudNavLink>
+		</MudNavMenu>
+	</MudDrawer>
+	<MudMainContent>
+		@Body
+	</MudMainContent>
+</MudLayout>
+
+@code
+{
+	private bool _drawlerOpen = true;
+	private void DrawlerToggle()
+	{
+		_drawlerOpen = !_drawlerOpen;
+	}
+}

@@ -1,0 +1,169 @@
+﻿@page "/Products/Edit/{id:int}"
+@using InvoiceDesigner.Domain.Shared.DTOs.Currency
+@using InvoiceDesigner.Domain.Shared.DTOs.Product
+@using InvoiceDesigner.Domain.Shared.Helpers
+@using InvoiceDesigner.Domain.Shared.Models
+@using InvoiceDesigner.WebApp.Helpers
+@inject HttpClient Http
+@inject NavigationManager nav
+@inject ISnackbar Snackbar
+
+<MudContainer>
+	@if (_productEditDto == null)
+	{
+		<MudText Align="Align.Center">Loading...</MudText>
+	}
+	else
+	{
+		<EditForm Model="@_productEditDto" OnValidSubmit="OnValidSubmit" Context="contextForm">
+			<DataAnnotationsValidator />
+			<MudCard>
+				<MudCardContent>
+					<MudTextField Class="pa-2"
+								  @bind-Value="_productEditDto.Name"
+								  Label="Name"
+								  For="(() => _productEditDto.Name)" />
+					<MudDataGrid Class="pa-2"
+								 T="ProductPriceEditDto"
+								 @ref="dataGrid"
+								 @bind-SelectedItems="selectedItems"
+								 Items="_productEditDto.ProductPrice"
+								 SortMode="SortMode.None"
+								 ReadOnly="false"
+								 Striped="true"
+								 Hover="true"
+								 Dense="true"
+								 EditMode="DataGridEditMode.Cell"
+								 EditTrigger="DataGridEditTrigger.Manual">
+						<ColGroup>
+							<col style="width: auto;" />
+							<col style="width: auto;" />
+						</ColGroup>
+						<Columns>
+							<SelectColumn />
+							<PropertyColumn Property="x => x.Currency">
+								<EditTemplate>
+									<MudAutocomplete T="CurrencyAutocompleteDto"
+													 Value="context.Item.Currency"
+													 ValueChanged="@(currency => OnCurrencySelected(currency, context.Item))"
+													 Placeholder="Select Currency"
+													 Clearable="true"
+													 Required
+													 Dense="true"
+													 SearchFunc="@((value, token) => FilteringDataWithApi<CurrencyAutocompleteDto>(value, "Currencies", token))"
+													 ToStringFunc="@(c => c?.Name ?? "")"
+													 For="(() => context.Item.Currency)" />
+								</EditTemplate>
+							</PropertyColumn>
+
+							<PropertyColumn Property="x => x.Price">
+								<EditTemplate>
+									<MudNumericField @bind-Value="context.Item.Price" Format="N0" />
+								</EditTemplate>
+							</PropertyColumn>
+
+						</Columns>
+						<NoRecordsContent>
+							<MudText>No records available.</MudText>
+						</NoRecordsContent>
+					</MudDataGrid>
+				</MudCardContent>
+				<MudCardActions>
+					<MudButton Size="Size.Small"
+							   StartIcon="@Icons.Material.Filled.AddCircle"
+							   OnClick="AddInvoiceItems">
+						<MudText>Add Item</MudText>
+					</MudButton>
+					<MudButton Size="Size.Small"
+							   StartIcon="@Icons.Material.Filled.DeleteForever"
+							   Disabled="@(selectedItems.Count == 0)"
+							   OnClick="DeleteSelectedItems">
+						<MudText>Delete Item</MudText>
+					</MudButton>
+					<MudButton Size="Size.Small"
+							   Variant="Variant.Filled"
+							   Color="Color.Primary"
+							   ButtonType="ButtonType.Submit"
+							   Class="ml-auto">
+						Save
+					</MudButton>
+				</MudCardActions>
+			</MudCard>
+		</EditForm>
+	}
+</MudContainer>
+@code {
+	[Parameter]
+	public int? id { get; set; }
+
+	private static string _controller = "Products";
+	private HttpRequestHelper _httpHelper = null!;
+
+	private MudDataGrid<ProductPriceEditDto> dataGrid = new();
+	private List<CurrencyAutocompleteDto> _selectedCurrencies = new();
+	private HashSet<ProductPriceEditDto> selectedItems = new();
+
+	private ProductEditDto? _productEditDto;
+
+	protected override async Task OnInitializedAsync()
+	{
+		_httpHelper = new HttpRequestHelper(_controller, Http, Snackbar, nav);
+
+		_productEditDto = await _httpHelper.GetAsync<ProductEditDto>(id);
+
+		if (_productEditDto != null)
+		{
+			_selectedCurrencies.AddRange(
+				_productEditDto.ProductPrice
+					.Select(a => a.Currency)
+					.Where(currency => currency != null)
+					.Distinct()
+			);
+		}
+	}
+
+
+	private void AddInvoiceItems()
+	{
+		_productEditDto?.ProductPrice.Add(new ProductPriceEditDto());
+	}
+
+	private void OnCurrencySelected(CurrencyAutocompleteDto selectedCurrency, ProductPriceEditDto item)
+	{
+		if (!_selectedCurrencies.Contains(selectedCurrency))
+		{
+			_selectedCurrencies.Add(selectedCurrency);
+			item.Currency = selectedCurrency;
+		}
+	}
+
+	private void DeleteSelectedItems()
+	{
+		foreach (var item in selectedItems.ToList())
+		{
+			_selectedCurrencies.Remove(item.Currency);
+			_productEditDto?.ProductPrice.Remove(item);
+			selectedItems.Clear();
+			StateHasChanged();
+		}
+	}
+
+	private async Task OnValidSubmit()
+	{
+		await _httpHelper.SendRequest(_productEditDto, id.HasValue && id > 0);
+	}
+
+
+	private async Task<IEnumerable<T>> FilteringDataWithApi<T>(string value, string apiUrl, CancellationToken token) where T : IHasIdAndName
+	{
+		var allResults = await _httpHelper.GetDataFromAPI<IEnumerable<T>>($"api/{apiUrl}/FilteringData?f={value}");
+
+		var filteredResults = allResults.Cast<CurrencyAutocompleteDto>()
+			.Where(result => !_selectedCurrencies.Any(selected => selected.Id == result.Id))
+			.Cast<T>();
+
+		return filteredResults;
+
+	}
+
+}

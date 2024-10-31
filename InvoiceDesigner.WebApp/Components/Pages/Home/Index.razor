@@ -1,0 +1,104 @@
+﻿@page "/Invoices"
+@using InvoiceDesigner.Domain.Shared.DTOs.Invoice
+@using InvoiceDesigner.Domain.Shared.Helpers
+@using InvoiceDesigner.WebApp.Helpers
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<MudContainer>
+	<MudTable ServerData="ServerReload" @ref="table" Dense="true" Hover="true" RowsPerPage="10">
+		<ToolBarContent>
+			<MudText Typo="Typo.h6">Invoices</MudText>
+			<MudSpacer />
+			<MudTextField T="string"
+						  ValueChanged="@(s=>OnSearch(s))"
+						  Placeholder="Search"
+						  Adornment="Adornment.Start"
+						  AdornmentIcon="@Icons.Material.Filled.Search"
+						  IconSize="Size.Medium"
+						  Class="mt-0" />
+			<MudSpacer />
+			<MudButton Href="/Invoices/Edit/0"
+					   Variant="Variant.Filled"
+					   StartIcon="@Icons.Material.Filled.Add"
+					   Color="Color.Default">
+				New
+			</MudButton>
+		</ToolBarContent>
+
+		<HeaderContent>
+			<MudTh>Id</MudTh>
+			<MudTh>Date</MudTh>
+			<MudTh>Company</MudTh>
+			<MudTh>Customer</MudTh>
+			<MudTh>Amount</MudTh>
+			<MudTh>Currency</MudTh>
+			<MudTh></MudTh>
+			<MudTh></MudTh>
+		</HeaderContent>
+		<RowTemplate>
+			<MudTd DataLabel="Id">@context.InvoiceNumber</MudTd>
+			<MudTd DataLabel="Date">@context.DateTime.ToString("dd.MM.yyyy")</MudTd>
+			<MudTd DataLabel="Comapny">@context.CompanyName</MudTd>
+			<MudTd DataLabel="Custome">@context.CustomerName</MudTd>
+			<MudTd DataLabel="Amount">@context.TotalAmount.ToString("N2")</MudTd>
+			<MudTd DataLabel="Currency">@context.CurrencyName</MudTd>
+			<MudTd Class="text-right" Style="width:25px">
+				<MudIconButton Href="@($"/Invoices/Edit/{context.Id}")"
+							   Icon="@Icons.Material.Filled.Edit"
+							   Size="Size.Small"
+							   Color="Color.Default" />
+			</MudTd>
+			<MudTd Class="text-right" Style="width:25px">
+				<MudIconButton Icon="@Icons.Material.Filled.Delete"
+							   Color="Color.Default"
+							   Size="Size.Small"
+							   OnClick="() => RedirectToDeleteRow(context.Id)" />
+			</MudTd>
+		</RowTemplate>
+		<NoRecordsContent>
+			<MudText>No matching records found</MudText>
+		</NoRecordsContent>
+		<LoadingContent>
+			<MudText>Loading...</MudText>
+		</LoadingContent>
+		<PagerContent>
+			<MudTablePager />
+		</PagerContent>
+	</MudTable>
+</MudContainer>
+
+@code {
+	private static string _controller = "Invoices";
+	private HttpRequestHelper _httpHelper = null!;
+
+	private MudTable<InvoicesViewDto> table = new();
+	private PagedResult<InvoicesViewDto>? pagedResult;
+	private string searchString = "";
+
+	private async Task<TableData<InvoicesViewDto>> ServerReload(TableState state, CancellationToken token)
+	{
+		_httpHelper = new HttpRequestHelper(_controller, Http, Snackbar, null, DialogService);
+
+		pagedResult = await _httpHelper.GetDataFromAPI<PagedResult<InvoicesViewDto>>($"api/Invoices?pageSize={state.PageSize}&page={state.Page + 1}&searchString={searchString}&sortLabel=Id_desc");
+
+		if (pagedResult != null)
+			return new TableData<InvoicesViewDto>() { TotalItems = pagedResult.TotalCount, Items = pagedResult.Items };
+
+		return new();
+	}
+
+	private void OnSearch(string text)
+	{
+		searchString = text;
+		table.ReloadServerData();
+	}
+
+	private async void RedirectToDeleteRow(int id)
+	{
+		if (await _httpHelper.DeleteWithConfirmationAsync(id))
+			await table.ReloadServerData();
+	}
+
+}

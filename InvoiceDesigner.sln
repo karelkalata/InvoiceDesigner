@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35222.181
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InvoiceDesigner.API", "InvoiceDesigner.API\InvoiceDesigner.API.csproj", "{5C857A62-3F5F-4992-8EFB-37A1AEEF1259}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InvoiceDesigner.Domain.Shared", "InvoiceDesigner.Models\InvoiceDesigner.Domain.Shared.csproj", "{B482875E-E01C-487D-A3F1-C56D5CECBB44}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InvoiceDesigner.Application", "InvoiceDesigner.Application\InvoiceDesigner.Application.csproj", "{7B2E3B52-E5B7-419D-927C-1B12027A0691}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InvoiceDesigner.Infrastructure", "InvoiceDesigner.Infrastructure\InvoiceDesigner.Infrastructure.csproj", "{78446D30-6466-475F-886B-3345C7795692}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InvoiceDesigner.WebApp", "InvoiceDesigner.WebApp\InvoiceDesigner.WebApp.csproj", "{4999837D-F337-463A-86E0-269AE443B8BB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5C857A62-3F5F-4992-8EFB-37A1AEEF1259}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C857A62-3F5F-4992-8EFB-37A1AEEF1259}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C857A62-3F5F-4992-8EFB-37A1AEEF1259}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C857A62-3F5F-4992-8EFB-37A1AEEF1259}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B482875E-E01C-487D-A3F1-C56D5CECBB44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B482875E-E01C-487D-A3F1-C56D5CECBB44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B482875E-E01C-487D-A3F1-C56D5CECBB44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B482875E-E01C-487D-A3F1-C56D5CECBB44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B2E3B52-E5B7-419D-927C-1B12027A0691}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B2E3B52-E5B7-419D-927C-1B12027A0691}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B2E3B52-E5B7-419D-927C-1B12027A0691}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B2E3B52-E5B7-419D-927C-1B12027A0691}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78446D30-6466-475F-886B-3345C7795692}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78446D30-6466-475F-886B-3345C7795692}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78446D30-6466-475F-886B-3345C7795692}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78446D30-6466-475F-886B-3345C7795692}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4999837D-F337-463A-86E0-269AE443B8BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4999837D-F337-463A-86E0-269AE443B8BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4999837D-F337-463A-86E0-269AE443B8BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4999837D-F337-463A-86E0-269AE443B8BB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4D50AC23-49B1-4C4F-A816-CB388A4BDD3F}
+	EndGlobalSection
+EndGlobal

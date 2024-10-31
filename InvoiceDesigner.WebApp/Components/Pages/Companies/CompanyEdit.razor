@@ -1,0 +1,160 @@
+﻿@page "/Companies/Edit/{id:int}"
+@using InvoiceDesigner.Domain.Shared.DTOs.Company
+@using InvoiceDesigner.Domain.Shared.DTOs.Currency
+@using InvoiceDesigner.Domain.Shared.Helpers
+@using InvoiceDesigner.WebApp.Helpers
+@inject HttpClient Http
+@inject NavigationManager nav
+@inject ISnackbar Snackbar
+
+<MudContainer>
+	@if (_companyEditDto == null)
+	{
+		<MudText Align="Align.Center">Loading...</MudText>
+	}
+	else
+	{
+		<EditForm Model="@_companyEditDto" OnValidSubmit="OnValidSubmit">
+			<DataAnnotationsValidator />
+			<MudGrid Spacing="2">
+				<MudItem xs="12" sm="12" Class="ma-1">
+					<MudCard>
+						<MudCardContent>
+							<MudTextField @bind-Value="_companyEditDto.Name"
+										  Label="My Company Name"
+										  Required
+										  For="(() => _companyEditDto.Name)" />
+						</MudCardContent>
+					</MudCard>
+				</MudItem>
+			</MudGrid>
+
+			<MudGrid Spacing="2">
+				<MudItem xs="12" sm="12" Class="ma-1">
+					<MudCard>
+						<MudCardContent>
+							<MudGrid>
+								<MudItem xs="2">
+									<MudTextField @bind-Value="_companyEditDto.TaxId"
+												  Label="Tax Id"
+												  Required
+												  For="(() => _companyEditDto.TaxId)" />
+								</MudItem>
+								<MudItem xs="2">
+									<MudTextField @bind-Value="_companyEditDto.VatId"
+												  Label="Vat Id"
+												  For="(() => _companyEditDto.VatId)" />
+								</MudItem>
+								<MudItem xs="2">
+									<MudNumericField @bind-Value="_companyEditDto.DefaultVat"
+													 Label="Default Vat"
+													 For="(() => _companyEditDto.DefaultVat)" />
+								</MudItem>
+								<MudItem xs="2">
+									<MudNumericField @bind-Value="_companyEditDto.PaymentTerms"
+													 Label="Payment Terms"
+													 Required
+													 For="(() => _companyEditDto.PaymentTerms)" />
+								</MudItem>
+								<MudItem xs="4">
+									<MudAutocomplete T="CurrencyAutocompleteDto"
+													 @bind-Value="_companyEditDto.Currency"
+													 Label="Currency"
+													 Required
+													 Dense="true"
+													 SearchFunc="@((value, token) => FilteringDataWithApi<CurrencyAutocompleteDto>(value, "Currencies", token))"
+													 ToStringFunc="@(c => c?.Name ?? "")"
+													 For="(() => _companyEditDto.Currency)" />
+								</MudItem>
+							</MudGrid>
+						</MudCardContent>
+					</MudCard>
+				</MudItem>
+			</MudGrid>
+
+			<MudGrid Spacing="2">
+				<MudItem xs="12" sm="12" Class="ma-1">
+					<MudCard>
+						<MudCardContent>
+							<MudGrid>
+								<MudItem xs="4">
+									<MudTextField @bind-Value="_companyEditDto.WWW"
+												  Label="www"
+												  For="(() => _companyEditDto.WWW)" />
+								</MudItem>
+								<MudItem xs="4">
+									<MudTextField @bind-Value="_companyEditDto.Email"
+												  Label="email"
+												  For="(() => _companyEditDto.Email)" />
+								</MudItem>
+								<MudItem xs="4">
+									<MudTextField @bind-Value="_companyEditDto.Phone"
+												  Label="phone"
+												  For="(() => _companyEditDto.Phone)" />
+								</MudItem>
+							</MudGrid>
+						</MudCardContent>
+					</MudCard>
+				</MudItem>
+			</MudGrid>
+
+			<MudGrid Spacing="2">
+				<MudItem xs="12" sm="12" Class="ma-1">
+					<MudCard>
+						<MudCardContent>
+							<MudTextField @bind-Value="_companyEditDto.Address"
+										  Label="Address"
+										  For="(() => _companyEditDto.Address)" />
+						</MudCardContent>
+					</MudCard>
+				</MudItem>
+			</MudGrid>
+
+			<MudGrid Spacing="2">
+				<MudItem xs="12" sm="12" Class="ma-1">
+					<MudCard>
+						<MudCardContent>
+							<MudTextField @bind-Value="_companyEditDto.Info"
+										  Label="Additional Info"
+										  For="(() => _companyEditDto.Info)" />
+						</MudCardContent>
+					</MudCard>
+				</MudItem>
+			</MudGrid>
+			<MudCardActions>
+				<MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit" Class="ml-auto">Save</MudButton>
+			</MudCardActions>
+
+		</EditForm>
+	}
+</MudContainer>
+@code {
+	[Parameter]
+	public int? id { get; set; }
+
+	private static string _controller = "Companies";
+	private HttpRequestHelper _httpHelper = null!;
+
+	private CompanyEditDto? _companyEditDto;
+	private List<CurrencyAutocompleteDto> _currenciesAutocomplete = new();
+
+	protected override async Task OnInitializedAsync()
+	{
+		_httpHelper = new HttpRequestHelper(_controller, Http, Snackbar, nav);
+
+		_currenciesAutocomplete = await _httpHelper.GetDataFromAPI<List<CurrencyAutocompleteDto>>("api/Currencies/GetCurrencyAutocompleteDto");
+
+		_companyEditDto = await _httpHelper.GetAsync<CompanyEditDto>(id);
+	}
+
+	private async Task OnValidSubmit()
+	{
+		await _httpHelper.SendRequest(_companyEditDto, id.HasValue && id > 0);
+	}
+
+	private async Task<IEnumerable<T>> FilteringDataWithApi<T>(string value, string apiUrl, CancellationToken token) where T : IHasIdAndName
+	{
+		return await _httpHelper.GetDataFromAPI<IEnumerable<T>>($"api/{apiUrl}/FilteringData?f={value}");
+	}
+
+}

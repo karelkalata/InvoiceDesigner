@@ -1,0 +1,67 @@
+﻿@using InvoiceDesigner.Domain.Shared.DTOs.FormDesigners
+@using InvoiceDesigner.Domain.Shared.Models.FormDesigner
+ 
+<MudDialog Style="width:500px; ">
+	<DialogContent>
+		<MudTextField T="string" @bind-Value="@dropItemEditDto.Name" multiline FullWidth Lines="5"></MudTextField>
+	</DialogContent>
+	<DialogActions>
+		<MudSelect T="string"
+				   Label="Font Size"
+				   Value="_selectedFontSize"
+				   ValueChanged="OnMudSelectChanged"
+				   Variant="Variant.Outlined"
+				   Dense="true">
+
+			<MudSelectItem Value="@ConstsCssProperty.Value_10px">@ConstsCssProperty.Value_10px</MudSelectItem>
+			<MudSelectItem Value="@ConstsCssProperty.Value_12px">@ConstsCssProperty.Value_12px</MudSelectItem>
+			<MudSelectItem Value="@ConstsCssProperty.Value_14px">@ConstsCssProperty.Value_14px</MudSelectItem>
+			<MudSelectItem Value="@ConstsCssProperty.Value_16px">@ConstsCssProperty.Value_16px</MudSelectItem>
+			<MudSelectItem Value="@ConstsCssProperty.Value_18px">@ConstsCssProperty.Value_18px</MudSelectItem>
+			<MudSelectItem Value="@ConstsCssProperty.Value_20px">@ConstsCssProperty.Value_20px</MudSelectItem>
+
+		</MudSelect>
+		<MudButton OnClick="Cancel">Cancel</MudButton>
+		<MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+	</DialogActions>
+</MudDialog>
+
+@code {
+	[CascadingParameter]
+	private MudDialogInstance MudDialog { get; set; } = null!;
+
+	[Parameter]
+	public DropItemEditDto dropItemEditDto { get; set; } = new();
+
+	public string _selectedFontSize = string.Empty;
+
+	private void Cancel() => MudDialog.Cancel();
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+		if (dropItemEditDto != null)
+		{
+			var fontSize = dropItemEditDto.CssStyleEditDto.FirstOrDefault(e => e.Name == ConstsCssProperty.FontSize);
+			if (fontSize != null)
+				_selectedFontSize = fontSize.Value;
+		}
+
+	}
+
+	private void OnMudSelectChanged(string newValue)
+	{
+		_selectedFontSize = newValue;
+	}
+
+	private void Submit()
+	{
+		var fontSize = dropItemEditDto.CssStyleEditDto.FirstOrDefault(e => e.Name == ConstsCssProperty.FontSize);
+		if (fontSize != null)
+		{
+			fontSize.Value = _selectedFontSize;
+		}
+		MudDialog.Close(DialogResult.Ok(dropItemEditDto));
+	}
+}

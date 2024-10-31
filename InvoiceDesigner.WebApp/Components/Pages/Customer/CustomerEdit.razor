@@ -1,0 +1,56 @@
+﻿@page "/Customers/Edit/{id:int}"
+@using InvoiceDesigner.Domain.Shared.DTOs.Customer
+@using InvoiceDesigner.WebApp.Helpers
+@inject HttpClient Http
+@inject NavigationManager nav
+@inject ISnackbar Snackbar
+
+<MudContainer>
+	@if (_customerEditDto == null)
+	{
+		<MudText Align="Align.Center">Loading...</MudText>
+	}
+	else
+	{
+		<EditForm Model="@_customerEditDto" OnValidSubmit="OnValidSubmit">
+			<DataAnnotationsValidator />
+			<MudCard>
+				<MudCardContent>
+					<MudTextField @bind-Value="_customerEditDto.Name"
+								  Label="Name"
+								  For="(() => _customerEditDto.Name)" />
+					<MudTextField @bind-Value="_customerEditDto.TaxId"
+								  Label="Tax Id"
+								  For="(() => _customerEditDto.TaxId)" />
+					<MudTextField @bind-Value="_customerEditDto.VatId"
+								  Label="Vat Id"
+								  For="(() => _customerEditDto.VatId)" />
+				</MudCardContent>
+				<MudCardActions>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit" Class="ml-auto">Save</MudButton>
+				</MudCardActions>
+			</MudCard>
+		</EditForm>
+	}
+</MudContainer>
+@code {
+	[Parameter]
+	public int? id { get; set; }
+
+	private static string _controller = "Customers";
+	private HttpRequestHelper _httpHelper = null!;
+
+	private CustomerEditDto? _customerEditDto = null;
+
+	protected override async Task OnInitializedAsync()
+	{
+		_httpHelper = new HttpRequestHelper(_controller, Http, Snackbar, nav);
+
+		_customerEditDto = await _httpHelper.GetAsync<CustomerEditDto>(id);
+	}
+
+	private async Task OnValidSubmit()
+	{
+		await _httpHelper.SendRequest(_customerEditDto, id.HasValue && id > 0);
+	}
+}
