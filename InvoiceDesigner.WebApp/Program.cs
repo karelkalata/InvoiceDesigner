@@ -1,5 +1,8 @@
+using Blazored.LocalStorage;
 using InvoiceDesigner.WebApp.Components;
+using InvoiceDesigner.WebApp.Helpers;
 using InvoiceDesigner.WebClient;
+using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,24 +12,25 @@ builder.Services.AddRazorComponents()
 	.AddInteractiveServerComponents();
 
 builder.Services.AddMudServices();
+builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddScoped<AuthenticationStateProvider, AuthenticationStateProviderHelper>();
+builder.Services.AddAuthorizationCore();
 
-builder.Services.AddScoped(sp =>
+builder.Services.AddHttpClient("ApiClient", client =>
 {
-    var apiSettings = builder.Configuration.GetSection("ApiSettings").Get<ApiSettings>();
-    if (apiSettings == null || string.IsNullOrEmpty(apiSettings.BaseUrl))
-    {
-        throw new InvalidOperationException("API base URL is not configured.");
-    }
-    return new HttpClient { BaseAddress = new Uri(apiSettings.BaseUrl) };
+	var apiSettings = builder.Configuration.GetSection("ApiSettings").Get<ApiSettings>();
+	if (apiSettings == null || string.IsNullOrEmpty(apiSettings.BaseUrl))
+	{
+		throw new InvalidOperationException("API base URL is not configured.");
+	}
+	client.BaseAddress = new Uri(apiSettings.BaseUrl);
 });
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
 	app.UseExceptionHandler("/Error", createScopeForErrors: true);
-	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 	app.UseHsts();
 }
 

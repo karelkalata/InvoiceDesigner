@@ -1,0 +1,16 @@
+﻿@page "/Logout"
+@inject NavigationManager nav
+@inject ILocalStorageService LocalStorageService
+
+<MudContainer>
+	<MudPaper Class="d-flex justify-center align-content-center flex-grow-1 gap-4" Elevation="0">
+		<MudProgressCircular Color="Color.Primary" Style="height:70px;width:70px;" Indeterminate="true" />
+	</MudPaper>
+</MudContainer>
+@code {
+	protected override async Task OnInitializedAsync()
+	{
+		await LocalStorageService.ClearAsync();
+		nav.NavigateTo("/Login", true);
+	}
+}

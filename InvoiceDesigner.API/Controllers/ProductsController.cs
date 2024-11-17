@@ -1,10 +1,12 @@
 ﻿using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Domain.Shared.DTOs.Product;
-using InvoiceDesigner.Domain.Shared.Helpers;
+using InvoiceDesigner.Domain.Shared.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InvoiceDesigner.API.Controllers
 {
+	[Authorize]
 	[Route("api/[controller]")]
 	[ApiController]
 	public class ProductsController : ControllerBase
@@ -17,7 +19,7 @@ namespace InvoiceDesigner.API.Controllers
 		}
 
 		[HttpGet]
-		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedResult<ProductsViewDto>))]
+		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponsePaged<ProductsViewDto>))]
 		public async Task<IActionResult> Index(int pageSize = 10, int page = 1, string searchString = "", string sortLabel = "")
 		{
 			var result = await _service.GetPagedProductsAsync(pageSize, page, searchString, sortLabel);
@@ -84,18 +86,14 @@ namespace InvoiceDesigner.API.Controllers
 
 
 		[HttpDelete("{id:int}")]
-		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseBoolean))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> DeleteAsync(int id)
 		{
 			try
 			{
 				var result = await _service.DeleteProductAsync(id);
-
-				if (!result)
-					return BadRequest(new { message = "Error DeleteAsync" });
-
-				return NoContent();
+				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
 			{

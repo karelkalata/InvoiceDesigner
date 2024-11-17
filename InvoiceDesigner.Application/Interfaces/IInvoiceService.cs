@@ -1,31 +1,33 @@
 ﻿using InvoiceDesigner.Domain.Shared.DTOs;
 using InvoiceDesigner.Domain.Shared.DTOs.Invoice;
-using InvoiceDesigner.Domain.Shared.Helpers;
 using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Interfaces
 {
 	public interface IInvoiceService
 	{
-		Task<InfoForNewInvoiceDto> GetInfoForNewInvoice(int invoiceId);
+		Task<InfoForNewInvoiceDto> GetInfoForNewInvoice(int userId, bool isAdmin, int invoiceId);
 
-		Task<PagedResult<InvoicesViewDto>> GetPagedInvoicesAsync(int pageSize,
-																int page,
-																string searchString,
-																string sortLabel);
+		Task<ResponsePaged<InvoicesViewDto>> GetPagedInvoicesAsync( int userId, 
+																	bool isAdmin,
+																	int pageSize,
+																	int page,
+																	string searchString,
+																	string sortLabel);
 
 
-		Task<ResponseRedirect> CreateInvoiceAsync(InvoiceEditDto invoiceDto);
+		Task<ResponseRedirect> CreateInvoiceAsync(int userId, bool isAdmin, InvoiceEditDto invoiceDto);
 
-		Task<Invoice?> GetInvoiceByIdAsync(int id);
+		Task<Invoice?> GetInvoiceByIdAsync(int userId, bool isAdmin, int id);
 
-		Task<InvoiceEditDto> GetInvoiceDtoByIdAsync(int id);
+		Task<InvoiceEditDto> GetInvoiceDtoByIdAsync(int userId, bool isAdmin, int id);
 
-		Task<ResponseRedirect> UpdateInvoiceAsync(InvoiceEditDto invoiceDto);
+		Task<ResponseRedirect> UpdateInvoiceAsync(int userId, bool isAdmin, InvoiceEditDto invoiceDto);
 
-		Task<bool> DeleteInvoiceAsync(int id);
+		Task<ResponseBoolean> DeleteInvoiceAsync(int userId, bool isAdmin, int id);
 
-		Task<int> GetInvoiceCountAsync();
+		Task<int> GetInvoiceCountAsync(int userId, bool isAdmin );
 
 	}
 }

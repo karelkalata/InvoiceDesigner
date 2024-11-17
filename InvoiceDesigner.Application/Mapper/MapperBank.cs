@@ -13,16 +13,6 @@ namespace InvoiceDesigner.Application.Mapper
 			CreateMap<Bank, BankEditDto>();
 
 			CreateMap<Bank, BankPrintDto>();
-
-			CreateMap<Bank, BankViewDto>()
-				.ForMember(
-					dest => dest.CurrencyName,
-					opt => opt.MapFrom(src => src.Currency.Name)
-				).ForMember(
-					dest => dest.CompanyName,
-					opt => opt.MapFrom(src => src.Company.Name)
-				);
-
 		}
 	}
 }

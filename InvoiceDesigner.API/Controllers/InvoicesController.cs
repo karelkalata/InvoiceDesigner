@@ -1,27 +1,42 @@
-﻿using InvoiceDesigner.Application.Interfaces;
+﻿using InvoiceDesigner.API.Helpers;
+using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Domain.Shared.DTOs;
 using InvoiceDesigner.Domain.Shared.DTOs.Invoice;
-using InvoiceDesigner.Domain.Shared.Helpers;
+using InvoiceDesigner.Domain.Shared.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InvoiceDesigner.API.Controllers
 {
+	[Authorize]
+	[ServiceFilter(typeof(ValidateUserIdFilter))]
 	[Route("api/[controller]")]
 	[ApiController]
 	public class InvoicesController : ControllerBase
 	{
+		private int userId => GetItemFromContext<int>("userId");
+		private bool isAdmin => GetItemFromContext<bool>("isAdmin");
 		private readonly IInvoiceService _service;
+
+		private T GetItemFromContext<T>(string key)
+		{
+			if (HttpContext?.Items[key] is T value)
+				return value;
+
+			throw new UnauthorizedAccessException($"{key} is missing or invalid.");
+		}
 
 		public InvoicesController(IInvoiceService service)
 		{
 			_service = service;
 		}
 
+
 		[HttpGet]
-		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedResult<InvoicesViewDto>))]
+		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponsePaged<InvoicesViewDto>))]
 		public async Task<IActionResult> Index(int pageSize = 10, int page = 1, string searchString = "", string sortLabel = "")
 		{
-			var result = await _service.GetPagedInvoicesAsync(pageSize, page, searchString, sortLabel);
+			var result = await _service.GetPagedInvoicesAsync(userId, isAdmin, pageSize, page, searchString, sortLabel);
 			return Ok(result);
 		}
 
@@ -35,7 +50,7 @@ namespace InvoiceDesigner.API.Controllers
 
 			try
 			{
-				var result = await _service.CreateInvoiceAsync(invoiceDto);
+				var result = await _service.CreateInvoiceAsync(userId, isAdmin, invoiceDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -51,7 +66,7 @@ namespace InvoiceDesigner.API.Controllers
 		{
 			try
 			{
-				var result = await _service.GetInvoiceDtoByIdAsync(id);
+				var result = await _service.GetInvoiceDtoByIdAsync(userId, isAdmin, id);
 
 				return Ok(result);
 			}
@@ -71,7 +86,7 @@ namespace InvoiceDesigner.API.Controllers
 
 			try
 			{
-				var result = await _service.UpdateInvoiceAsync(InvoiceDto);
+				var result = await _service.UpdateInvoiceAsync(userId, isAdmin, InvoiceDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -81,18 +96,14 @@ namespace InvoiceDesigner.API.Controllers
 		}
 
 		[HttpDelete("{id:int}")]
-		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseBoolean))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> Delete(int id)
 		{
 			try
 			{
-				var result = await _service.DeleteInvoiceAsync(id);
-
-				if (!result)
-					return BadRequest(new { message = "Error delete" });
-
-				return NoContent();
+				var result = await _service.DeleteInvoiceAsync(userId, isAdmin, id);
+				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
 			{
@@ -104,8 +115,15 @@ namespace InvoiceDesigner.API.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InfoForNewInvoiceDto))]
 		public async Task<IActionResult> GetInfoForNewInvoice(int invoiceId = 0)
 		{
-			var result = await _service.GetInfoForNewInvoice(invoiceId);
-			return Ok(result);
+			try
+			{
+				var result = await _service.GetInfoForNewInvoice(userId, isAdmin, invoiceId);
+				return Ok(result);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(new { message = ex.Message });
+			}
 		}
 
 	}

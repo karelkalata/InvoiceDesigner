@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
 using InvoiceDesigner.Application.Interfaces;
-using InvoiceDesigner.Domain.Shared.DTOs.Bank;
 using InvoiceDesigner.Domain.Shared.DTOs.Currency;
-using InvoiceDesigner.Domain.Shared.Helpers;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Services
 {
@@ -32,7 +31,7 @@ namespace InvoiceDesigner.Application.Services
 			_productServiceHelper = productServiceHelper;
 		}
 
-		public async Task<PagedResult<CurrencyViewDto>> GetPagedCurrenciesAsync(int pageSize, int page, string searchString, string sortLabel)
+		public async Task<ResponsePaged<CurrencyViewDto>> GetPagedCurrenciesAsync(int pageSize, int page, string searchString, string sortLabel)
 		{
 			pageSize = pageSize > 0 ? pageSize : await _repository.GetCountCurrenciesAsync();
 			page = page > 0 ? page : 1;
@@ -44,7 +43,7 @@ namespace InvoiceDesigner.Application.Services
 
 			var currenciesViewDto = _mapper.Map<IReadOnlyCollection<CurrencyViewDto>>(await currenciesTask);
 
-			return new PagedResult<CurrencyViewDto>
+			return new ResponsePaged<CurrencyViewDto>
 			{
 				Items = currenciesViewDto,
 				TotalCount = await totalCountTask
@@ -86,7 +85,7 @@ namespace InvoiceDesigner.Application.Services
 			};
 		}
 
-		public async Task<bool> DeleteCurrencyAsync(int id)
+		public async Task<ResponseBoolean> DeleteCurrencyAsync(int id)
 		{
 			var existsEntity = await ValidateExistsEntityAsync(id);
 
@@ -102,7 +101,10 @@ namespace InvoiceDesigner.Application.Services
 			if (await _productServiceHelper.IsCurrencyUsedInProduct(id))
 				throw new InvalidOperationException($"{existsEntity.Name} is in use in Products and cannot be deleted.");
 
-			return await _repository.DeleteCurrencyAsync(existsEntity);
+			return new ResponseBoolean
+			{
+				Result = await _repository.DeleteCurrencyAsync(existsEntity)
+			};
 		}
 
 		public Task<int> GetCountCurrenciesAsync()
@@ -118,7 +120,7 @@ namespace InvoiceDesigner.Application.Services
 
 		public async Task<IReadOnlyCollection<CurrencyAutocompleteDto>> FilteringData(string f)
 		{
-			var currencies = await _repository.GetCurrenciesAsync(10, 1, f, GetOrdering("Name"));
+			var currencies = await _repository.GetCurrenciesAsync(10, 1, f, GetOrdering("Value"));
 			return _mapper.Map<IReadOnlyCollection<CurrencyAutocompleteDto>>(currencies);
 		}
 

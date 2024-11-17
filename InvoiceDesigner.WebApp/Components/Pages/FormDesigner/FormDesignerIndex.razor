@@ -1,12 +1,18 @@
-﻿@page "/FormDesigner/{id:int}"
-@inject HttpClient Http
+﻿@page "/FormDesigner"
+
+@inject IHttpClientFactory HttpClientFactory
+@inject ILocalStorageService LocalStorageService
 @inject NavigationManager nav
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
-@using InvoiceDesigner.Domain.Shared.DTOs.FormDesigners
-@using InvoiceDesigner.Domain.Shared.Helpers
-@using InvoiceDesigner.Domain.Shared.Models.FormDesigner
+@inject IJSRuntime JS
+
+@using InvoiceDesigner.Domain.Shared.DTOs.DtoFormDesigners
+@using InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner
+@using InvoiceDesigner.Domain.Shared.Responses
 @using InvoiceDesigner.WebApp.Helpers
+@using System.Diagnostics
+
 <style>
 	.border-my-05 {
 		border-width: 0.5px;
@@ -25,6 +31,14 @@
 	.mud-expand-panel .mud-expand-panel-header {
 		padding: 5px 10px 5px 10px;
 	}
+
+	.opacity-toggle {
+		opacity: 0.1
+	}
+
+		.opacity-toggle:hover {
+			opacity: 1.0
+		}
 </style>
 @if (!_loaded)
 {
@@ -32,11 +46,11 @@
 }
 else
 {
-
-
 	<MudContainer Class="ma-3 pa-3">
-		<MudDropContainer T="DropItemEditDto" Items="_formDesigner.DropItemsDto" ItemDropped="ItemUpdated" Class="d-flex flex-wrap flex-grow-1"
+		<MudDropContainer T="DropItemEditDto"
+						  ItemDropped="ItemUpdated" Class="d-flex flex-wrap flex-grow-1"
 						  @ref="_mudDropContainerRef"
+						  Items="_formDesigner.DropItems"
 						  ItemDisabled="@(item => item.StartSelector == "_Hidden")"
 						  NoDropClass="mud-border-error"
 						  ItemsSelector="@((item, dropzone) => item.Selector == dropzone)">
@@ -50,7 +64,6 @@ else
 								<MudGrid>
 									<MudItem xs="4" Class="justify-content-start">
 										<MudButton Variant="Variant.Filled"
-												 
 												   OnClick="OpenInputName"
 												   Size="Size.Small"
 												   StartIcon="@Icons.Material.Filled.Add"
@@ -61,9 +74,8 @@ else
 
 									<MudItem xs="4" Class="justify-content-between">
 										<MudButton Variant="Variant.Filled"
-												   Href="@($"{Http.BaseAddress}api/PrintInvoice?id=0&printform={id}")"
-												   Target="_blank"
-												   Disabled="@(id==0)"
+												   OnClick="GetFilePDF"
+												   Disabled="@(_id==0)"
 												   Size="Size.Small"
 												   StartIcon="@Icons.Material.Filled.Download"
 												   Color="Color.Primary">
@@ -73,8 +85,7 @@ else
 
 									<MudItem xs="4" Class="justify-content-end">
 										<MudButton Variant="Variant.Filled"
-												 
-												   Disabled="@(id==0)"
+												   Disabled="@(_id==0)"
 												   OnClick="OnValidSubmit"
 												   Size="Size.Small"
 												   StartIcon="@Icons.Material.Filled.Save"
@@ -86,6 +97,7 @@ else
 
 									<MudItem xs="12">
 										<MudSelect T="FormDesignersAutocompleteDto"
+												   Typo="Typo.inherit"
 												   Label="Select Form"
 												   Value="_selectedDesignersAutocompleteDto"
 												   ValueChanged="OnFormDesignersAutocompleteDtoChanged"
@@ -124,19 +136,20 @@ else
 									<MudExpansionPanel Text="Other">
 										<MudButton Variant="Variant.Filled"
 												   FullWidth="true"
-												   Disabled="_formDesigner.DropItemsDto.Count == 0"
+												   Disabled="_formDesigner.DropItems.Count == 0"
 												   OnClick="AddEmptyBox"
 												   Size="Size.Small"
 												   StartIcon="@Icons.Material.Outlined.AddBox"
 												   Color="Color.Secondary">
 											Add Empty Box
 										</MudButton>
+
 										<MudDropZone T="DropItemEditDto" Identifier="_Other" Class="rounded mud-background-gray pa-1 ma-0 flex-grow-1" />
 									</MudExpansionPanel>
 									<MudExpansionPanel Text="Delete">
 										<MudButton Variant="Variant.Filled"
 												   FullWidth="true"
-												   Disabled="id==0"
+												   Disabled="_id==0"
 												   OnClick="RedirectToDeleteRow"
 												   Size="Size.Small"
 												   StartIcon="@Icons.Material.Filled.DeleteForever"
@@ -153,22 +166,31 @@ else
 					</MudItem>
 
 					<MudItem xs="9">
-						@for (int r = 0; r < _formDesigner.Rows; r++)
+						@for (int r = 0; r < _formDesigner.Schemes.Count; r++)
 						{
 							var row = r.ToString();
+							var currentRow = r;
 							<div class="d-flex">
-								@for (int c = 0; c < _formDesigner.Columns; c++)
+								@for (int c = 0; c <= _formDesigner.Schemes[r].Column; c++)
 								{
 									var col = c.ToString();
 									var identifier = $"coor_{row}_{col}";
 									<MudDropZone T="DropItemEditDto"
 												 Identifier=@identifier
-												 CanDrop="@(item => !_formDesigner.DropItemsDto.Any(x => x.Selector == identifier))"
+												 CanDrop="@(item => !_dropItemsEditDto.Any(x => x.Selector == identifier))"
 												 DraggingClass="mud-theme-success"
 												 Class="d-flex justify-center align-center border-my-05 "
-												 Style="height: 25px; width: 300px;" />
+												 Style="height: 25px; width: 900px;" />
 
 								}
+								<div class="d-flex opacity-toggle">
+									<MudMenu Icon="@Icons.Material.Filled.Settings" Size="Size.Small" Style="height: 25px; margin-left: auto;" Dense>
+
+										<MudMenuItem IconSize="Size.Small" Icon="@Icons.Material.Filled.Add" OnClick="@(() => AddColumn(currentRow))">Column</MudMenuItem>
+										<MudMenuItem IconSize="Size.Small" Icon="@Icons.Material.Filled.Remove" OnClick="@(()=> RemoveColumn(currentRow))">Column</MudMenuItem>
+
+									</MudMenu>
+								</div>
 							</div>
 						}
 					</MudItem>
@@ -177,32 +199,24 @@ else
 			</ChildContent>
 
 			<ItemRenderer>
-				@if (context.StartSelector == "_Hidden")
-				{
-					<MudPaper Class="pa-1 my-1 docs-gray-bg my-page-dropzone " Style="height: 25px; display: flex; align-items: center;">
-						<MudText Typo="Typo.caption" Style=@GetCssStyle(context)>
-							@context.Name
-						</MudText>
-					</MudPaper>
-				}
-				else if (context.Selector.StartsWith("_"))
+				@if (context.Selector.StartsWith("_"))
 				{
 					<MudPaper Class="pa-1 my-1">
 						<MudText Typo="Typo.caption">
-							@context.Name
+							@context.Value
 						</MudText>
 					</MudPaper>
 				}
 				else
 				{
-					<MudPaper Class="pa-1 my-1 docs-gray-bg my-page-dropzone " Style="height: 25px; display: flex; align-items: center;">
+					<MudPaper Class="pa-1 my-1 docs-gray-bg my-page-dropzone" Style="height: 25px; display: flex; align-items: center;">
 						<MudText Typo="Typo.caption" Style=@GetCssStyle(context)>
-							@context.Name
+							@context.Value
 						</MudText>
 
 						<MudMenu Icon="@Icons.Material.Filled.Settings" Size="Size.Small" Style="margin-left: auto;" Dense>
 
-							<MudMenuItem IconSize="Size.Small" Icon="@Icons.Material.Filled.Edit" @onclick="() => EditContextDescription(context)">Edit</MudMenuItem>
+							<MudMenuItem IconSize="Size.Small" Icon="@Icons.Material.Filled.Edit" @onclick="() => EditDropItemValue(context)">Edit</MudMenuItem>
 
 							<MudMenuItem>
 								<MudStack Row="true" Spacing="2">
@@ -211,27 +225,46 @@ else
 									<MudIconButton Size="Size.Small" Color="Color.Primary" Icon="@Icons.Material.Filled.FormatAlignRight" @onclick="() => SetCssStyle(context, ConstsCssProperty.TextAlign, ConstsCssProperty.Value_Right)" />
 								</MudStack>
 							</MudMenuItem>
+							<MudMenuItem>
+								<MudStack Row="true" Spacing="2">
+									<MudIconButton Size="Size.Small" Color="Color.Primary" Icon="@Icons.Material.Filled.FormatBold" @onclick="() => SetCssStyle(context, ConstsCssProperty.FontWight, ConstsCssProperty.Value_Bold)" />
+									<MudIconButton Size="Size.Small" Color="Color.Primary" Icon="@Icons.Material.Filled.FormatItalic" @onclick="() => SetCssStyle(context, ConstsCssProperty.FontStyle, ConstsCssProperty.Value_Italic)" />
+								</MudStack>
+							</MudMenuItem>
+
 						</MudMenu>
 					</MudPaper>
 				}
 			</ItemRenderer>
 
 		</MudDropContainer>
+
+
 	</MudContainer>
 
 
+
+	<script>
+		function openPdf(pdfDataUrl) {
+			if (pdfDataUrl) {
+				window.open(pdfDataUrl, '_blank');
+			}
+		}
+	</script>
 }
 
 
 
 @code {
-	[Parameter]
-	public int? id { get; set; }
+
+	private int _id;
 
 	private static string _controller = "FormDesigner";
 	private HttpRequestHelper _httpHelper = null!;
 
+	private List<DropItemEditDto> _dropItemsEditDto = new();
 	private MudDropContainer<DropItemEditDto> _mudDropContainerRef { get; set; } = new();
+
 	private List<FormDesignersAutocompleteDto> _formDesignersAutocompleteDto = new();
 	private FormDesignersAutocompleteDto _selectedDesignersAutocompleteDto = null!;
 	private bool _loaded;
@@ -239,38 +272,64 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
-		_httpHelper = new HttpRequestHelper(_controller, Http, Snackbar, nav);
-
+		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav, DialogService);
 		_formDesignersAutocompleteDto = await _httpHelper.GetDataFromAPI<List<FormDesignersAutocompleteDto>>($"api/FormDesigner/GetAllFormDesignersAutocompleteDto");
+		_loaded = true;
+	}
 
-		if (id.HasValue && id > 0)
-		{
-			_formDesigner = await _httpHelper.GetDataFromAPI<FormDesignerEditDto>($"/api/FormDesigner/{id}");
-			var selectedDto = _formDesignersAutocompleteDto.FirstOrDefault(e => e.Id == id);
-			if (selectedDto != null)
-			{
-				_selectedDesignersAutocompleteDto = selectedDto;
-			}
-			else
-			{
-				Snackbar.Add($"Error Init", Severity.Error);
-				return;
-			}
-		}
+
+	private void AddColumn(int row)
+	{
+		if (_formDesigner.Schemes[row].Column == 10)
+			return;
+
+		_formDesigner.Schemes[row].Column++;
+		StateHasChanged();
+	}
+
+	private void RemoveColumn(int row)
+	{
+		var column = _formDesigner.Schemes[row].Column;
+		if (column == 0)
+			return;
+
+		_formDesigner.Schemes[row].Column = column - 1;
+
+		var removeDropItem = _formDesigner.DropItems.FirstOrDefault(e => e.Selector == $"coor_{row}_{column}");
+		if (removeDropItem != null)
+			removeDropItem.Selector = removeDropItem.StartSelector;
+
+		StateHasChanged();
+	}
+
+	private async Task GetFilePDF()
+	{
+		var PdfGuid = await _httpHelper.GetDataFromAPI<ResponsePdfGuid>($"api/PrintInvoice?id=0&PrintFormId={_id}");
+		var client = await _httpHelper.CreateHttpClient();
+		await JS.InvokeVoidAsync("open", $"{client?.BaseAddress?.ToString()}api/PrintInvoice/{PdfGuid.Guid}", "_blank");
+	}
+
+	private async Task LoadForm(int id)
+	{
+		_loaded = false;
+		_formDesigner = await _httpHelper.GetDataFromAPI<FormDesignerEditDto>($"/api/FormDesigner/{id}");
+		_mudDropContainerRef.Refresh();
+		StateHasChanged();
 		_loaded = true;
 	}
 
 	private async Task AddEmptyBox()
 	{
-		var newElement = await _httpHelper.GetDataFromAPI<DropItemEditDto>($"/api/FormDesigner/AddEmptyBox");
-		newElement.Id = _formDesigner.Id;
-		_formDesigner.DropItemsDto.Add(newElement);
+		var newEmptyBox = await _httpHelper.GetDataFromAPI<DropItemEditDto>($"/api/FormDesigner/AddEmptyBox");
+		_formDesigner.DropItems.Add(newEmptyBox);
 		_mudDropContainerRef.Refresh();
 	}
 
-	private void OnFormDesignersAutocompleteDtoChanged(FormDesignersAutocompleteDto formDesignersAutocompleteDto)
+	private async Task OnFormDesignersAutocompleteDtoChanged(FormDesignersAutocompleteDto formDesignersAutocompleteDto)
 	{
-		nav.NavigateTo($"/FormDesigner/{formDesignersAutocompleteDto.Id}", forceLoad: true);
+		_selectedDesignersAutocompleteDto = formDesignersAutocompleteDto;
+		_id = formDesignersAutocompleteDto.Id;
+		await LoadForm(_id);
 	}
 
 	private async Task OpenInputName()
@@ -286,12 +345,15 @@ else
 
 			if (!string.IsNullOrEmpty(inputName))
 			{
-				id = 0;
-				_formDesigner = new FormDesignerEditDto
-					{
-						Name = inputName
-					};
+				_id = 0;
+				_formDesigner = new FormDesignerEditDto { Name = inputName };
+
 				await OnValidSubmit();
+
+				_formDesignersAutocompleteDto = await _httpHelper.GetDataFromAPI<List<FormDesignersAutocompleteDto>>($"api/FormDesigner/GetAllFormDesignersAutocompleteDto");
+				_selectedDesignersAutocompleteDto = _formDesignersAutocompleteDto.Last();
+
+				await LoadForm(_selectedDesignersAutocompleteDto.Id);
 			}
 		}
 	}
@@ -306,18 +368,30 @@ else
 	{
 		var css = dropItem.CssStyleEditDto.FirstOrDefault(e => e.Name == name);
 		if (css != null)
-			css.Value = value;
+		{
+			switch(css.Name)
+			{
+				case ConstsCssProperty.FontWight:
+				case ConstsCssProperty.FontStyle:
+					css.Value = css.Value == value ? ConstsCssProperty.Value_Normal : value;
+					break;
+				default:
+					css.Value = value;
+					break;
+			}
+			
+		}
 
 		_mudDropContainerRef.Refresh();
 	}
 
-	private async Task EditContextDescription(DropItemEditDto dropItemEdit)
+	private async Task EditDropItemValue(DropItemEditDto dropItem)
 	{
-		var parameters = new DialogParameters<InputDescription> { { x => x.dropItemEditDto, dropItemEdit } };
+		var parameters = new DialogParameters<InputDescription> { { x => x.DropItemEditDto, dropItem } };
 
 		IDialogReference dialog;
 
-		if (dropItemEdit.UniqueId == "{Invoice.InvoiceItems}")
+		if (dropItem.Value == "{Invoice.InvoiceItems}")
 		{
 			dialog = await DialogService.ShowAsync<InvoiceItemsProperties_dialog>(string.Empty, parameters);
 		}
@@ -330,14 +404,8 @@ else
 
 		if (result != null && !result.Canceled)
 		{
-			var editedDropItemEdit = result.Data as DropItemEditDto;
-
-			if (editedDropItemEdit != null)
-			{
-				dropItemEdit = editedDropItemEdit;
-				_mudDropContainerRef.Refresh();
-				await OnValidSubmit();
-			}
+			_mudDropContainerRef.Refresh();
+			await OnValidSubmit();
 		}
 	}
 
@@ -348,94 +416,35 @@ else
 
 		if (dropItem.DropzoneIdentifier.StartsWith("coor_"))
 		{
-			if (dropItem.Item.UniqueId == "{Invoice.InvoiceItems}")
-			{
-				var coor = dropItem.DropzoneIdentifier.Split("_");
-
-				int row = 0;
-				if (int.TryParse(coor[1], out row)) //check last rows
-				{
-
-					RemoveHiddenItems();
-
-					if (row >= (_formDesigner.Rows - 2))
-						row = _formDesigner.Rows - 2;
-
-					int column = 0;
-					dropItem.Item.Selector = $"coor_{row}_{column++}";
-
-					var totalItems = _formDesigner.DropItemsDto.Where(item => item.UniqueId == "{Table.Footer}").FirstOrDefault();
-					if (totalItems != null)
-					{
-						totalItems.Selector = $"coor_{row + 1}_{_formDesigner.Columns - 1}";
-					}
-
-					var listHidden = _formDesigner.DropItemsDto.Where(item => string.IsNullOrEmpty(item.Name)).ToList();
-					foreach (var item in listHidden)
-					{
-						item.Selector = $"coor_{row}_{column++}";
-					}
-				}
-			}
-			else
-			{
-				dropItem.Item.Selector = dropItem.DropzoneIdentifier;
-			}
+			dropItem.Item.Selector = dropItem.DropzoneIdentifier;
 		}
 		else
 		{
-			if (dropItem.Item.UniqueId == "{Invoice.InvoiceItems}")
-				RemoveHiddenItems();
-
 			dropItem.Item.Selector = dropItem.Item.StartSelector;
-
-		}
-
-	}
-
-	private void RemoveHiddenItems()
-	{
-		var listHidden = _formDesigner.DropItemsDto.Where(item => item.StartSelector == "_Hidden").ToList();
-		foreach (var item in listHidden)
-		{
-			item.Selector = "_Hidden";
 		}
 	}
 
 	private async void RedirectToDeleteRow()
 	{
-		var options = new DialogOptions { CloseOnEscapeKey = true };
-		var dialog = await DialogService.ShowAsync<ConfirmDelete>(string.Empty, options);
-		var result = await dialog.Result;
-
-		if (result != null && !result.Canceled)
+		if (await _httpHelper.DeleteWithConfirmationAsync(_id))
 		{
-			try
-			{
-				var response = await Http.DeleteAsync($"api/FormDesigner/{id}");
-
-				if (!response.IsSuccessStatusCode)
-				{
-					var errorContent = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-					Snackbar.Add($"An unexpected error occurred: {errorContent?.Message}", Severity.Error);
-				}
-				else
-				{
-					nav.NavigateTo("/FormDesigner/0", forceLoad: true);
-				}
-			}
-			catch (Exception ex)
-			{
-				Snackbar.Add($"Exception: {ex.Message}", Severity.Error);
-			}
+			_formDesignersAutocompleteDto = await _httpHelper.GetDataFromAPI<List<FormDesignersAutocompleteDto>>($"api/FormDesigner/GetAllFormDesignersAutocompleteDto");
+			_selectedDesignersAutocompleteDto = null!;
+			_dropItemsEditDto = new();
+			_formDesigner = new();
+			_id = 0;
+			StateHasChanged();
 		}
 	}
 
 	private async Task OnValidSubmit()
 	{
-		await _httpHelper.SendRequest(_formDesigner, id.HasValue && id > 0);
+		_id = await _httpHelper.SendRequest(_formDesigner, _id > 0) ?? 0;
 	}
 
-
-
+	private class ErrorResponse
+	{
+		public string? Message { get; set; }
+		public object? errors { get; set; }
+	}
 }

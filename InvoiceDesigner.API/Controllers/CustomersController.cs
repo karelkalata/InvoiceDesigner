@@ -1,10 +1,12 @@
 ﻿using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Domain.Shared.DTOs.Customer;
-using InvoiceDesigner.Domain.Shared.Helpers;
+using InvoiceDesigner.Domain.Shared.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InvoiceDesigner.API.Controllers
 {
+	[Authorize]
 	[Route("api/[controller]")]
 	[ApiController]
 	public class CustomersController : ControllerBase
@@ -17,9 +19,10 @@ namespace InvoiceDesigner.API.Controllers
 		}
 
 		[HttpGet]
-		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedResult<CustomerViewDto>))]
+		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponsePaged<CustomerViewDto>))]
 		public async Task<IActionResult> Index(int pageSize = 10, int page = 1, string searchString = "", string sortLabel = "")
 		{
+
 			var result = await _service.GetPagedCustomersAsync(pageSize, page, searchString, sortLabel);
 			return Ok(result);
 		}

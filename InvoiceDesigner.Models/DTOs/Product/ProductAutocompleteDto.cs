@@ -1,5 +1,4 @@
 ﻿using InvoiceDesigner.Domain.Shared.Helpers;
-using InvoiceDesigner.Domain.Shared.Models;
 
 namespace InvoiceDesigner.Domain.Shared.DTOs.Product
 {

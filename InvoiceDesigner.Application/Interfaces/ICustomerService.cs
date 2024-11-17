@@ -1,12 +1,12 @@
 ﻿using InvoiceDesigner.Domain.Shared.DTOs.Customer;
-using InvoiceDesigner.Domain.Shared.Helpers;
 using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Interfaces
 {
 	public interface ICustomerService
 	{
-		Task<PagedResult<CustomerViewDto>> GetPagedCustomersAsync(int pageSize, int page, string searchString, string sortLabel);
+		Task<ResponsePaged<CustomerViewDto>> GetPagedCustomersAsync(int pageSize, int page, string searchString, string sortLabel);
 
 		Task<ResponseRedirect> CreateCustomerAsync(CustomerEditDto newEntity);
 

@@ -1,4 +1,5 @@
-﻿using InvoiceDesigner.Domain.Shared.DTOs.Bank;
+﻿using InvoiceDesigner.Application.Helpers.Currency;
+using InvoiceDesigner.Domain.Shared.DTOs.Bank;
 using InvoiceDesigner.Domain.Shared.DTOs.Company;
 using InvoiceDesigner.Domain.Shared.DTOs.Currency;
 using InvoiceDesigner.Domain.Shared.DTOs.Customer;
@@ -20,6 +21,7 @@ namespace InvoiceDesigner.Application.Helpers
 			invoicePrintDto.DateTime = DateTime.Now;
 			invoicePrintDto.DueDate = DateTime.Now.AddDays(random.Next(3, 30));
 			invoicePrintDto.Vat = 21;
+			invoicePrintDto.EnabledVat = true;
 
 
 			invoicePrintDto.Company = new CompanyPrintDto
@@ -29,7 +31,7 @@ namespace InvoiceDesigner.Application.Helpers
 				PaymentTerms = 14,
 				Name = "Company s.r.o.",
 				WWW = "www.company.cz",
-				Email = "info@company.cz",
+				Email = "karelkalata@gmail.com",
 				Phone = "+420 000 123 456",
 				Address = "Jiráskovo nám. 1981/6, 120 00 Praha",
 				Info = "additional information"
@@ -54,7 +56,7 @@ namespace InvoiceDesigner.Application.Helpers
 				Name = "FinTech Bank",
 				BIC = "FOIBCZPPXXX",
 				Account = "CZ64BOFI90583812345678",
-				Address = "Netherlands, South Hollandt, Dordrecht Van den Broek-Erf 30"
+				Address = "Jiráskovo nám. 2021/1, 110 00 Praha 1"
 			};
 
 			for (int i = 0; i < 10; i++)

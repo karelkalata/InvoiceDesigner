@@ -1,6 +1,6 @@
 ﻿@page "/Invoices/Edit/{id:int}"
 @using InvoiceDesigner.Domain.Shared.DTOs
-@using InvoiceDesigner.Domain.Shared.DTOs.FormDesigners
+@using InvoiceDesigner.Domain.Shared.DTOs.DtoFormDesigners
 @using InvoiceDesigner.Domain.Shared.DTOs.InvoiceItem
 @using InvoiceDesigner.Domain.Shared.DTOs.Bank
 @using InvoiceDesigner.Domain.Shared.DTOs.Company
@@ -9,13 +9,15 @@
 @using InvoiceDesigner.Domain.Shared.DTOs.Invoice
 @using InvoiceDesigner.Domain.Shared.DTOs.Product
 @using InvoiceDesigner.Domain.Shared.Helpers
+@using InvoiceDesigner.Domain.Shared.Responses
 @using InvoiceDesigner.WebApp.Helpers
-@inject HttpClient Http
+@inject IHttpClientFactory HttpClientFactory
+@inject ILocalStorageService LocalStorageService
 @inject NavigationManager nav
 @inject ISnackbar Snackbar
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime JS
 
- 
+
 <MudContainer Class="pa-5">
 	@if (!_isLoaded)
 	{
@@ -222,9 +224,8 @@
 									<MudTooltip Text="Please save the document">
 										<MudButton Variant="Variant.Filled"
 												   Disabled="@(_selectedDesignersAutocompleteDto == null || id == 0)"
-												   Href="@($"{Http.BaseAddress}api/PrintInvoice?id={id}&printform={_selectedDesignersAutocompleteDto?.Id}")"
-												   Target="_blank"
-														   Size="Size.Large"
+												   OnClick="GetPrintInvoiceUrl"
+												   Size="Size.Large"
 												   StartIcon="@Icons.Material.Filled.Download"
 												   Color="Color.Secondary">
 											Get
@@ -266,7 +267,13 @@
 
 	}
 </MudContainer>
-
+<script>
+	function openPdf(pdfDataUrl) {
+		if (pdfDataUrl) {
+			window.open(pdfDataUrl, '_blank');
+		}
+	}
+</script>
 @code {
 	[Parameter]
 	public int? id { get; set; }
@@ -312,7 +319,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		_httpHelper = new HttpRequestHelper(_controller, Http, Snackbar, nav);
+		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav);
 
 		var infoForNewInvoiceDto = await _httpHelper.GetDataFromAPI<InfoForNewInvoiceDto>($"api/Invoices/GetInfoForNewInvoice?id={id}");
 		if (infoForNewInvoiceDto.Companies.Count == 0)
@@ -324,11 +331,12 @@
 
 		_companiesAutocomplete = infoForNewInvoiceDto.Companies.ToList();
 		_currenciesAutocomplete = infoForNewInvoiceDto.Currencies.ToList();
-		_banksAutocomplete = infoForNewInvoiceDto.Banks.ToList();
+
 
 		if (id.HasValue && id > 0)
 		{
 			_invoiceEditDto = await _httpHelper.GetDataFromAPI<InvoiceEditDto>($"api/Invoices/{id}");
+			_banksAutocomplete = _invoiceEditDto.Company.Banks.ToList();
 		}
 		else
 		{
@@ -348,6 +356,8 @@
 					DateTime = DateTime.Now,
 					DueDate = DateTime.Now.AddDays(defaultCompany.PaymentTerms)
 				};
+
+			_banksAutocomplete = _invoiceEditDto.Company.Banks.ToList();
 
 			OnCompanyChanged(defaultCompany);
 		}
@@ -369,6 +379,9 @@
 			_invoiceEditDto.Currency = selectedCompany.Currency;
 
 			_selectedCurrency = selectedCompany.Currency;
+
+			_banksAutocomplete = _invoiceEditDto.Company.Banks.ToList();
+
 			OnCurrencyChanged(selectedCompany.Currency);
 		}
 	}
@@ -383,7 +396,7 @@
 		_selectedCurrency = currency;
 
 		_filteredBanksAutocomplete = _banksAutocomplete
-			.Where(bank => bank.CompanyId == _invoiceEditDto.Company.Id && bank.CurrencyId == currency.Id)
+			.Where(bank => bank.CurrencyId == currency.Id)
 			.ToList();
 
 		var firstFilteredBank = _filteredBanksAutocomplete.FirstOrDefault();
@@ -422,23 +435,9 @@
 
 	private async Task OnValidSubmit()
 	{
-		await _httpHelper.SendRequest(_invoiceEditDto, id.HasValue && id > 0);
+		id = await _httpHelper.SendRequest(_invoiceEditDto, id.HasValue && id > 0);
+		nav.NavigateTo($"/Invoices/Edit/{id}");
 	}
-
-	private async Task OpenPdf()
-	{
-		_invoiceEditDto.FormDesignerId = _selectedDesignersAutocompleteDto != null ? _selectedDesignersAutocompleteDto.Id : 0;
-		await _httpHelper.SendRequest(_invoiceEditDto, id.HasValue && id > 0);
-	}
-
-	private void PrintPdf()
-	{
-		var designerId = _selectedDesignersAutocompleteDto?.Id;
-		var pdfUrl = $"{Http.BaseAddress}api/PrintInvoice?id={id}&printform={designerId}";
-		JSRuntime.InvokeVoidAsync("openPdfInNewTab", pdfUrl);
-
-	}
-
 
 	private Task<IEnumerable<T>> SearchElements<T>(string value, IEnumerable<T> items, CancellationToken token) where T : IHasIdAndName
 	{
@@ -457,4 +456,10 @@
 		return await _httpHelper.GetDataFromAPI<IEnumerable<T>>($"api/{apiUrl}/FilteringData?f={value}");
 	}
 
+	private async Task GetPrintInvoiceUrl()
+	{
+		var PdfGuid = await _httpHelper.GetDataFromAPI<ResponsePdfGuid>($"api/PrintInvoice?id={id}&PrintFormId={_selectedDesignersAutocompleteDto?.Id}");
+		var client = await _httpHelper.CreateHttpClient();
+		await JS.InvokeVoidAsync("open", $"{client?.BaseAddress?.ToString()}api/PrintInvoice/{PdfGuid.Guid}", "_blank");
+	}
 }

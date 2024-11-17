@@ -1,4 +1,5 @@
-﻿using InvoiceDesigner.Domain.Shared.DTOs.Currency;
+﻿using InvoiceDesigner.Domain.Shared.DTOs.Bank;
+using InvoiceDesigner.Domain.Shared.DTOs.Currency;
 using System.ComponentModel.DataAnnotations;
 
 namespace InvoiceDesigner.Domain.Shared.DTOs.Company
@@ -35,6 +36,8 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Company
 
 		[Range(0, 100, ErrorMessage = "Default VAT must be between 0% and 100%.")]
 		public decimal DefaultVat { get; set; } = 21;
+
+		public List<BankEditDto> Banks { get; set; } = new List<BankEditDto>();
 	}
 
 }

@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
-using InvoiceDesigner.Application.Interfaces;
-using InvoiceDesigner.Domain.Shared.DTOs.Company;
-using InvoiceDesigner.Domain.Shared.DTOs.FormDesigners;
-using InvoiceDesigner.Domain.Shared.Helpers;
+using InvoiceDesigner.Application.Interfaces.InterfacesFormDesigner;
+using InvoiceDesigner.Domain.Shared.DTOs.DtoFormDesigners;
+using InvoiceDesigner.Domain.Shared.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InvoiceDesigner.API.Controllers
 {
+	[Authorize]
 	[Route("api/[controller]")]
 	[ApiController]
 	public class FormDesignerController : Controller
@@ -24,14 +25,14 @@ namespace InvoiceDesigner.API.Controllers
 		[HttpPost]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseRedirect))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> CreateAsync([FromBody] FormDesignerEditDto formDesignerEditDto)
+		public async Task<IActionResult> CreateAsync([FromBody] FormDesignerEditDto editDto)
 		{
 			if (!ModelState.IsValid)
 				return BadRequest(ModelState);
 
 			try
 			{
-				var result = await _service.CreateFormDesignerAsync(formDesignerEditDto);
+				var result = await _service.CreateFormDesignerAsync(editDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -80,18 +81,14 @@ namespace InvoiceDesigner.API.Controllers
 
 
 		[HttpDelete("{id:int}")]
-		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseBoolean))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> DeleteAsync(int id)
 		{
 			try
 			{
 				var result = await _service.DeleteFormDesignerAsync(id);
-
-				if (!result)
-					return BadRequest(new { message = "Error DeleteAsync" });
-
-				return NoContent();
+				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
 			{

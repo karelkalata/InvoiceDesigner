@@ -1,6 +1,7 @@
 ﻿using InvoiceDesigner.Domain.Shared.Models;
-using InvoiceDesigner.Domain.Shared.Models.FormDesigner;
+using InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace InvoiceDesigner.Infrastructure.Data
 {
@@ -17,10 +18,13 @@ namespace InvoiceDesigner.Infrastructure.Data
 		public DbSet<ProductPrice> ProductPrice { get; set; }
 		public DbSet<Invoice> Invoices { get; set; }
 		public DbSet<InvoiceItem> InvoiceItems { get; set; }
+		public DbSet<User> Users { get; set; }
+		public DbSet<PrintInvoice> PrintInvoices { get; set; }
 
 		public DbSet<FormDesigner> FormDesigners { get; set; }
+		public DbSet<FormDesignerScheme> FormDesignerSchemes { get; set; }
 		public DbSet<DropItem> DropItems { get; set; }
-		public DbSet<DropItemCssStyle> DropItemStyles { get; set; }
+		public DbSet<CssStyle> DropItemStyles { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -67,14 +71,17 @@ namespace InvoiceDesigner.Infrastructure.Data
 					.IsRequired();
 
 				bank.HasOne(e => e.Company)
-					.WithMany()
+					.WithMany(c => c.Banks)
 					.HasForeignKey(e => e.CompanyId)
-					.IsRequired();
+					.IsRequired()
+					.OnDelete(DeleteBehavior.Cascade);
 			});
 
 			modelBuilder.Entity<Company>(company =>
 			{
 				company.HasKey(e => e.Id);
+
+				company.HasIndex(e => e.Name).IsUnique();
 
 				company.Property(e => e.Name)
 					.IsRequired()
@@ -89,6 +96,7 @@ namespace InvoiceDesigner.Infrastructure.Data
 					.HasForeignKey(e => e.CurrencyId)
 					.IsRequired();
 			});
+
 
 			modelBuilder.Entity<Customer>(customer =>
 			{
@@ -198,6 +206,53 @@ namespace InvoiceDesigner.Infrastructure.Data
 					.HasDefaultValue(decimal.Zero);
 			});
 
+			modelBuilder.Entity<User>(user =>
+			{
+				user.HasKey(e => e.Id);
+
+				user.HasIndex(e => e.Login).IsUnique();
+
+				user.Property(e => e.Login)
+					.IsRequired()
+					.HasMaxLength(100);
+
+				user.Property(e => e.Name)
+					.IsRequired()
+					.HasMaxLength(100);
+
+				user.Property(e => e.PasswordHash)
+					.IsRequired();
+
+				user.Property(e => e.PasswordSalt)
+					.IsRequired();
+
+				user.HasMany(e => e.Companies)
+					.WithMany()
+					.UsingEntity<Dictionary<string, object>>(
+						"UserCompany",
+						uc => uc.HasOne<Company>().WithMany().HasForeignKey("CompanyId").OnDelete(DeleteBehavior.Cascade),
+						uc => uc.HasOne<User>().WithMany().HasForeignKey("UserId").OnDelete(DeleteBehavior.Cascade)
+					);
+
+				// default login: admin, password: admin
+				user.HasData(
+						new User
+						{
+							Id = 1,
+							Login = "admin",
+							Name = "Super Admin",
+							PasswordHash = "1708D30988E562DD2958B50B77F0D61C47C59FD7555F3B91AB02D486F361504F7E0C569157D104D99E5076BFF20AF9EE38482A63BA10993B28C38F9936668010",
+							PasswordSalt = "7A6604F49A4E8EFCBB8B6CA86305FB0E4E14F817AE6D8726DE7A56463581A1D21D68699970298BBFE2182AE02366BCBB56C14DF47B9D000AF0C5D74DCED88953",
+							IsAdmin = true
+						}
+					);
+			});
+
+			modelBuilder.Entity<PrintInvoice>(PrintInvoice =>
+			{
+				PrintInvoice.HasKey(e => e.Giud);
+
+			});
 
 			modelBuilder.Entity<FormDesigner>(formDesigner =>
 			{
@@ -206,18 +261,24 @@ namespace InvoiceDesigner.Infrastructure.Data
 				formDesigner.Property(e => e.Name)
 					.IsRequired();
 
-				formDesigner.Property(e => e.Rows)
-					.HasDefaultValue(32);
-
-				formDesigner.Property(e => e.Columns)
-					.HasDefaultValue(3);
+				formDesigner.HasMany(e => e.Schemes)
+					.WithOne()
+					.HasForeignKey(e => e.FormDesignerId)
+					.OnDelete(DeleteBehavior.Cascade);
 
 				formDesigner.HasMany(e => e.DropItems)
-					.WithOne(e => e.FormDesigner)
-					.HasForeignKey(e => e.FormDesignerId)
-					.OnDelete(DeleteBehavior.Cascade)
-					.IsRequired();
+					.WithOne()
+					.HasForeignKey(e => e.FormDesignerSchemeId)
+					.OnDelete(DeleteBehavior.Cascade);
 			});
+
+			modelBuilder.Entity<FormDesignerScheme>(formDesignerScheme =>
+			{
+				formDesignerScheme.HasKey(e => e.Id);
+
+
+			});
+
 
 			modelBuilder.Entity<DropItem>(dropItem =>
 			{
@@ -226,19 +287,11 @@ namespace InvoiceDesigner.Infrastructure.Data
 				dropItem.Property(e => e.UniqueId)
 					.IsRequired();
 
-				dropItem.Property(e => e.Name)
-					.IsRequired();
-
 				dropItem.Property(e => e.Selector)
 					.IsRequired();
 
 				dropItem.Property(e => e.StartSelector)
 					.IsRequired();
-
-				dropItem.HasOne(e => e.FormDesigner)
-					.WithMany()
-					.HasForeignKey(e => e.FormDesignerId)
-					.OnDelete(DeleteBehavior.Cascade);
 
 				dropItem.HasMany(e => e.CssStyle)
 					.WithOne(e => e.DropItem)
@@ -246,7 +299,7 @@ namespace InvoiceDesigner.Infrastructure.Data
 					.OnDelete(DeleteBehavior.Cascade);
 			});
 
-			modelBuilder.Entity<DropItemCssStyle>(cssStyle =>
+			modelBuilder.Entity<CssStyle>(cssStyle =>
 			{
 				cssStyle.HasKey(e => e.Id);
 
@@ -262,6 +315,26 @@ namespace InvoiceDesigner.Infrastructure.Data
 					.OnDelete(DeleteBehavior.Cascade);
 			});
 
+			var dataDirectory = Path.Combine(AppContext.BaseDirectory, "Data");
+
+			var FormDesignerEntities = ReadJsonFile<FormDesigner>(Path.Combine(dataDirectory, "FormDesigners.json"));
+			modelBuilder.Entity<FormDesigner>().HasData(FormDesignerEntities);
+
+			var FormDesignerSchemeEntities = ReadJsonFile<FormDesignerScheme>(Path.Combine(dataDirectory, "FormDesignerSchemes.json"));
+			modelBuilder.Entity<FormDesignerScheme>().HasData(FormDesignerSchemeEntities);
+
+			var DropItemEntities = ReadJsonFile<DropItem>(Path.Combine(dataDirectory, "DropItems.json"));
+			modelBuilder.Entity<DropItem>().HasData(DropItemEntities);
+
+			var DropItemStylesEntities = ReadJsonFile<CssStyle>(Path.Combine(dataDirectory, "DropItemStyles.json"));
+			modelBuilder.Entity<CssStyle>().HasData(DropItemStylesEntities);
+		}
+
+
+		private static IEnumerable<T> ReadJsonFile<T>(string filePath)
+		{
+			var json = File.ReadAllText(filePath);
+			return JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
 		}
 	}
 }

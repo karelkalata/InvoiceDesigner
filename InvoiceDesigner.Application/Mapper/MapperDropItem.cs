@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using InvoiceDesigner.Domain.Shared.DTOs.FormDesigners;
-using InvoiceDesigner.Domain.Shared.Models.FormDesigner;
+using InvoiceDesigner.Domain.Shared.DTOs.DtoFormDesigners;
+using InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner;
 
 namespace InvoiceDesigner.Application.Mapper
 {
@@ -8,7 +8,6 @@ namespace InvoiceDesigner.Application.Mapper
 	{
 		public MapperDropItem()
 		{
-
 			CreateMap<DropItem, DropItemEditDto>()
 				.ForMember(
 					dest => dest.CssStyleEditDto,

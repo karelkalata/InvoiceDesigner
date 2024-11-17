@@ -1,5 +1,4 @@
-﻿using InvoiceDesigner.Domain.Shared.DTOs.Company;
-using InvoiceDesigner.Domain.Shared.DTOs.Currency;
+﻿using InvoiceDesigner.Domain.Shared.DTOs.Currency;
 using System.ComponentModel.DataAnnotations;
 
 namespace InvoiceDesigner.Domain.Shared.DTOs.Bank
@@ -24,7 +23,6 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Bank
 		[Required(ErrorMessage = "Currency  is required.")]
 		public CurrencyAutocompleteDto Currency { get; set; } = null!;
 
-		[Required(ErrorMessage = "Company is required.")]
-		public CompanyAutocompleteDto Company { get; set; } = null!;
+		public int CompanyId { get; set; }
 	}
 }

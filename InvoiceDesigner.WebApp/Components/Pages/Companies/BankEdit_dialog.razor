@@ -1,0 +1,96 @@
+﻿@using InvoiceDesigner.Domain.Shared.DTOs.Bank
+@using InvoiceDesigner.Domain.Shared.DTOs.Currency
+@using InvoiceDesigner.Domain.Shared.Helpers
+<MudDialog>
+	<DialogContent>
+		<MudGrid Spacing="2">
+			<MudItem xs="4">
+				<MudAutocomplete T="CurrencyAutocompleteDto" Class="d-flex pa-2"
+								 @bind-Value="@_editedBankEditDto.Currency"
+								 Label="Currency"
+								 Clearable="true"
+								 Required
+								 Dense
+								 SearchFunc="@((value, token) => SearchElements<CurrencyAutocompleteDto>(value, currenciesAutocomplete, token))"
+								 ToStringFunc="@(c => c?.Name ?? "")"
+								 For="(() => _editedBankEditDto.Currency)" />
+			</MudItem>
+			<MudItem xs="8">
+				<MudTextField @bind-Value="_editedBankEditDto.Name" Class="d-flex pa-2"
+							  Label="Name"
+							  Required
+							  For="(() => _editedBankEditDto.Name)" />
+			</MudItem>
+		</MudGrid>
+		<MudTextField @bind-Value="_editedBankEditDto.BIC" Class="d-flex pa-2"
+					  Label="BIC"
+					  For="(() => _editedBankEditDto.BIC)" />
+		<MudTextField @bind-Value="_editedBankEditDto.Account" Class="d-flex pa-2"
+					  Label="Account"
+					  Required
+					  For="(() => _editedBankEditDto.Account)" />
+		<MudTextField @bind-Value="_editedBankEditDto.Address" Class="d-flex pa-2"
+					  Label="Address"
+					  For="(() => _editedBankEditDto.Address)" />
+	</DialogContent>
+	<DialogActions>
+		<MudButton OnClick="Cancel">Cancel</MudButton>
+		<MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+	</DialogActions>
+</MudDialog>
+
+@code {
+	[CascadingParameter]
+	private MudDialogInstance MudDialog { get; set; } = null!;
+
+	[Parameter]
+	public BankEditDto BankEditDto { get; set; } = new();
+
+	[Parameter]
+	public List<CurrencyAutocompleteDto> currenciesAutocomplete { get; set; } = new();
+
+	private BankEditDto _editedBankEditDto { get; set; } = null!;
+
+	private string _name = string.Empty;
+
+	private void Cancel() => MudDialog.Cancel();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+		_editedBankEditDto = new BankEditDto
+			{
+				Id = BankEditDto.Id,
+				Name = BankEditDto.Name,
+				BIC = BankEditDto.BIC,
+				Account = BankEditDto.Account,
+				Address = BankEditDto.Address,
+				Currency = BankEditDto.Currency,
+			};
+	}
+	private void Submit()
+	{
+
+		BankEditDto.Id = _editedBankEditDto.Id;
+		BankEditDto.Name = _editedBankEditDto.Name;
+		BankEditDto.BIC = _editedBankEditDto.BIC;
+		BankEditDto.Account = _editedBankEditDto.Account;
+		BankEditDto.Address = _editedBankEditDto.Address;
+		BankEditDto.Currency = _editedBankEditDto.Currency;
+
+		MudDialog.Close(DialogResult.Ok(BankEditDto));
+	}
+
+	private Task<IEnumerable<T>> SearchElements<T>(string value, IEnumerable<T> items, CancellationToken token) where T : IHasIdAndName
+	{
+
+		if (string.IsNullOrEmpty(value))
+			return Task.FromResult(items.AsEnumerable());
+
+		return Task.FromResult(items
+						.Where(c => c.Name.Contains(value, StringComparison.OrdinalIgnoreCase))
+						.AsEnumerable());
+	}
+
+
+}

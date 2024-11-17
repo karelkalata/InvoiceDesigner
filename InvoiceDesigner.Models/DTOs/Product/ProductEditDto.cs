@@ -6,7 +6,7 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Product
 	{
 		public int Id { get; set; }
 
-		[Required(ErrorMessage = "Name is required.")]
+		[Required(ErrorMessage = "Value is required.")]
 		[StringLength(200, MinimumLength = 1, ErrorMessage = "The {0} field must be between {2} and {1} characters long.")]
 		public string Name { get; set; } = string.Empty;
 

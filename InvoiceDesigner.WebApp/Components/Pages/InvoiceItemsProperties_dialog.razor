@@ -1,12 +1,12 @@
-﻿@using InvoiceDesigner.Domain.Shared.DTOs.FormDesigners
-@using InvoiceDesigner.Domain.Shared.Models.FormDesigner
+﻿@using InvoiceDesigner.Domain.Shared.DTOs.DtoFormDesigners
+@using InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner
 <MudDialog Style="width:500px; ">
 	<DialogContent>
 
 		<MudGrid>
 			<MudItem xs="12">
 				<MudSelect T="string"
-						   Label="Font Size"
+						   Label="Font Size Items"
 						   Value="_selectedFontSize"
 						   ValueChanged="OnMudSelectChanged"
 						   Variant="Variant.Outlined"

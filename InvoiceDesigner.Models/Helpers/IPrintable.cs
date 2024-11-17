@@ -3,6 +3,6 @@
 	public interface IPrintable
 	{
 		string GetSelectorName();
-		
-    }
+
+	}
 }

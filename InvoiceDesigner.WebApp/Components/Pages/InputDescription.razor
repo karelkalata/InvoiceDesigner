@@ -1,15 +1,14 @@
-﻿@using InvoiceDesigner.Domain.Shared.DTOs.FormDesigners
-@using InvoiceDesigner.Domain.Shared.Models.FormDesigner
- 
+﻿@using InvoiceDesigner.Domain.Shared.DTOs.DtoFormDesigners
+@using InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner
+
 <MudDialog Style="width:500px; ">
 	<DialogContent>
-		<MudTextField T="string" @bind-Value="@dropItemEditDto.Name" multiline FullWidth Lines="5"></MudTextField>
+		<MudTextField T="string" @bind-Value="@_editedDropItemEditDto.Value" multiline FullWidth Lines="5"></MudTextField>
 	</DialogContent>
 	<DialogActions>
 		<MudSelect T="string"
 				   Label="Font Size"
-				   Value="_selectedFontSize"
-				   ValueChanged="OnMudSelectChanged"
+				   @bind-Value="@_selectedFontSize"
 				   Variant="Variant.Outlined"
 				   Dense="true">
 
@@ -31,7 +30,9 @@
 	private MudDialogInstance MudDialog { get; set; } = null!;
 
 	[Parameter]
-	public DropItemEditDto dropItemEditDto { get; set; } = new();
+	public DropItemEditDto DropItemEditDto { get; set; } = new();
+
+	private DropItemEditDto _editedDropItemEditDto = new();
 
 	public string _selectedFontSize = string.Empty;
 
@@ -41,27 +42,52 @@
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		if (dropItemEditDto != null)
+		if (DropItemEditDto != null)
 		{
-			var fontSize = dropItemEditDto.CssStyleEditDto.FirstOrDefault(e => e.Name == ConstsCssProperty.FontSize);
+
+			_editedDropItemEditDto.Value = DropItemEditDto.Value;
+
+			List<CssStyleEditDto> CssStyle = new List<CssStyleEditDto>();
+			foreach (var item in DropItemEditDto.CssStyleEditDto)
+			{
+				CssStyle.Add(
+					new CssStyleEditDto
+						{
+							Name = item.Name,
+							Value = item.Value
+						}
+				);
+			}
+			_editedDropItemEditDto.CssStyleEditDto = CssStyle;
+
+			var fontSize = _editedDropItemEditDto.CssStyleEditDto.FirstOrDefault(e => e.Name == ConstsCssProperty.FontSize);
 			if (fontSize != null)
 				_selectedFontSize = fontSize.Value;
 		}
 
 	}
 
-	private void OnMudSelectChanged(string newValue)
-	{
-		_selectedFontSize = newValue;
-	}
-
 	private void Submit()
 	{
-		var fontSize = dropItemEditDto.CssStyleEditDto.FirstOrDefault(e => e.Name == ConstsCssProperty.FontSize);
+		var fontSize = _editedDropItemEditDto.CssStyleEditDto.FirstOrDefault(e => e.Name == ConstsCssProperty.FontSize);
 		if (fontSize != null)
-		{
 			fontSize.Value = _selectedFontSize;
+
+		DropItemEditDto.Value = _editedDropItemEditDto.Value;
+		
+		List<CssStyleEditDto> CssStyle = new List<CssStyleEditDto>();
+		foreach (var item in _editedDropItemEditDto.CssStyleEditDto)
+		{
+			CssStyle.Add(
+				new CssStyleEditDto
+					{
+						Name = item.Name,
+						Value = item.Value
+					}
+			);
 		}
-		MudDialog.Close(DialogResult.Ok(dropItemEditDto));
+		DropItemEditDto.CssStyleEditDto = CssStyle;
+
+		MudDialog.Close(DialogResult.Ok(DropItemEditDto));
 	}
 }

@@ -1,6 +1,4 @@
-﻿using InvoiceDesigner.Domain.Shared.Models;
-
-namespace InvoiceDesigner.Application.Interfaces
+﻿namespace InvoiceDesigner.Application.Interfaces
 {
 	public interface IBankServiceHelper
 	{

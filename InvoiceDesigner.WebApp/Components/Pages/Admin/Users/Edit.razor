@@ -1,0 +1,141 @@
+﻿@page "/Admin/Users/{id:int}"
+@using InvoiceDesigner.Domain.Shared.DTOs.Bank
+@using InvoiceDesigner.Domain.Shared.DTOs.Company
+@using InvoiceDesigner.Domain.Shared.DTOs.Currency
+@using InvoiceDesigner.Domain.Shared.DTOs.User
+@using InvoiceDesigner.Domain.Shared.Helpers
+@using InvoiceDesigner.WebApp.Helpers;
+@using InvoiceDesigner.Domain.Shared.Responses;
+@inject IHttpClientFactory HttpClientFactory
+@inject ILocalStorageService LocalStorageService
+@inject NavigationManager nav
+@inject ISnackbar Snackbar
+
+<MudContainer>
+	@if (_adminUserEditDto == null)
+	{
+		<MudText Align="Align.Center">Loading...</MudText>
+	}
+	else
+	{
+		<EditForm Model="@_adminUserEditDto" OnValidSubmit="OnValidSubmit">
+			<DataAnnotationsValidator />
+			<MudCard>
+				<MudCardContent>
+					<MudPaper Class="pa-4">
+						<MudTextField @bind-Value="_adminUserEditDto.Login"
+									  Label="Login"
+									  Required
+									  Class="d-flex pa-2"
+									  For="(() => _adminUserEditDto.Login)"
+									  Error="@_isLoginUsed"
+									  ErrorText="Login is already used by an existing object." />
+						<MudTextField @bind-Value="_adminUserEditDto.Name"
+									  Label="Name"
+									  Required
+									  Class="d-flex pa-2"
+									  For="(() => _adminUserEditDto.Name)" />
+						<MudTextField @bind-Value="_adminUserEditDto.Password"
+									  Label="Password"
+									  Class="d-flex pa-2"
+									  For="(() => _adminUserEditDto.Password)"
+									  onchange="changePassword"
+									  Error="@_isPasswordFieldEmpty"
+									  ErrorText="Password cannot be empty" />
+						@if (!_adminUserEditDto.IsAdmin)
+						{
+							<MudSelect T="string"
+									   Class="d-flex pa-2"
+									   Label="Company"
+									   MultiSelection="true"
+									   @bind-Value="_selectedCompanyString"
+									   @bind-SelectedValues="_selectedCompany">
+								@foreach (var company in listCompany)
+								{
+									<MudSelectItem T="string" Value="@company">@company</MudSelectItem>
+								}
+
+							</MudSelect>
+						}
+					</MudPaper>
+				</MudCardContent>
+				<MudCardActions>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit" Class="ml-auto">Save</MudButton>
+				</MudCardActions>
+			</MudCard>
+		</EditForm>
+	}
+</MudContainer>
+@code {
+	[Parameter]
+	public int? id { get; set; }
+
+	private static string _controller = "Admin/Users";
+	private HttpRequestHelper _httpHelper = null!;
+
+	private bool _isPasswordFieldEmpty;
+	private bool _isLoginUsed;
+
+	private AdminUserEditDto? _adminUserEditDto = null;
+	private string _companies { get; set; } = "Nothing selected";
+
+	private List<CompanyAutocompleteDto> _companyAutocompleteDto = new List<CompanyAutocompleteDto>();
+	private string[] listCompany = [];
+
+	private string _selectedCompanyString { get; set; } = "";
+	private IEnumerable<string> _selectedCompany { get; set; } = new List<string>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav);
+
+		_companyAutocompleteDto = await _httpHelper.GetDataFromAPI<List<CompanyAutocompleteDto>>("api/Companies/GetAllCompanyAutocompleteDto");
+		listCompany = _companyAutocompleteDto.Select(c => c.Name).ToArray();
+
+		_adminUserEditDto = await _httpHelper.GetAsync<AdminUserEditDto>(id);
+
+		if (_adminUserEditDto != null)
+			_selectedCompany = _adminUserEditDto.Companies.Select(c => c.Name).ToArray();
+
+	}
+
+	private async Task OnValidSubmit()
+	{
+		_isPasswordFieldEmpty = false;
+		_isLoginUsed = false;
+
+		if (_adminUserEditDto == null)
+			return;
+
+		if(id == 0)
+		{
+			if (string.IsNullOrEmpty(_adminUserEditDto.Password))
+			{
+				_isPasswordFieldEmpty = true;
+				return;
+			}
+			ResponseBoolean booleanResult = await _httpHelper.GetDataFromAPI<ResponseBoolean>($"api/Admin/Users/CheckLoginName?f={_adminUserEditDto.Login.Trim()}");
+			if (booleanResult != null && booleanResult.Result)
+			{
+				_isLoginUsed = true;
+				return;
+			}
+		}
+
+		_adminUserEditDto.Companies = new List<CompanyAutocompleteDto>();
+		foreach (var item in _selectedCompany)
+		{
+			var company = _companyAutocompleteDto.FirstOrDefault(e => e.Name == item);
+			if (company != null)
+				_adminUserEditDto.Companies.Add(company);
+		}
+		await _httpHelper.SendRequest(_adminUserEditDto, id.HasValue && id > 0);
+	}
+
+	private void changePassword()
+	{
+		if (_adminUserEditDto != null)
+			_isPasswordFieldEmpty = string.IsNullOrEmpty(_adminUserEditDto.Password?.Trim());
+	}
+
+}

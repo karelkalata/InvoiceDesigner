@@ -1,4 +1,4 @@
-﻿using InvoiceDesigner.Domain.Shared.Models.FormDesigner;
+﻿using InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner;
 
 namespace InvoiceDesigner.Domain.Shared.Interfaces
 {

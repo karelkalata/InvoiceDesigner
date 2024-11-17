@@ -1,0 +1,60 @@
+﻿@page "/Login"
+@using InvoiceDesigner.Domain.Shared.DTOs.User
+@using InvoiceDesigner.WebApp.Helpers;
+@using InvoiceDesigner.Domain.Shared.Responses;
+@inject IHttpClientFactory HttpClientFactory
+@inject ILocalStorageService localStorage
+@inject NavigationManager nav
+@inject ISnackbar Snackbar
+
+<MudContainer>
+	<MudPaper Class="d-flex justify-center align-content-center flex-grow-1 gap-4" Elevation="0">
+		<EditForm Model="@_userLogin" OnValidSubmit="OnValidSubmit">
+			<DataAnnotationsValidator />
+			<MudGrid>
+				<MudItem>
+					<MudCard>
+						<MudCardContent>
+							<MudTextField Label="Login"
+										  @bind-Value="_userLogin.Login"
+										  For="@(() => _userLogin.Login)" />
+							<MudTextField Label="Password"
+										  InputType="InputType.Password"
+										  Class="mt-3"
+										  @bind-Value="_userLogin.Password"
+										  For="@(() => _userLogin.Password)" />
+						</MudCardContent>
+						<MudCardActions>
+							<MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Login</MudButton>
+						</MudCardActions>
+					</MudCard>
+				</MudItem>
+			</MudGrid>
+		</EditForm>
+	</MudPaper>
+</MudContainer>
+@code {
+	private UserLoginDto _userLogin = new UserLoginDto();
+
+	private async Task OnValidSubmit(EditContext context)
+	{
+		var httpClient = HttpClientFactory.CreateClient("ApiClient");
+		HttpResponseMessage response = await httpClient.PostAsJsonAsync($"api/Login", _userLogin);
+
+		if (response.IsSuccessStatusCode)
+		{
+			var result = await response.Content.ReadFromJsonAsync<ResponseJwtToken>();
+			if (result != null && !string.IsNullOrEmpty(result.JwtToken))
+			{
+				await localStorage.SetItemAsync<string>("jwtToken", result.JwtToken);
+				nav.NavigateTo("/", true);
+			}
+			else
+			{
+				_userLogin.Password = "";
+				Snackbar.Add($"Invalid Credentials", Severity.Success);
+			}
+
+		}
+	}
+}

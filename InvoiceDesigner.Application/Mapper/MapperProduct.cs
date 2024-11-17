@@ -10,10 +10,10 @@ namespace InvoiceDesigner.Application.Mapper
 		{
 			CreateMap<Product, ProductAutocompleteDto>()
 				.ForMember(
-					dest => dest.PriceByCurrency, 
+					dest => dest.PriceByCurrency,
 					opt => opt.MapFrom(
 						src => src.ProductPrice.ToDictionary(
-							e => e.CurrencyId, 
+							e => e.CurrencyId,
 							e => e.Price
 						)
 					)

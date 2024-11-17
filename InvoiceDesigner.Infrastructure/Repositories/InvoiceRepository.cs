@@ -14,12 +14,17 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 			_context = context;
 		}
 
-		public async Task<IReadOnlyCollection<Invoice>> GetInvoicesAsync(int pageSize, int page, string searchString, Func<IQueryable<Invoice>, IOrderedQueryable<Invoice>> orderBy)
+		public async Task<IReadOnlyCollection<Invoice>> GetInvoicesAsync(	int pageSize, 
+																			int page, 
+																			string searchString, 
+																			Func<IQueryable<Invoice>, IOrderedQueryable<Invoice>> orderBy,
+																			IReadOnlyCollection<Company> userAuthorizedCompanies)
 		{
 			int skip = (page - 1) * pageSize;
 
 			IQueryable<Invoice> query = _context.Invoices.AsNoTracking()
 												.AsNoTracking()
+												.Where(invoice => userAuthorizedCompanies.Contains(invoice.Company))
 												.Include(a => a.Company)
 												.Include(b => b.Currency)
 												.Include(c => c.Customer);
@@ -45,9 +50,10 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 			return entity.Id;
 		}
 
-		public async Task<Invoice?> GetInvoiceByIdAsync(int id)
+		public async Task<Invoice?> GetInvoiceByIdAsync(int id, IReadOnlyCollection<Company> userAuthorizedCompanies)
 		{
 			return await _context.Invoices
+				.Where(invoice => userAuthorizedCompanies.Contains(invoice.Company))
 				.Include(a => a.Currency)
 				.Include(b => b.Bank)
 				.Include(c => c.Customer)
@@ -68,13 +74,16 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 
 		public async Task<bool> DeleteInvoiceAsync(Invoice entity)
 		{
-			_context.Invoices.Remove(entity);
+			_context.Invoices
+				.Remove(entity);
 			return await _context.SaveChangesAsync() > 0;
 		}
 
-		public async Task<int> GetCountInvoicesAsync()
+		public async Task<int> GetCountInvoicesAsync(IReadOnlyCollection<Company> userAuthorizedCompanies)
 		{
-			return await _context.Invoices.CountAsync();
+			return await _context.Invoices
+						.Where(invoice => userAuthorizedCompanies.Contains(invoice.Company))
+						.CountAsync();
 		}
 
 		public async Task<int> GetNextInvoiceNumberForCompanyAsync(int companyId)

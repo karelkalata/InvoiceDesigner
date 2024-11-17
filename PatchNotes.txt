@@ -1,0 +1,9 @@
+0.2.1-alpha
+	Added Authorization and Authentication (JWT token)
+	Implemented User Access Control for Companies
+	Refactored Company and Bank management
+	Refactored Print Form Designer
+		Added default print form
+		Added new CSS styles:
+			font-style: normal/italic
+			font-weight: normal/bold

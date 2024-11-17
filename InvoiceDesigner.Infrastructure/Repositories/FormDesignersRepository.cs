@@ -1,5 +1,5 @@
 ﻿using InvoiceDesigner.Domain.Shared.Interfaces;
-using InvoiceDesigner.Domain.Shared.Models.FormDesigner;
+using InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner;
 using InvoiceDesigner.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,9 +32,10 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		public async Task<FormDesigner?> GetFormDesignerByIdAsync(int id)
 		{
 			return await _context.FormDesigners
-				.Include(a => a.DropItems)
-					.ThenInclude(b => b.CssStyle)
-				.FirstOrDefaultAsync(c => c.Id == id);
+				.Include(a => a.Schemes)
+				.Include(b => b.DropItems)
+					.ThenInclude(c => c.CssStyle)
+				.FirstOrDefaultAsync(e => e.Id == id);
 		}
 
 

@@ -1,11 +1,14 @@
 ﻿@page "/Companies/Edit/{id:int}"
+@using InvoiceDesigner.Domain.Shared.DTOs.Bank
 @using InvoiceDesigner.Domain.Shared.DTOs.Company
 @using InvoiceDesigner.Domain.Shared.DTOs.Currency
 @using InvoiceDesigner.Domain.Shared.Helpers
 @using InvoiceDesigner.WebApp.Helpers
-@inject HttpClient Http
+@inject IHttpClientFactory HttpClientFactory
+@inject ILocalStorageService LocalStorageService
 @inject NavigationManager nav
 @inject ISnackbar Snackbar
+@inject IDialogService DialogService
 
 <MudContainer>
 	@if (_companyEditDto == null)
@@ -14,117 +17,155 @@
 	}
 	else
 	{
-		<EditForm Model="@_companyEditDto" OnValidSubmit="OnValidSubmit">
-			<DataAnnotationsValidator />
-			<MudGrid Spacing="2">
-				<MudItem xs="12" sm="12" Class="ma-1">
-					<MudCard>
-						<MudCardContent>
-							<MudTextField @bind-Value="_companyEditDto.Name"
+		<EditForm Model="@_companyEditDto" OnValidSubmit="OnValidSubmit" Context="contextForm">
+			<MudCard>
+				<MudCardContent>
+					<DataAnnotationsValidator />
+					<MudGrid Spacing="2">
+						<MudItem xs="4">
+							<MudTextField @bind-Value="_companyEditDto.Name" Class="d-flex pa-2"
 										  Label="My Company Name"
 										  Required
 										  For="(() => _companyEditDto.Name)" />
-						</MudCardContent>
-					</MudCard>
-				</MudItem>
-			</MudGrid>
-
-			<MudGrid Spacing="2">
-				<MudItem xs="12" sm="12" Class="ma-1">
-					<MudCard>
-						<MudCardContent>
-							<MudGrid>
-								<MudItem xs="2">
-									<MudTextField @bind-Value="_companyEditDto.TaxId"
-												  Label="Tax Id"
-												  Required
-												  For="(() => _companyEditDto.TaxId)" />
-								</MudItem>
-								<MudItem xs="2">
-									<MudTextField @bind-Value="_companyEditDto.VatId"
-												  Label="Vat Id"
-												  For="(() => _companyEditDto.VatId)" />
-								</MudItem>
-								<MudItem xs="2">
-									<MudNumericField @bind-Value="_companyEditDto.DefaultVat"
-													 Label="Default Vat"
-													 For="(() => _companyEditDto.DefaultVat)" />
-								</MudItem>
-								<MudItem xs="2">
-									<MudNumericField @bind-Value="_companyEditDto.PaymentTerms"
-													 Label="Payment Terms"
-													 Required
-													 For="(() => _companyEditDto.PaymentTerms)" />
-								</MudItem>
-								<MudItem xs="4">
-									<MudAutocomplete T="CurrencyAutocompleteDto"
-													 @bind-Value="_companyEditDto.Currency"
-													 Label="Currency"
-													 Required
-													 Dense="true"
-													 SearchFunc="@((value, token) => FilteringDataWithApi<CurrencyAutocompleteDto>(value, "Currencies", token))"
-													 ToStringFunc="@(c => c?.Name ?? "")"
-													 For="(() => _companyEditDto.Currency)" />
-								</MudItem>
-							</MudGrid>
-						</MudCardContent>
-					</MudCard>
-				</MudItem>
-			</MudGrid>
-
-			<MudGrid Spacing="2">
-				<MudItem xs="12" sm="12" Class="ma-1">
-					<MudCard>
-						<MudCardContent>
-							<MudGrid>
-								<MudItem xs="4">
-									<MudTextField @bind-Value="_companyEditDto.WWW"
-												  Label="www"
-												  For="(() => _companyEditDto.WWW)" />
-								</MudItem>
-								<MudItem xs="4">
-									<MudTextField @bind-Value="_companyEditDto.Email"
-												  Label="email"
-												  For="(() => _companyEditDto.Email)" />
-								</MudItem>
-								<MudItem xs="4">
-									<MudTextField @bind-Value="_companyEditDto.Phone"
-												  Label="phone"
-												  For="(() => _companyEditDto.Phone)" />
-								</MudItem>
-							</MudGrid>
-						</MudCardContent>
-					</MudCard>
-				</MudItem>
-			</MudGrid>
-
-			<MudGrid Spacing="2">
-				<MudItem xs="12" sm="12" Class="ma-1">
-					<MudCard>
-						<MudCardContent>
-							<MudTextField @bind-Value="_companyEditDto.Address"
+						</MudItem>
+						<MudItem xs="8">
+							<MudTextField @bind-Value="_companyEditDto.Address" Class="d-flex pa-2"
 										  Label="Address"
 										  For="(() => _companyEditDto.Address)" />
-						</MudCardContent>
-					</MudCard>
-				</MudItem>
-			</MudGrid>
+						</MudItem>
+					</MudGrid>
 
-			<MudGrid Spacing="2">
-				<MudItem xs="12" sm="12" Class="ma-1">
-					<MudCard>
-						<MudCardContent>
-							<MudTextField @bind-Value="_companyEditDto.Info"
-										  Label="Additional Info"
-										  For="(() => _companyEditDto.Info)" />
-						</MudCardContent>
-					</MudCard>
-				</MudItem>
-			</MudGrid>
-			<MudCardActions>
-				<MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit" Class="ml-auto">Save</MudButton>
-			</MudCardActions>
+					<MudGrid Spacing="2">
+						<MudItem xs="2">
+							<MudTextField @bind-Value="_companyEditDto.TaxId" Class="d-flex pa-2"
+										  Label="Tax Id"
+										  Required
+										  For="(() => _companyEditDto.TaxId)" />
+						</MudItem>
+						<MudItem xs="2">
+							<MudTextField @bind-Value="_companyEditDto.VatId" Class="d-flex pa-2"
+										  Label="Vat Id"
+										  For="(() => _companyEditDto.VatId)" />
+						</MudItem>
+						<MudItem xs="2">
+							<MudNumericField @bind-Value="_companyEditDto.DefaultVat" Class="d-flex pa-2"
+											 Label="Default Vat"
+											 For="(() => _companyEditDto.DefaultVat)" />
+						</MudItem>
+						<MudItem xs="2">
+							<MudNumericField @bind-Value="_companyEditDto.PaymentTerms" Class="d-flex pa-2"
+											 Label="Payment Terms"
+											 Required
+											 For="(() => _companyEditDto.PaymentTerms)" />
+						</MudItem>
+						<MudItem xs="4">
+							<MudAutocomplete T="CurrencyAutocompleteDto" Class="d-flex pa-2"
+											 @bind-Value="_companyEditDto.Currency"
+											 Label="Default Currency"
+											 Required
+											 Dense="true"
+											 SearchFunc="@((value, token) => FilteringDataWithApi<CurrencyAutocompleteDto>(value, "Currencies", token))"
+											 ToStringFunc="@(c => c?.Name ?? "")"
+											 For="(() => _companyEditDto.Currency)" />
+						</MudItem>
+					</MudGrid>
 
+					<MudGrid Spacing="2">
+						<MudItem xs="4">
+							<MudTextField @bind-Value="_companyEditDto.WWW" Class="d-flex pa-2"
+										  Label="www"
+										  For="(() => _companyEditDto.WWW)" />
+						</MudItem>
+						<MudItem xs="4">
+							<MudTextField @bind-Value="_companyEditDto.Email" Class="d-flex pa-2"
+										  Label="email"
+										  For="(() => _companyEditDto.Email)" />
+						</MudItem>
+						<MudItem xs="4">
+							<MudTextField @bind-Value="_companyEditDto.Phone" Class="d-flex pa-2"
+										  Label="phone"
+										  For="(() => _companyEditDto.Phone)" />
+						</MudItem>
+					</MudGrid>
+
+					<MudGrid Spacing="2">
+						<MudTextField @bind-Value="_companyEditDto.Info" Class="d-flex pa-2"
+									  Label="Additional Info"
+									  For="(() => _companyEditDto.Info)" />
+					</MudGrid>
+
+					<MudDataGrid Class="pa-2"
+								 T="BankEditDto"
+								 Items="_companyEditDto.Banks"
+								 Context="context"
+								 SortMode="SortMode.None"
+								 ReadOnly="false"
+								 Striped="true"
+								 Hover="true"
+								 Dense="true"
+								 EditMode="DataGridEditMode.Form"
+								 EditTrigger="DataGridEditTrigger.Manual">
+						<ColGroup>
+							<col style="width: auto;" />
+							<col style="width: auto;" />
+							<col style="width: auto;" />
+							<col style="width: 25px;" />
+							<col style="width: 25px;" />
+						</ColGroup>
+						<Columns>
+							<PropertyColumn Property="x => x.Currency.Name">
+								<EditTemplate>
+									<MudTextField @bind-Value="context.Item.Currency" Immediate="true" />
+								</EditTemplate>
+							</PropertyColumn>
+
+							<PropertyColumn Property="x => x.Name">
+								<EditTemplate>
+									<MudTextField @bind-Value="context.Item.Name" />
+								</EditTemplate>
+							</PropertyColumn>
+
+							<PropertyColumn Property="x => x.Account">
+								<EditTemplate>
+									<MudTextField @bind-Value="context.Item.Account" />
+								</EditTemplate>
+							</PropertyColumn>
+
+							<TemplateColumn>
+								<CellTemplate>
+									<MudIconButton OnClick="() => AddInvoiceItems(context.Item)"
+												   Icon="@Icons.Material.Filled.Edit"
+												   Size="Size.Small"
+												   Color="Color.Default" />
+								</CellTemplate>
+							</TemplateColumn>
+
+							<TemplateColumn>
+								<CellTemplate>
+									<MudIconButton OnClick="() => DeleteBank(context.Item)"
+												   Icon="@Icons.Material.Filled.DeleteForever"
+												   Size="Size.Small"
+												   Color="Color.Default">
+									</MudIconButton>
+								</CellTemplate>
+							</TemplateColumn>
+						</Columns>
+						<NoRecordsContent>
+							<MudText>No banks available.</MudText>
+						</NoRecordsContent>
+					</MudDataGrid>
+				</MudCardContent>
+				<MudCardActions>
+
+					<MudButton Size="Size.Small"
+							   StartIcon="@Icons.Material.Filled.AddCircle"
+							   OnClick="() => AddInvoiceItems(null)">
+						<MudText>Add Bank Account</MudText>
+					</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit" Class="ml-auto">Save</MudButton>
+				</MudCardActions>
+
+			</MudCard>
 		</EditForm>
 	}
 </MudContainer>
@@ -140,11 +181,56 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		_httpHelper = new HttpRequestHelper(_controller, Http, Snackbar, nav);
+		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav);
 
 		_currenciesAutocomplete = await _httpHelper.GetDataFromAPI<List<CurrencyAutocompleteDto>>("api/Currencies/GetCurrencyAutocompleteDto");
 
 		_companyEditDto = await _httpHelper.GetAsync<CompanyEditDto>(id);
+	}
+
+	private async Task AddInvoiceItems(BankEditDto? bankEditDto)
+	{
+		var newBank = false;
+		if (bankEditDto == null)
+		{
+			newBank = true;
+			bankEditDto = new BankEditDto();
+		}
+
+		var parameters = new DialogParameters<BankEdit_dialog>
+		{
+			{ x => x.BankEditDto, bankEditDto },
+			{ x => x.currenciesAutocomplete, _currenciesAutocomplete }
+		};
+
+		var options = new DialogOptions { CloseOnEscapeKey = true };
+		var dialog = await DialogService.ShowAsync<BankEdit_dialog>(string.Empty, parameters, options);
+		var result = await dialog.Result;
+
+		if (result != null && !result.Canceled)
+		{
+			var res = result.Data;
+			if (res != null)
+			{
+				var editedBankEditDto = res as BankEditDto;
+				if (editedBankEditDto != null)
+				{
+					if (newBank)
+						_companyEditDto?.Banks.Add(editedBankEditDto);
+					else
+						bankEditDto = editedBankEditDto;
+
+					StateHasChanged();
+				}
+
+			}
+
+		}
+	}
+
+	private void DeleteBank(BankEditDto bankEditDto)
+	{
+		_companyEditDto?.Banks.Remove(bankEditDto);
 	}
 
 	private async Task OnValidSubmit()

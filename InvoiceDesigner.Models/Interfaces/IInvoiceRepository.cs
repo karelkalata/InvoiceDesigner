@@ -7,17 +7,18 @@ namespace InvoiceDesigner.Domain.Shared.Interfaces
 		Task<IReadOnlyCollection<Invoice>> GetInvoicesAsync(int pageSize,
 											int pageNumber,
 											string searchString,
-											Func<IQueryable<Invoice>, IOrderedQueryable<Invoice>> orderBy);
+											Func<IQueryable<Invoice>, IOrderedQueryable<Invoice>> orderBy,
+											IReadOnlyCollection<Company> userAuthorizedCompanies);
 
 		Task<int> CreateInvoiceAsync(Invoice entity);
 
-		Task<Invoice?> GetInvoiceByIdAsync(int id);
+		Task<Invoice?> GetInvoiceByIdAsync(int id, IReadOnlyCollection<Company> userAuthorizedCompanies);
 
 		Task<int> UpdateInvoiceAsync(Invoice entity);
 
 		Task<bool> DeleteInvoiceAsync(Invoice entity);
 
-		Task<int> GetCountInvoicesAsync();
+		Task<int> GetCountInvoicesAsync(IReadOnlyCollection<Company> userAuthorizedCompanies);
 
 		Task<int> GetNextInvoiceNumberForCompanyAsync(int companyId);
 

@@ -27,5 +27,7 @@
 		public int CurrencyId { get; set; }
 
 		public Currency Currency { get; set; } = null!;
+
+		public ICollection<Bank> Banks { get; set; } = new List<Bank>();
 	}
 }

@@ -1,0 +1,83 @@
+﻿@page "/User/{id:int}"
+@using InvoiceDesigner.Domain.Shared.DTOs.User
+@using InvoiceDesigner.WebApp.Helpers;
+@inject IHttpClientFactory HttpClientFactory
+@inject ILocalStorageService LocalStorageService
+@inject NavigationManager nav
+@inject ISnackbar Snackbar
+
+<MudContainer>
+	@if (_userEditDto == null)
+	{
+		<MudText Align="Align.Center">Loading...</MudText>
+	}
+	else
+	{
+		<EditForm Model="@_userEditDto" OnValidSubmit="OnValidSubmit">
+			<DataAnnotationsValidator />
+			<MudCard>
+				<MudCardContent>
+					<MudPaper Class="pa-4">
+						<MudTextField @bind-Value="_userEditDto.Name"
+									  Label="Name"
+									  Required
+									  Class="d-flex pa-2"
+									  For="(() => _userEditDto.Name)" />
+						<MudTextField @bind-Value="_userEditDto.Password"
+									  Label="Password"
+									  Class="d-flex pa-2"
+									  For="(() => _userEditDto.Password)"
+									  onchange="changePassword"
+									  Error="@_isPasswordFieldEmpty"
+									  ErrorText="Password cannot be empty" />
+					</MudPaper>
+				</MudCardContent>
+				<MudCardActions>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit" Class="ml-auto">Save</MudButton>
+				</MudCardActions>
+			</MudCard>
+		</EditForm>
+	}
+</MudContainer>
+@code {
+	[Parameter]
+	public int? id { get; set; }
+
+	private static string _controller = "User/Account";
+	private HttpRequestHelper _httpHelper = null!;
+
+	private UserEditDto? _userEditDto = null;
+	private bool _isPasswordFieldEmpty;
+
+	protected override async Task OnInitializedAsync()
+	{
+		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav);
+		_userEditDto = await _httpHelper.GetAsync<UserEditDto>(id);
+	}
+
+	private async Task OnValidSubmit()
+	{
+		_isPasswordFieldEmpty = false;
+
+		if (_userEditDto == null)
+			return;
+
+		if (id == 0)
+		{
+			if (string.IsNullOrEmpty(_userEditDto.Password))
+			{
+				_isPasswordFieldEmpty = true;
+				return;
+			}
+		}
+
+		await _httpHelper.SendRequest(_userEditDto, true);
+	}
+
+	private void changePassword()
+	{
+		if (_userEditDto != null)
+			_isPasswordFieldEmpty = string.IsNullOrEmpty(_userEditDto.Password?.Trim());
+	}
+
+}

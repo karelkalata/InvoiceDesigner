@@ -2,9 +2,9 @@
 using AutoMapper;
 using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Domain.Shared.DTOs.Product;
-using InvoiceDesigner.Domain.Shared.Helpers;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Services
 {
@@ -15,8 +15,8 @@ namespace InvoiceDesigner.Application.Services
 		private readonly IInvoiceServiceHelper _invoiceServiceHelper;
 		private readonly ICurrencyService _currencyService;
 
-		public ProductService(IProductRepository repository, 
-								IMapper mapper, 
+		public ProductService(IProductRepository repository,
+								IMapper mapper,
 								IInvoiceServiceHelper invoiceServiceHelper,
 								ICurrencyService currencyService)
 		{
@@ -26,7 +26,7 @@ namespace InvoiceDesigner.Application.Services
 			_currencyService = currencyService;
 		}
 
-		public async Task<PagedResult<ProductsViewDto>> GetPagedProductsAsync(int pageSize, int page, string searchString, string sortLabel)
+		public async Task<ResponsePaged<ProductsViewDto>> GetPagedProductsAsync(int pageSize, int page, string searchString, string sortLabel)
 		{
 			pageSize = Math.Max(pageSize, 1);
 			page = Math.Max(page, 1);
@@ -37,7 +37,7 @@ namespace InvoiceDesigner.Application.Services
 			await Task.WhenAll(productsTask, totalCountTask);
 
 			var productsDto = _mapper.Map<IReadOnlyCollection<ProductsViewDto>>(await productsTask);
-			var result = new PagedResult<ProductsViewDto>
+			var result = new ResponsePaged<ProductsViewDto>
 			{
 				Items = productsDto,
 				TotalCount = await totalCountTask
@@ -79,21 +79,24 @@ namespace InvoiceDesigner.Application.Services
 			};
 		}
 
-		public async Task<bool> DeleteProductAsync(int id)
+		public async Task<ResponseBoolean> DeleteProductAsync(int id)
 		{
 			var existsProduct = await ValidateExistsEntityAsync(id);
 
 			if (await _invoiceServiceHelper.IsProductUsedInInvoiceItems(id))
 				throw new InvalidOperationException($"Product {existsProduct.Name} is in use in Invoices and cannot be deleted.");
 
-			return await _repository.DeleteProductAsync(existsProduct);
+			return new ResponseBoolean
+			{
+				Result = await _repository.DeleteProductAsync(existsProduct)
+			};
 		}
 
 		public Task<int> GetCountProductsAsync() => _repository.GetCountProductsAsync();
 
 		public async Task<IReadOnlyCollection<ProductAutocompleteDto>> FilteringData(string searchText)
 		{
-			var products = await _repository.GetProductsAsync(10, 1, searchText, GetOrdering("Name"));
+			var products = await _repository.GetProductsAsync(10, 1, searchText, GetOrdering("Value"));
 			return _mapper.Map<IReadOnlyCollection<ProductAutocompleteDto>>(products);
 		}
 
@@ -131,7 +134,7 @@ namespace InvoiceDesigner.Application.Services
 			var sortingOptions = new Dictionary<string, Func<IQueryable<Product>, IOrderedQueryable<Product>>>
 			{
 				{ "Id_desc", q => q.OrderByDescending(e => e.Id) },
-				{ "Name", q => q.OrderBy(e => e.Name) },
+				{ "Value", q => q.OrderBy(e => e.Name) },
 				{ "Name_desc", q => q.OrderByDescending(e => e.Name) }
 			};
 

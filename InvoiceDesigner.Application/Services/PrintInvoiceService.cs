@@ -1,22 +1,24 @@
 ﻿using AutoMapper;
 using InvoiceDesigner.Application.Helpers;
 using InvoiceDesigner.Application.Interfaces;
+using InvoiceDesigner.Application.Interfaces.InterfacesFormDesigner;
 using InvoiceDesigner.Domain.Shared.DTOs.Invoice;
-using InvoiceDesigner.Domain.Shared.Helpers;
-using InvoiceDesigner.Domain.Shared.Models.FormDesigner;
+using InvoiceDesigner.Domain.Shared.Interfaces;
+using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner;
+using InvoiceDesigner.Domain.Shared.Responses;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using System.Data;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Document = QuestPDF.Fluent.Document;
 
 namespace InvoiceDesigner.Application.Services
 {
 	public class PrintInvoiceService : IPrintInvoiceService, IDocument
 	{
 		private InvoicePrintDto _invoicePrintDto = null!;
+		private readonly IPrintInvoiceRepository _repository;
 		private readonly IInvoiceService _invoiceService;
 		private readonly IMapper _mapper;
 		private readonly IFormDesignersService _formDesignersService;
@@ -24,8 +26,12 @@ namespace InvoiceDesigner.Application.Services
 		public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
 		public DocumentSettings GetSettings() => DocumentSettings.Default;
 
-		public PrintInvoiceService(IInvoiceService invoiceService, IMapper mapper, IFormDesignersService formDesignersService)
+		public PrintInvoiceService(IPrintInvoiceRepository repository,
+									IInvoiceService invoiceService,
+									IMapper mapper,
+									IFormDesignersService formDesignersService)
 		{
+			_repository = repository;
 			_invoiceService = invoiceService;
 			_mapper = mapper;
 			_formDesignersService = formDesignersService;
@@ -36,10 +42,16 @@ namespace InvoiceDesigner.Application.Services
 			throw new NotImplementedException();
 		}
 
-		public async Task<PdfFileInfo> CreatePDF(int invoiceId, int printform)
+		public async Task<ResponsePdf> CreatePDF(Guid guid)
 		{
 
-			var invoice = await _invoiceService.GetInvoiceByIdAsync(invoiceId);
+			var printInvoice = await _repository.GetPrintInvoicebyGuidAsync(guid)
+					?? throw new InvalidOperationException($"PrintInvoice {guid} not found.");
+
+			var invoiceId = printInvoice.InvoiceId;
+			var printform = printInvoice.PrintFormId;
+
+			var invoice = await _invoiceService.GetInvoiceByIdAsync(0, true, invoiceId);
 			if (invoice == null)
 			{
 				_invoicePrintDto = (new InvoiceExample()).GetInvoiceExample();
@@ -49,16 +61,14 @@ namespace InvoiceDesigner.Application.Services
 				_invoicePrintDto = _mapper.Map<InvoicePrintDto>(invoice);
 			}
 
-			var formDesigner = await _formDesignersService.GetFormDesignerByIdAsync(printform);
-			if (formDesigner == null)
-				throw new InvalidOperationException($"Form Designer: {printform} Not Found");
+			var formDesigner = await _formDesignersService.GetFormDesignerByIdAsync(printform)
+					?? throw new InvalidOperationException($"Form Designer: {printform} Not Found");
 
-			bool isVat = _invoicePrintDto.Vat > 0;
 			var addCurrencySymbol = ConstsCssProperty.Value_None;
 			var addCurrencySymbolFooter = ConstsCssProperty.Value_None;
 			var fontSizeInt = 12;
 			var fontSizeTableItems = 12;
-
+			var addTableFooter = false;
 
 			Document document = Document.Create(container =>
 			{
@@ -72,23 +82,21 @@ namespace InvoiceDesigner.Application.Services
 					page.Content().Column(column =>
 					{
 
-						for (var coorX = 0; coorX < formDesigner.Rows; coorX++)
+						foreach (var scheme in formDesigner.Schemes)
 						{
 							column.Item().Row(row =>
 							{
-								for (int coorY = 0; coorY < formDesigner.Columns; coorY++)
+								for (int coorY = 0; coorY <= scheme.Column; coorY++)
 								{
-									var selector = $"coor_{coorX}_{coorY}";
+									var selector = $"coor_{scheme.Row}_{coorY}";
 									var existstDropItem = formDesigner.DropItems.Where(e => e.Selector == selector).FirstOrDefault();
 
 									if (existstDropItem == null)
 									{
-										
 										row.RelativeItem().Column(col =>
 										{
 											col.Item().Text(string.Empty);
 										});
-										
 									}
 									else
 									{
@@ -99,13 +107,15 @@ namespace InvoiceDesigner.Application.Services
 											if (!int.TryParse(fontSizeString, out fontSizeInt))
 												fontSizeInt = 12;
 										}
-										var getText = parsedText(existstDropItem.Name);
+										var getText = parsedText(existstDropItem.Value);
 
 										row.RelativeItem().Column(col =>
 										{
 
 											if (existstDropItem.UniqueId == "{Invoice.InvoiceItems}")
 											{
+												addTableFooter = true;
+
 												var _addCurrencySymbol = existstDropItem.CssStyle.Where(e => e.Name == ConstsCssProperty.AddCurrencySymbol).FirstOrDefault();
 												if (_addCurrencySymbol != null)
 													addCurrencySymbol = _addCurrencySymbol.Value;
@@ -124,9 +134,7 @@ namespace InvoiceDesigner.Application.Services
 														columns.RelativeColumn();
 														columns.RelativeColumn();
 														columns.RelativeColumn();
-
 													});
-
 
 													table.Header(header =>
 													{
@@ -160,12 +168,69 @@ namespace InvoiceDesigner.Application.Services
 														}
 													}
 												});
-												coorY = formDesigner.Columns;
 
 											}
-											else if (existstDropItem.UniqueId == "{Table.Footer}")
+											else
 											{
+												col.Item().Text(text =>
+												{
+													text.Span(getText).FontSize(fontSizeInt);
 
+													var fontStyle = existstDropItem.CssStyle.Any(e => e.Value == ConstsCssProperty.Value_Bold) ? "1" : "0";
+													fontStyle += existstDropItem.CssStyle.Any(e => e.Value == ConstsCssProperty.Value_Italic) ? "1" : "0";
+
+													switch (fontStyle)
+													{
+														case "10":
+															text.DefaultTextStyle(TextStyle.Default.Bold());
+															break;
+														case "01":
+															text.DefaultTextStyle(TextStyle.Default.Italic());
+															break;
+														case "11":
+															text.DefaultTextStyle(TextStyle.Default.Italic().Bold());
+															break;
+													}
+
+													switch (existstDropItem.CssStyle.Where(e => e.Name == ConstsCssProperty.TextAlign).Select(e => e.Value).First())
+													{
+														case ConstsCssProperty.Value_Center:
+															text.AlignCenter();
+															break;
+														case ConstsCssProperty.Value_Right:
+															text.AlignRight();
+															break;
+														default:
+															text.AlignLeft();
+															break;
+													}
+
+												});
+											}
+										});
+									};
+								}
+
+							});
+
+							if (addTableFooter)
+							{
+								addTableFooter = false;
+								column.Item().Row(row =>
+								{
+									for (int footerColumn = 0; footerColumn < 3; footerColumn++)
+									{
+										if (footerColumn < 2)
+										{
+											row.RelativeItem().Column(col =>
+											{
+												col.Item().Text(string.Empty);
+											});
+										}
+										else
+										{
+											row.RelativeItem().Column(col =>
+											{
 												col.Item().Table(tableFooter =>
 												{
 													tableFooter.ColumnsDefinition(columns =>
@@ -203,35 +268,12 @@ namespace InvoiceDesigner.Application.Services
 																		.PaddingVertical(2);
 													};
 												});
-
-											}
-											else
-											{
-
-												var TextAlign = existstDropItem.CssStyle.Where(e => e.Name == ConstsCssProperty.TextAlign).FirstOrDefault();
-												if (TextAlign != null)
-												{
-
-													if (TextAlign.Value == ConstsCssProperty.Value_Center)
-													{
-														col.Item().AlignCenter().Text(getText).FontSize(fontSizeInt);
-													}
-													else if (TextAlign.Value == ConstsCssProperty.Value_Right)
-													{
-														col.Item().AlignRight().Text(getText).FontSize(fontSizeInt);
-													}
-													else
-													{
-														col.Item().AlignLeft().Text(getText).FontSize(fontSizeInt);
-													}
-												}
-
-											}
-
-										});
+											});
+										}
 									}
-								}
-							});
+								});
+
+							}
 						}
 					});
 				});
@@ -239,12 +281,15 @@ namespace InvoiceDesigner.Application.Services
 
 			byte[] pdfBytes = document.GeneratePdf();
 
-			return new PdfFileInfo()
+			await _repository.DeletePrintInvoicebyGuidAsync(printInvoice);
+
+			return new ResponsePdf()
 			{
 				ByteArray = pdfBytes,
 				FileName = $"Invoice_{_invoicePrintDto.InvoiceNumber}.pdf",
 				MimeType = "application/pdf"
 			};
+
 		}
 
 		private string CheckAddCurrencySymbol(decimal value, string coorSymbol, string resFormat)
@@ -327,6 +372,24 @@ namespace InvoiceDesigner.Application.Services
 			return "not found";
 		}
 
+		public async Task<ResponsePdfGuid> GenerateDownloadLink(int invoiceId, int printform)
+		{
+			var entity = new PrintInvoice
+			{
+				InvoiceId = invoiceId,
+				PrintFormId = printform
+			};
+
+			return new ResponsePdfGuid
+			{
+				Guid = await _repository.GenerateDownloadLinkAsync(entity)
+			};
+		}
+
+		public Task<ResponsePdf> DownloadPDF(Guid guid)
+		{
+			throw new NotImplementedException();
+		}
 	}
 
 }

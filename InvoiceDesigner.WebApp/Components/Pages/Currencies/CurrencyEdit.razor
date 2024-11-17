@@ -1,7 +1,8 @@
 ﻿@page "/Currencies/Edit/{id:int}"
 @using InvoiceDesigner.Domain.Shared.DTOs.Currency
 @using InvoiceDesigner.WebApp.Helpers
-@inject HttpClient Http
+@inject IHttpClientFactory HttpClientFactory
+@inject ILocalStorageService LocalStorageService
 @inject NavigationManager nav
 @inject ISnackbar Snackbar
 
@@ -42,7 +43,7 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
-		_httpHelper = new HttpRequestHelper(_controller, Http, Snackbar, nav);
+		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav);
 
 		_currencyEditDto = await _httpHelper.GetAsync<CurrencyEditDto>(id);
 	}

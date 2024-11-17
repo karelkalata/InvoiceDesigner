@@ -11,7 +11,7 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Invoice
 	{
 		public int InvoiceNumber { get; set; } = 0;
 
-		public string PONumber { get; set; } =string.Empty;
+		public string PONumber { get; set; } = string.Empty;
 
 		public DateTime DateTime { get; set; }
 

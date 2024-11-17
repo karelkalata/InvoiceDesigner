@@ -1,7 +1,8 @@
 ﻿@page "/Customers/Edit/{id:int}"
 @using InvoiceDesigner.Domain.Shared.DTOs.Customer
 @using InvoiceDesigner.WebApp.Helpers
-@inject HttpClient Http
+@inject IHttpClientFactory HttpClientFactory
+@inject ILocalStorageService LocalStorageService
 @inject NavigationManager nav
 @inject ISnackbar Snackbar
 
@@ -44,7 +45,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		_httpHelper = new HttpRequestHelper(_controller, Http, Snackbar, nav);
+		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav);
 
 		_customerEditDto = await _httpHelper.GetAsync<CustomerEditDto>(id);
 	}

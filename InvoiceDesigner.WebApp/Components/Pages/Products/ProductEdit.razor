@@ -4,7 +4,8 @@
 @using InvoiceDesigner.Domain.Shared.Helpers
 @using InvoiceDesigner.Domain.Shared.Models
 @using InvoiceDesigner.WebApp.Helpers
-@inject HttpClient Http
+@inject IHttpClientFactory HttpClientFactory
+@inject ILocalStorageService LocalStorageService
 @inject NavigationManager nav
 @inject ISnackbar Snackbar
 
@@ -72,13 +73,13 @@
 					<MudButton Size="Size.Small"
 							   StartIcon="@Icons.Material.Filled.AddCircle"
 							   OnClick="AddInvoiceItems">
-						<MudText>Add Item</MudText>
+						<MudText>Add Price</MudText>
 					</MudButton>
 					<MudButton Size="Size.Small"
 							   StartIcon="@Icons.Material.Filled.DeleteForever"
 							   Disabled="@(selectedItems.Count == 0)"
 							   OnClick="DeleteSelectedItems">
-						<MudText>Delete Item</MudText>
+						<MudText>Delete Price</MudText>
 					</MudButton>
 					<MudButton Size="Size.Small"
 							   Variant="Variant.Filled"
@@ -107,7 +108,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		_httpHelper = new HttpRequestHelper(_controller, Http, Snackbar, nav);
+		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav);
 
 		_productEditDto = await _httpHelper.GetAsync<ProductEditDto>(id);
 

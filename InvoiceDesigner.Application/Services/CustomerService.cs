@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Domain.Shared.DTOs.Customer;
-using InvoiceDesigner.Domain.Shared.Helpers;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Services
 {
@@ -22,7 +22,7 @@ namespace InvoiceDesigner.Application.Services
 			_invoiceServiceHelper = invoiceServiceHelper;
 		}
 
-		public async Task<PagedResult<CustomerViewDto>> GetPagedCustomersAsync(int pageSize, int page, string searchString, string sortLabel)
+		public async Task<ResponsePaged<CustomerViewDto>> GetPagedCustomersAsync(int pageSize, int page, string searchString, string sortLabel)
 		{
 			pageSize = Math.Max(pageSize, 1);
 			page = Math.Max(page, 1);
@@ -34,7 +34,7 @@ namespace InvoiceDesigner.Application.Services
 
 			var clientsViewDto = _mapper.Map<IReadOnlyCollection<CustomerViewDto>>(await clientsTask);
 
-			return new PagedResult<CustomerViewDto>
+			return new ResponsePaged<CustomerViewDto>
 			{
 				Items = clientsViewDto,
 				TotalCount = await totalCountTask
@@ -89,7 +89,7 @@ namespace InvoiceDesigner.Application.Services
 
 		public async Task<IReadOnlyCollection<CustomerAutocompleteDto>> FilteringData(string f)
 		{
-			var customersTask = _repository.GetCustomersAsync(10, 1, f, GetOrdering("Name"));
+			var customersTask = _repository.GetCustomersAsync(10, 1, f, GetOrdering("Value"));
 			var customers = await customersTask;
 			return _mapper.Map<IReadOnlyCollection<CustomerAutocompleteDto>>(customers);
 		}
@@ -112,7 +112,7 @@ namespace InvoiceDesigner.Application.Services
 			var sortingOptions = new Dictionary<string, Func<IQueryable<Customer>, IOrderedQueryable<Customer>>>
 			{
 				{ "Id_desc", q => q.OrderByDescending(e => e.Id) },
-				{ "Name", q => q.OrderBy(e => e.Name) },
+				{ "Value", q => q.OrderBy(e => e.Name) },
 				{ "Name_desc", q => q.OrderByDescending(e => e.Name) }
 			};
 

@@ -1,7 +1,7 @@
 ﻿namespace InvoiceDesigner.WebClient
 {
-    public class ApiSettings
-    {
-        public required string BaseUrl { get; set; }
-    }
+	public class ApiSettings
+	{
+		public required string BaseUrl { get; set; }
+	}
 }

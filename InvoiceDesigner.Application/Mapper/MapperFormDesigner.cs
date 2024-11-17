@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using InvoiceDesigner.Domain.Shared.DTOs.FormDesigners;
-using InvoiceDesigner.Domain.Shared.Models.FormDesigner;
+using InvoiceDesigner.Domain.Shared.DTOs.DtoFormDesigners;
+using InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner;
 
 namespace InvoiceDesigner.Application.Mapper
 {
@@ -8,15 +8,9 @@ namespace InvoiceDesigner.Application.Mapper
 	{
 		public MapperFormDesigner()
 		{
-
-			CreateMap<FormDesigner, FormDesignerEditDto>()
-				.ForMember(
-					dest => dest.DropItemsDto,
-					opt => opt.MapFrom(src => src.DropItems)
-				);
+			CreateMap<FormDesigner, FormDesignerEditDto>();
 
 			CreateMap<FormDesigner, FormDesignersAutocompleteDto>();
-
 		}
 	}
 }

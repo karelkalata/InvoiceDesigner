@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using InvoiceDesigner.Application.Helpers;
 using InvoiceDesigner.Domain.Shared.DTOs.Currency;
 using InvoiceDesigner.Domain.Shared.Models;
 

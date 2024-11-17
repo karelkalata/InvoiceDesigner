@@ -49,6 +49,8 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		{
 			return await _context.Companies
 				.Include(c => c.Currency)
+				.Include(c => c.Banks)
+					.ThenInclude(c => c.Currency)
 				.FirstOrDefaultAsync(c => c.Id == id);
 		}
 
@@ -78,6 +80,8 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		{
 			return await _context.Companies
 				.Include(a => a.Currency)
+				.Include(b => b.Banks)
+					.ThenInclude(c => c.Currency)
 				.AsNoTracking()
 				.ToListAsync();
 		}

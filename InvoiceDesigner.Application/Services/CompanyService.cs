@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using InvoiceDesigner.Application.Interfaces;
+using InvoiceDesigner.Application.Interfaces.InterfacesUser;
 using InvoiceDesigner.Domain.Shared.DTOs.Company;
-using InvoiceDesigner.Domain.Shared.Helpers;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Services
 {
@@ -13,19 +14,22 @@ namespace InvoiceDesigner.Application.Services
 		private readonly IMapper _mapper;
 		private readonly ICurrencyService _currencyService;
 		private readonly IInvoiceServiceHelper _invoiceServiceHelper;
+		private readonly IUserAuthorizedDataService _userAuthorizedData;
 
 		public CompanyService(ICompanyRepository repository,
 								IMapper mapper,
 								ICurrencyService currencyService,
-								IInvoiceServiceHelper invoiceServiceHelper)
+								IInvoiceServiceHelper invoiceServiceHelper,
+								IUserAuthorizedDataService userAuthorizedData)
 		{
 			_repository = repository;
 			_mapper = mapper;
 			_currencyService = currencyService;
 			_invoiceServiceHelper = invoiceServiceHelper;
+			_userAuthorizedData = userAuthorizedData;
 		}
 
-		public async Task<PagedResult<CompanyViewDto>> GetPagedCompaniesAsync(int pageSize, int page, string searchString, string sortLabel)
+		public async Task<ResponsePaged<CompanyViewDto>> GetPagedCompaniesAsync(int pageSize, int page, string searchString, string sortLabel)
 		{
 			pageSize = pageSize > 0 ? pageSize : await _repository.GetCountCompaniesAsync();
 			page = Math.Max(page, 1);
@@ -35,7 +39,7 @@ namespace InvoiceDesigner.Application.Services
 
 			await Task.WhenAll(companiesTask, totalCountTask);
 
-			return new PagedResult<CompanyViewDto>
+			return new ResponsePaged<CompanyViewDto>
 			{
 				Items = _mapper.Map<IReadOnlyCollection<CompanyViewDto>>(await companiesTask),
 				TotalCount = await totalCountTask
@@ -47,7 +51,7 @@ namespace InvoiceDesigner.Application.Services
 			var currency = await ValidateInputAsync(companyEditDto);
 
 			var company = new Company();
-			MapCompany(company, companyEditDto, currency);
+			await MapCompany(company, companyEditDto, currency);
 
 			var entityId = await _repository.CreateCompanyAsync(company);
 
@@ -75,7 +79,7 @@ namespace InvoiceDesigner.Application.Services
 			var existingCompany = await existingCompanyTask;
 			var currency = await currencyTask;
 
-			MapCompany(existingCompany, companyEditDto, currency);
+			await MapCompany(existingCompany, companyEditDto, currency);
 
 			var entityId = await _repository.UpdateCompanyAsync(existingCompany);
 
@@ -85,28 +89,34 @@ namespace InvoiceDesigner.Application.Services
 			};
 		}
 
-
-		public async Task<bool> DeleteCompanyAsync(int id)
+		public async Task<ResponseBoolean> DeleteCompanyAsync(int id)
 		{
 			var company = await ValidateExistsEntityAsync(id);
-
-			if (await _invoiceServiceHelper.IsCompanyUsedInInvoices(id))
-				throw new InvalidOperationException($"Company {company.Name} is in use in invoices and cannot be deleted.");
-
-			return await _repository.DeleteCompanyAsync(company);
+			return new ResponseBoolean
+			{
+				Result = await _repository.DeleteCompanyAsync(company)
+			};
 		}
 
 		public async Task<int> GetCompaniesCountAsync() => await _repository.GetCountCompaniesAsync();
 
-		public async Task<IReadOnlyCollection<CompanyAutocompleteDto>> GetAllCompanyAutocompleteDto()
+		public async Task<List<Company>> GetAuthorizedCompaniesAsync(int userId, bool isAdmin)
 		{
-			var companies = await _repository.GetAllCompaniesDto();
-			return _mapper.Map<IReadOnlyCollection<CompanyAutocompleteDto>>(companies);
+			var companies = isAdmin
+				? await _repository.GetAllCompaniesDto()
+				: await _userAuthorizedData.GetAuthorizedCompaniesAsync(userId);
+
+			return companies.ToList();
+		}
+
+		public async Task<IReadOnlyCollection<CompanyAutocompleteDto>> GetAllCompanyAutocompleteDto(int userId, bool isAdmin)
+		{
+			return _mapper.Map<IReadOnlyCollection<CompanyAutocompleteDto>>(await GetAuthorizedCompaniesAsync(userId, isAdmin));
 		}
 
 		public async Task<IReadOnlyCollection<CompanyAutocompleteDto>> FilteringData(string filter)
 		{
-			var companies = await _repository.GetCompaniesAsync(10, 1, filter, GetOrdering("Name"));
+			var companies = await _repository.GetCompaniesAsync(10, 1, filter, GetOrdering("Value"));
 			return _mapper.Map<IReadOnlyCollection<CompanyAutocompleteDto>>(companies);
 		}
 
@@ -124,13 +134,13 @@ namespace InvoiceDesigner.Application.Services
 			return currency;
 		}
 
-		private Company MapCompany(Company company, CompanyEditDto dto, Currency currency)
+		private async Task<Company> MapCompany(Company company, CompanyEditDto dto, Currency currency)
 		{
 			company.Name = dto.Name;
 			company.TaxId = dto.TaxId;
 			company.VatId = dto.VatId;
 			company.WWW = dto.WWW?.Trim();
-			company.Email = dto.Email?.Trim(); 
+			company.Email = dto.Email?.Trim();
 			company.Phone = dto.Phone?.Trim();
 			company.Address = dto.Address?.Trim();
 			company.Info = dto.Info?.Trim();
@@ -139,6 +149,33 @@ namespace InvoiceDesigner.Application.Services
 			company.CurrencyId = currency.Id;
 			company.Currency = currency;
 
+			var itemsBanks = new List<Bank>();
+
+			foreach (var item in dto.Banks)
+			{
+				var existsBank = company.Banks.FirstOrDefault(e => e.Id == item.Id);
+				if (existsBank == null)
+				{
+					existsBank = new Bank
+					{
+						CompanyId = company.Id,
+						Company = company
+					};
+
+				}
+				var bankCurrency = await _currencyService.GetCurrencyByIdAsync(item.Currency.Id)
+									?? throw new InvalidOperationException($"Currency with ID {item.Currency.Id} not found.");
+
+				existsBank.CurrencyId = bankCurrency.Id;
+				existsBank.Currency = bankCurrency;
+				existsBank.Name = item.Name.Trim();
+				existsBank.BIC = item.BIC.Trim();
+				existsBank.Account = item.Account.Trim();
+				existsBank.Address = item.Address.Trim();
+
+				itemsBanks.Add(existsBank);
+			}
+			company.Banks = itemsBanks;
 			return company;
 		}
 
@@ -149,13 +186,15 @@ namespace InvoiceDesigner.Application.Services
 				{"Id_desc", q => q.OrderByDescending(c => c.Id)},
 				{"TaxId", q => q.OrderBy(c => c.TaxId)},
 				{"TaxId_desc", q => q.OrderByDescending(c => c.TaxId)},
-				{"Name", q => q.OrderBy(c => c.Name)},
+				{"Value", q => q.OrderBy(c => c.Name)},
 				{"Name_desc", q => q.OrderByDescending(c => c.Name)},
 				{"Id", q => q.OrderBy(c => c.Id)}
 			};
 
 			return sortingOptions.TryGetValue(sortLabel, out var orderFunc) ? orderFunc : sortingOptions["Id"];
 		}
+
+
 	}
 
 }
