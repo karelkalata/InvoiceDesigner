@@ -121,6 +121,9 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(3)
@@ -138,18 +141,21 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                         {
                             Id = 1,
                             Description = "US Dollar",
+                            IsDeleted = false,
                             Name = "USD"
                         },
                         new
                         {
                             Id = 2,
                             Description = "Euro",
+                            IsDeleted = false,
                             Name = "EUR"
                         },
                         new
                         {
                             Id = 3,
                             Description = "Czech Koruna",
+                            IsDeleted = false,
                             Name = "CZK"
                         });
                 });
@@ -158,6 +164,9 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -1451,6 +1460,9 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")

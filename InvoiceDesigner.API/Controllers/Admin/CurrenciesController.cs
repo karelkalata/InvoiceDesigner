@@ -1,12 +1,13 @@
-﻿using InvoiceDesigner.Application.Interfaces;
+﻿using InvoiceDesigner.Application.Authorization;
+using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Domain.Shared.DTOs.Currency;
 using InvoiceDesigner.Domain.Shared.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace InvoiceDesigner.API.Controllers
+namespace InvoiceDesigner.API.Controllers.Admin
 {
-	[Authorize]
+	[Authorize(Policy = UserPolicy.IsAdmin)]
 	[Route("api/[controller]")]
 	[ApiController]
 	public class CurrenciesController : ControllerBase
@@ -20,9 +21,9 @@ namespace InvoiceDesigner.API.Controllers
 
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponsePaged<CurrencyViewDto>))]
-		public async Task<IActionResult> Index(int pageSize = 10, int page = 1, string searchString = "", string sortLabel = "")
+		public async Task<IActionResult> Index(int pageSize = 10, int page = 1, string searchString = "", string sortLabel = "", bool showDeleted = false)
 		{
-			var result = await _service.GetPagedCurrenciesAsync(pageSize, page, searchString, sortLabel);
+			var result = await _service.GetPagedCurrenciesAsync(pageSize, page, searchString, sortLabel, showDeleted);
 			return Ok(result);
 		}
 
@@ -89,6 +90,22 @@ namespace InvoiceDesigner.API.Controllers
 			try
 			{
 				var result = await _service.DeleteCurrencyAsync(id);
+				return Ok(result);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(new { message = ex.Message });
+			}
+		}
+
+		[HttpDelete("{id:int}/{modeDelete:int}")]
+		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseBoolean))]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public async Task<IActionResult> DeleteOrMarkAdDeletedAsync(int id, int modeDelete)
+		{
+			try
+			{
+				var result = await _service.DeleteOrMarkAsDeletedAsync(id, modeDelete);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)

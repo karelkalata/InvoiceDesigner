@@ -1,6 +1,7 @@
 ﻿using Blazored.LocalStorage;
 using InvoiceDesigner.Domain.Shared.Responses;
 using InvoiceDesigner.WebApp.Components.Pages;
+using InvoiceDesigner.WebApp.Components.Pages.Dialogs;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Net.Http.Headers;
@@ -57,6 +58,59 @@ namespace InvoiceDesigner.WebApp.Helpers
 				_snackbar.Add($"{ex.Message}", Severity.Error);
 			}
 			return null;
+		}
+
+		public async Task<bool> DeleteOrMarkAdDeletedAsync(int id)
+		{
+			try
+			{
+				if (_dialogService == null)
+				{
+					_snackbar.Add($"IDialogService is null", Severity.Error);
+					return false;
+				}
+
+				var options = new DialogOptions { CloseOnEscapeKey = true };
+				var dialog = await _dialogService.ShowAsync<DeleteEntity_dialog>(string.Empty, options);
+				var result = await dialog.Result;
+
+				if (result == null || result.Canceled)
+				{
+					return false;
+				}
+
+				if (!int.TryParse(result.Data?.ToString(), out int modeDelete))
+					modeDelete = 0;
+
+				var httpClient = await CreateHttpClient();
+				var response = await httpClient.DeleteAsync($"api/{_controller}/{id}/{modeDelete}");
+
+				switch (response.StatusCode)
+				{
+					case System.Net.HttpStatusCode.OK:
+						var res = await response.Content.ReadFromJsonAsync<ResponseBoolean>();
+
+						if (res != null)
+							return res.Result;
+
+						_snackbar.Add("Error Read Response<ResponseBoolean>", Severity.Warning);
+						return false;
+					case System.Net.HttpStatusCode.Forbidden:
+						_snackbar.Add("Access Denied", Severity.Warning);
+						return false;
+					case System.Net.HttpStatusCode.Unauthorized:
+						_navigationManager?.NavigateTo("/Login", true);
+						return false;
+					default:
+						await ShowError(response);
+						return false;
+				}
+			}
+			catch (Exception ex)
+			{
+				_snackbar.Add($"{ex.Message}", Severity.Error);
+			}
+			return false;
 		}
 
 		public async Task<bool> DeleteWithConfirmationAsync(int id)

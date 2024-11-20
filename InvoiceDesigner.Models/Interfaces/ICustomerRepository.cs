@@ -5,10 +5,11 @@ namespace InvoiceDesigner.Domain.Shared.Interfaces
 	public interface ICustomerRepository
 	{
 
-		Task<IReadOnlyCollection<Customer>> GetCustomersAsync(int pageSize,
-															int pageNumber,
-															string searchString,
-															Func<IQueryable<Customer>, IOrderedQueryable<Customer>> orderBy);
+		Task<IReadOnlyCollection<Customer>> GetCustomersAsync	(int pageSize,
+																int pageNumber,
+																string searchString,
+																Func<IQueryable<Customer>, IOrderedQueryable<Customer>> orderBy,
+																bool showDeleted = false);
 
 		Task<int> CreateCustomerAsync(Customer entity);
 
@@ -18,7 +19,7 @@ namespace InvoiceDesigner.Domain.Shared.Interfaces
 
 		Task<bool> DeleteCustomerAsync(Customer entity);
 
-		Task<int> GetCountCustomersAsync();
+		Task<int> GetCountCustomersAsync(bool showDeleted = false);
 
 	}
 }

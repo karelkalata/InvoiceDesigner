@@ -6,7 +6,11 @@ namespace InvoiceDesigner.Application.Interfaces
 {
 	public interface ICustomerService
 	{
-		Task<ResponsePaged<CustomerViewDto>> GetPagedCustomersAsync(int pageSize, int page, string searchString, string sortLabel);
+		Task<ResponsePaged<CustomerViewDto>> GetPagedCustomersAsync(int pageSize, 
+																	int page, 
+																	string searchString, 
+																	string sortLabel, 
+																	bool showDeleted = false);
 
 		Task<ResponseRedirect> CreateCustomerAsync(CustomerEditDto newEntity);
 
@@ -16,7 +20,9 @@ namespace InvoiceDesigner.Application.Interfaces
 
 		Task<ResponseRedirect> UpdateCustomerAsync(CustomerEditDto editedEntity);
 
-		Task<bool> DeleteCustomerAsync(int id);
+		Task<ResponseBoolean> DeleteCustomerAsync(int id);
+
+		Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(int id, int modeDelete);
 
 		Task<int> GetCustomerCountAsync();
 

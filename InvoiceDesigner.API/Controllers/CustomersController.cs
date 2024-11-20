@@ -20,10 +20,10 @@ namespace InvoiceDesigner.API.Controllers
 
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponsePaged<CustomerViewDto>))]
-		public async Task<IActionResult> Index(int pageSize = 10, int page = 1, string searchString = "", string sortLabel = "")
+		public async Task<IActionResult> Index(int pageSize = 10, int page = 1, string searchString = "", string sortLabel = "", bool showDeleted = false)
 		{
 
-			var result = await _service.GetPagedCustomersAsync(pageSize, page, searchString, sortLabel);
+			var result = await _service.GetPagedCustomersAsync(pageSize, page, searchString, sortLabel, showDeleted);
 			return Ok(result);
 		}
 
@@ -55,7 +55,6 @@ namespace InvoiceDesigner.API.Controllers
 			try
 			{
 				var result = await _service.GetCustomerEditDtoByIdAsync(id);
-
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -86,18 +85,30 @@ namespace InvoiceDesigner.API.Controllers
 
 
 		[HttpDelete("{id:int}")]
-		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseBoolean))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> DeleteAsync(int id)
 		{
 			try
 			{
 				var result = await _service.DeleteCustomerAsync(id);
+				return Ok(result);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(new { message = ex.Message });
+			}
+		}
 
-				if (!result)
-					return BadRequest(new { message = "Error Delete" });
-
-				return NoContent();
+		[HttpDelete("{id:int}/{modeDelete:int}")]
+		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseBoolean))]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public async Task<IActionResult> DeleteOrMarkAdDeletedAsync(int id, int modeDelete)
+		{
+			try
+			{
+				var result = await _service.DeleteOrMarkAsDeletedAsync(id, modeDelete);
+				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
 			{

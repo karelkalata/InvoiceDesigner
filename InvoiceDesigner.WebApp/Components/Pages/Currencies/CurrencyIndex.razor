@@ -10,9 +10,9 @@
 @inject IDialogService DialogService
 
 <MudContainer>
-	<MudTable ServerData="ServerReload" @ref="table" Dense="true" Hover="true" RowsPerPage="10">
+	<MudTable ServerData="ServerReload" @ref="_table" Dense Hover RowsPerPage="20">
 		<ToolBarContent>
-			<MudText Typo="Typo.h6">Currencies</MudText>
+			<MudText Typo="Typo.h6">@_controller</MudText>
 			<MudSpacer />
 			<MudTextField T="string"
 						  ValueChanged="@(s=>OnSearch(s))"
@@ -22,14 +22,13 @@
 						  IconSize="Size.Medium"
 						  Class="mt-0" />
 			<MudSpacer />
-			<MudButton Href="/Currencies/Edit/0"
-					   Variant="Variant.Filled"
-					   StartIcon="@Icons.Material.Filled.Add"
-					   Color="Color.Default">
-				New
-			</MudButton>
+			<MudIconButton Icon="@Icons.Material.Filled.PlaylistAdd" Size="Size.Medium" Href="/Currencies/0" />
+			<MudMenu Icon="@Icons.Material.Filled.Settings" Size="Size.Medium" Style="margin-left: auto;" Dense>
+				<MudMenuItem>
+					<MudCheckBox Dense @bind-Value="_showDeleted" Label="Show Deleted" onclick="@(()=>OnCheckedChanged())"></MudCheckBox>
+				</MudMenuItem>
+			</MudMenu>
 		</ToolBarContent>
-
 		<HeaderContent>
 			<MudTh>
 				<MudTableSortLabel T="CurrencyViewDto" SortLabel="Id" InitialDirection="SortDirection.Ascending">
@@ -50,13 +49,13 @@
 			<MudTd DataLabel="Code">@context.Name</MudTd>
 			<MudTd DataLabel="Description">@context.Description</MudTd>
 			<MudTd Class="text-right" Style="width:25px">
-				<MudIconButton Href="@($"/Currencies/Edit/{context.Id}")"
+				<MudIconButton Href="@($"/Currencies/{context.Id}")"
 							   Icon="@Icons.Material.Filled.Edit"
 							   Size="Size.Small"
 							   Color="Color.Default" />
 			</MudTd>
 			<MudTd Class="text-right" Style="width:25px">
-				<MudIconButton Icon="@Icons.Material.Filled.Delete"
+				<MudIconButton Icon="@(context.IsDeleted ? Icons.Material.Filled.DeleteForever : Icons.Material.Filled.Delete)"
 							   Color="Color.Default"
 							   Size="Size.Small"
 							   OnClick="() => RedirectToDeleteRow(context.Id)" />
@@ -69,7 +68,7 @@
 			<MudText>Loading...</MudText>
 		</LoadingContent>
 		<PagerContent>
-			<MudTablePager />
+			<MudTablePager PageSizeOptions="new int[] {10, 20, 30, 40, 50}" />
 		</PagerContent>
 	</MudTable>
 </MudContainer>
@@ -79,37 +78,49 @@
 	private static string _controller = "Currencies";
 	private HttpRequestHelper _httpHelper = null!;
 
-	private MudTable<CurrencyViewDto> table = new();
-	private ResponsePaged<CurrencyViewDto>? pagedResult;
-	private string searchString = "";
+	private MudTable<CurrencyViewDto> _table = new();
+	private ResponsePaged<CurrencyViewDto>? _pagedResult;
+	private string _searchString = "";
+	private bool _showDeleted = false;
 
-
+	protected override async Task OnInitializedAsync()
+	{
+		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav, DialogService);
+		await Task.Delay(1);
+	}
 
 	private async Task<TableData<CurrencyViewDto>> ServerReload(TableState state, CancellationToken token)
 	{
-		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav, DialogService);
-
 		string order = $"{state.SortLabel}{(state.SortDirection == SortDirection.Descending ? "_desc" : "")}";
 
-		pagedResult = await _httpHelper.GetDataFromAPI<ResponsePaged<CurrencyViewDto>>($"api/{_controller}?pageSize={state.PageSize}&page={state.Page + 1}&searchString={searchString}&sortLabel={order}");
+		_pagedResult = await _httpHelper.GetDataFromAPI<ResponsePaged<CurrencyViewDto>>($"api/{_controller}?pageSize={state.PageSize}&page={state.Page + 1}&searchString={_searchString}&sortLabel={order}&showDeleted={_showDeleted}");
 
-		if (pagedResult != null)
-			return new TableData<CurrencyViewDto>() { TotalItems = pagedResult.TotalCount, Items = pagedResult.Items };
+		if (_pagedResult != null)
+			return new TableData<CurrencyViewDto>()
+				{
+					TotalItems = _pagedResult.TotalCount,
+					Items = _pagedResult.Items
+				};
 
 		return new();
 	}
 
 	private void OnSearch(string text)
 	{
-		searchString = text;
-		table.ReloadServerData();
+		_searchString = text;
+		_table.ReloadServerData();
 	}
 
 
 	private async void RedirectToDeleteRow(int id)
 	{
-		if (await _httpHelper.DeleteWithConfirmationAsync(id))
-			await table.ReloadServerData();
+		if (await _httpHelper.DeleteOrMarkAdDeletedAsync(id))
+			await _table.ReloadServerData();
 	}
 
+	private async Task OnCheckedChanged()
+	{
+		_showDeleted = !_showDeleted;
+		await _table.ReloadServerData();
+	}
 }

@@ -22,13 +22,13 @@ namespace InvoiceDesigner.Application.Services
 			_invoiceServiceHelper = invoiceServiceHelper;
 		}
 
-		public async Task<ResponsePaged<CustomerViewDto>> GetPagedCustomersAsync(int pageSize, int page, string searchString, string sortLabel)
+		public async Task<ResponsePaged<CustomerViewDto>> GetPagedCustomersAsync(int pageSize, int page, string searchString, string sortLabel, bool showDeleted = false)
 		{
 			pageSize = Math.Max(pageSize, 1);
 			page = Math.Max(page, 1);
 
-			var clientsTask = _repository.GetCustomersAsync(pageSize, page, searchString, GetOrdering(sortLabel));
-			var totalCountTask = _repository.GetCountCustomersAsync();
+			var clientsTask = _repository.GetCustomersAsync(pageSize, page, searchString, GetOrdering(sortLabel), showDeleted);
+			var totalCountTask = _repository.GetCountCustomersAsync(showDeleted);
 
 			await Task.WhenAll(clientsTask, totalCountTask);
 
@@ -75,14 +75,31 @@ namespace InvoiceDesigner.Application.Services
 			};
 		}
 
-		public async Task<bool> DeleteCustomerAsync(int id)
+		public async Task<ResponseBoolean> DeleteCustomerAsync(int id)
 		{
 			var existsEntity = await ValidateExistsEntityAsync(id);
 
 			if (await _invoiceServiceHelper.IsClientUsedInInvoices(id))
 				throw new InvalidOperationException($"Customer {existsEntity.Name} is in use in Invoices and cannot be deleted.");
 
-			return await _repository.DeleteCustomerAsync(existsEntity);
+			return new ResponseBoolean
+			{
+				Result = await _repository.DeleteCustomerAsync(existsEntity)
+			};
+		}
+
+		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(int id, int modeDelete)
+		{
+			if (modeDelete == 0)
+			{
+				var existsEntity = await ValidateExistsEntityAsync(id);
+				existsEntity.IsDeleted = true;
+
+				await _repository.UpdateCustomerAsync(existsEntity);
+
+				return new ResponseBoolean { Result = true };
+			}
+			return await DeleteCustomerAsync(id);
 		}
 
 		public Task<int> GetCustomerCountAsync() => _repository.GetCountCustomersAsync();
@@ -112,7 +129,7 @@ namespace InvoiceDesigner.Application.Services
 			var sortingOptions = new Dictionary<string, Func<IQueryable<Customer>, IOrderedQueryable<Customer>>>
 			{
 				{ "Id_desc", q => q.OrderByDescending(e => e.Id) },
-				{ "Value", q => q.OrderBy(e => e.Name) },
+				{ "Name", q => q.OrderBy(e => e.Name) },
 				{ "Name_desc", q => q.OrderByDescending(e => e.Name) }
 			};
 

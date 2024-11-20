@@ -1,3 +1,5 @@
+0.2.2-alpha
+    Implemented soft delete functionality for Products, Currencies, and Customers. (Items marked as deleted are hidden from the interface by default but remain in the database for further review or permanent deletion.)
 0.2.1-alpha
 	Added Authorization and Authentication (JWT token)
 	Implemented User Access Control for Companies

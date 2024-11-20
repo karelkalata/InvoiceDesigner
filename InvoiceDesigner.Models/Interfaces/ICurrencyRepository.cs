@@ -9,7 +9,8 @@ namespace InvoiceDesigner.Domain.Shared.Interfaces
 		Task<IReadOnlyCollection<Currency>> GetCurrenciesAsync(int pageSize,
 																int pageNumber,
 																string searchString,
-																Func<IQueryable<Currency>, IOrderedQueryable<Currency>> orderBy);
+																Func<IQueryable<Currency>, IOrderedQueryable<Currency>> orderBy,
+																bool showDeleted = false);
 		Task<int> CreateCurrencyAsync(Currency entity);
 
 		Task<Currency?> GetCurrencyByIdAsync(int id);
@@ -18,6 +19,6 @@ namespace InvoiceDesigner.Domain.Shared.Interfaces
 
 		Task<bool> DeleteCurrencyAsync(Currency entity);
 
-		Task<int> GetCountCurrenciesAsync();
+		Task<int> GetCountCurrenciesAsync(bool showDeleted = false);
 	}
 }

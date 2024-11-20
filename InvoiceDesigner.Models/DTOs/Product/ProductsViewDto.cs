@@ -8,5 +8,7 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Product
 
 		public string Name { get; set; } = string.Empty;
 
+		public bool IsDeleted { get; set; }
+
 	}
 }

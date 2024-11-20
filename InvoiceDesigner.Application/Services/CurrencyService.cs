@@ -31,13 +31,13 @@ namespace InvoiceDesigner.Application.Services
 			_productServiceHelper = productServiceHelper;
 		}
 
-		public async Task<ResponsePaged<CurrencyViewDto>> GetPagedCurrenciesAsync(int pageSize, int page, string searchString, string sortLabel)
+		public async Task<ResponsePaged<CurrencyViewDto>> GetPagedCurrenciesAsync(int pageSize, int page, string searchString, string sortLabel, bool showDeleted = false)
 		{
 			pageSize = pageSize > 0 ? pageSize : await _repository.GetCountCurrenciesAsync();
 			page = page > 0 ? page : 1;
 
-			var currenciesTask = _repository.GetCurrenciesAsync(pageSize, page, searchString, GetOrdering(sortLabel));
-			var totalCountTask = _repository.GetCountCurrenciesAsync();
+			var currenciesTask = _repository.GetCurrenciesAsync(pageSize, page, searchString, GetOrdering(sortLabel), showDeleted);
+			var totalCountTask = _repository.GetCountCurrenciesAsync(showDeleted);
 
 			await Task.WhenAll(currenciesTask, totalCountTask);
 
@@ -105,6 +105,20 @@ namespace InvoiceDesigner.Application.Services
 			{
 				Result = await _repository.DeleteCurrencyAsync(existsEntity)
 			};
+		}
+
+		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(int id, int modeDelete)
+		{
+			if (modeDelete == 0)
+			{
+				var existsEntity = await ValidateExistsEntityAsync(id);
+				existsEntity.IsDeleted = true;
+
+				await _repository.UpdateCurrencyAsync(existsEntity);
+
+				return new ResponseBoolean { Result = true };
+			}
+			return await DeleteCurrencyAsync(id);
 		}
 
 		public Task<int> GetCountCurrenciesAsync()

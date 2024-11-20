@@ -15,11 +15,20 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		}
 
 
-		public async Task<IReadOnlyCollection<Product>> GetProductsAsync(int pageSize, int page, string searchString, Func<IQueryable<Product>, IOrderedQueryable<Product>> orderBy)
+		public async Task<IReadOnlyCollection<Product>> GetProductsAsync(	int pageSize, 
+																			int page, 
+																			string searchString, 
+																			Func<IQueryable<Product>, IOrderedQueryable<Product>> orderBy,
+																			bool showDeleted = false)
 		{
 			int skip = (page - 1) * pageSize;
 
 			IQueryable<Product> query = _context.Products.AsNoTracking();
+
+			if(!showDeleted)
+			{
+				query = query.Where(e => e.IsDeleted == false);
+			}
 
 			if (!string.IsNullOrEmpty(searchString))
 			{
@@ -69,10 +78,16 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 			return await _context.SaveChangesAsync() > 0;
 		}
 
-
-		public async Task<int> GetCountProductsAsync()
+		public async Task<int> GetCountProductsAsync(bool showDeleted)
 		{
-			return await _context.Products.CountAsync();
+			IQueryable<Product> query = _context.Products;
+
+			if (!showDeleted)
+			{
+				query = query.Where(e => e.IsDeleted == false);
+			}
+
+			return await query.CountAsync();
 		}
 
 		public async Task<bool> IsCurrencyUsedInProduct(int currencyId)

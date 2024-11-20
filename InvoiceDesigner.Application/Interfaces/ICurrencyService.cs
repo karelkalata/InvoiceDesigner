@@ -6,7 +6,11 @@ namespace InvoiceDesigner.Application.Interfaces
 {
 	public interface ICurrencyService
 	{
-		Task<ResponsePaged<CurrencyViewDto>> GetPagedCurrenciesAsync(int pageSize, int page, string searchString, string sortLabel);
+		Task<ResponsePaged<CurrencyViewDto>> GetPagedCurrenciesAsync(	int pageSize, 
+																		int page, 
+																		string searchString, 
+																		string sortLabel,
+																		bool showDeleted = false);
 
 		Task<ResponseRedirect> CreateCurrencyAsync(CurrencyEditDto currencyEditDto);
 
@@ -17,6 +21,8 @@ namespace InvoiceDesigner.Application.Interfaces
 		Task<ResponseRedirect> UpdateCurrencyAsync(CurrencyEditDto currencyEditDto);
 
 		Task<ResponseBoolean> DeleteCurrencyAsync(int id);
+
+		Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(int id, int modeDelete);
 
 		Task<int> GetCountCurrenciesAsync();
 

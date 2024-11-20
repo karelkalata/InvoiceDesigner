@@ -20,9 +20,9 @@ namespace InvoiceDesigner.API.Controllers
 
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponsePaged<ProductsViewDto>))]
-		public async Task<IActionResult> Index(int pageSize = 10, int page = 1, string searchString = "", string sortLabel = "")
+		public async Task<IActionResult> Index(int pageSize = 10, int page = 1, string searchString = "", string sortLabel = "", bool showDeleted = false)
 		{
-			var result = await _service.GetPagedProductsAsync(pageSize, page, searchString, sortLabel);
+			var result = await _service.GetPagedProductsAsync(pageSize, page, searchString, sortLabel, showDeleted);
 			return Ok(result);
 		}
 
@@ -101,6 +101,21 @@ namespace InvoiceDesigner.API.Controllers
 			}
 		}
 
+		[HttpDelete("{id:int}/{modeDelete:int}")]
+		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseBoolean))]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public async Task<IActionResult> DeleteOrMarkAdDeletedAsync(int id, int modeDelete)
+		{
+			try
+			{
+				var result = await _service.DeleteOrMarkAsDeletedAsync(id, modeDelete);
+				return Ok(result);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(new { message = ex.Message });
+			}
+		}
 
 		[HttpGet("FilteringData")]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IReadOnlyCollection<ProductAutocompleteDto>))]

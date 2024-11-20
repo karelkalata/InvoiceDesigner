@@ -7,7 +7,8 @@ namespace InvoiceDesigner.Domain.Shared.Interfaces
 		Task<IReadOnlyCollection<Product>> GetProductsAsync(int pageSize,
 															int pageNumber,
 															string searchString,
-															Func<IQueryable<Product>, IOrderedQueryable<Product>> orderBy);
+															Func<IQueryable<Product>, IOrderedQueryable<Product>> orderBy,
+															bool showDeleted = false);
 
 		Task<int> CreateProductAsync(Product entity);
 
@@ -17,7 +18,7 @@ namespace InvoiceDesigner.Domain.Shared.Interfaces
 
 		Task<bool> DeleteProductAsync(Product entity);
 
-		Task<int> GetCountProductsAsync();
+		Task<int> GetCountProductsAsync(bool showDeleted = false);
 
 		Task<bool> IsCurrencyUsedInProduct(int currencyId);
 	}

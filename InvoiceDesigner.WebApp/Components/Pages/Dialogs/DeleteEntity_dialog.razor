@@ -1,0 +1,19 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudText>Do you really want to delete?</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick=Cancel>Cancel</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick=@(() => Submit(1))>Delete</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick=@(() => Submit(0))>Mark As Deleted</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+
+    private void Submit(int type) => MudDialog?.Close(DialogResult.Ok(type));
+
+    private void Cancel() => MudDialog?.Cancel();
+}

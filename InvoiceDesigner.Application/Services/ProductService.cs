@@ -26,13 +26,13 @@ namespace InvoiceDesigner.Application.Services
 			_currencyService = currencyService;
 		}
 
-		public async Task<ResponsePaged<ProductsViewDto>> GetPagedProductsAsync(int pageSize, int page, string searchString, string sortLabel)
+		public async Task<ResponsePaged<ProductsViewDto>> GetPagedProductsAsync(int pageSize, int page, string searchString, string sortLabel, bool showDeleted)
 		{
 			pageSize = Math.Max(pageSize, 1);
 			page = Math.Max(page, 1);
 
-			var productsTask = _repository.GetProductsAsync(pageSize, page, searchString, GetOrdering(sortLabel));
-			var totalCountTask = _repository.GetCountProductsAsync();
+			var productsTask = _repository.GetProductsAsync(pageSize, page, searchString, GetOrdering(sortLabel), showDeleted);
+			var totalCountTask = _repository.GetCountProductsAsync(showDeleted);
 
 			await Task.WhenAll(productsTask, totalCountTask);
 
@@ -92,6 +92,20 @@ namespace InvoiceDesigner.Application.Services
 			};
 		}
 
+		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(int id, int modeDelete)
+		{
+			if (modeDelete == 0)
+			{
+				var existsEntity = await ValidateExistsEntityAsync(id);
+				existsEntity.IsDeleted = true;
+
+				await _repository.UpdateProductAsync(existsEntity);
+
+				return new ResponseBoolean { Result = true };
+			}
+			return await DeleteProductAsync(id);
+		}
+
 		public Task<int> GetCountProductsAsync() => _repository.GetCountProductsAsync();
 
 		public async Task<IReadOnlyCollection<ProductAutocompleteDto>> FilteringData(string searchText)
@@ -134,7 +148,7 @@ namespace InvoiceDesigner.Application.Services
 			var sortingOptions = new Dictionary<string, Func<IQueryable<Product>, IOrderedQueryable<Product>>>
 			{
 				{ "Id_desc", q => q.OrderByDescending(e => e.Id) },
-				{ "Value", q => q.OrderBy(e => e.Name) },
+				{ "Name", q => q.OrderBy(e => e.Name) },
 				{ "Name_desc", q => q.OrderByDescending(e => e.Name) }
 			};
 

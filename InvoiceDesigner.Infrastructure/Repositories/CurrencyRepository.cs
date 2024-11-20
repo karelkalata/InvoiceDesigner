@@ -21,12 +21,21 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 				.ToListAsync();
 		}
 
-		public async Task<IReadOnlyCollection<Currency>> GetCurrenciesAsync(int pageSize, int page, string searchString, Func<IQueryable<Currency>, IOrderedQueryable<Currency>> orderBy)
+		public async Task<IReadOnlyCollection<Currency>> GetCurrenciesAsync(int pageSize, 
+																			int page, 
+																			string searchString, 
+																			Func<IQueryable<Currency>, IOrderedQueryable<Currency>> orderBy, 
+																			bool showDeleted = false)
 		{
 
 			int skip = (page - 1) * pageSize;
 
 			IQueryable<Currency> query = _context.Currencies.AsNoTracking();
+
+			if (!showDeleted)
+			{
+				query = query.Where(e => e.IsDeleted == false);
+			}
 
 			if (!string.IsNullOrEmpty(searchString))
 			{
@@ -75,9 +84,16 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		}
 
 
-		public async Task<int> GetCountCurrenciesAsync()
+		public async Task<int> GetCountCurrenciesAsync(bool showDeleted = false)
 		{
-			return await _context.Currencies.CountAsync();
+			IQueryable<Currency> query = _context.Currencies;
+
+			if (!showDeleted)
+			{
+				query = query.Where(e => e.IsDeleted == false);
+			}
+
+			return await query.CountAsync();
 		}
 
 	}

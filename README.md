@@ -1,5 +1,5 @@
 # InvoiceDesigner
-InvoiceDesigner is a **C# and MudBlazor**-based tool designed to make invoice customization easy, with **no JavaScript/TypeScript/React/Angular/Vuejs and other frontend framework** involved. You can create and personalize invoice print forms in PDF using a drag-and-drop interface.
+With InvoiceDesigner, customizing your invoice print form is super easy. You can add, move around, and tweak elements in the layout, all without touching any code. Want to include extra info or some custom fields? No problem! 
 
 ## Technical Features
  - No JavaScript/TypeScript/React/Angular/Vuejs and other frontend framework
@@ -19,12 +19,13 @@ InvoiceDesigner is a **C# and MudBlazor**-based tool designed to make invoice cu
 </p>
 
 ## Features
-- **Local/LAN Support:** Work offline or on a local network.
-- **Customizable PDF Invoices:** Tailor designs with ease using drag-and-drop.
-- **Client & Customer Management:** Organize all your contacts efficiently.
-- **Invoice Management:** Create, track, and manage invoices seamlessly.
-- **User Access Control:** Secure data with role-based access for companies.
-- **Built-In Authorization:** Authenticate users via a robust JWT-based system.
+- works locally/lan
+- Customizable PDF invoice
+- Manage your Clients
+- Invoice Management
+- Customer Management
+- User access control for companies
+- Built-in authorization system
 
 ## Development Environment
 - [Microsoft Visual Studio 2022 Community Edition](https://visualstudio.microsoft.com/vs/community/)

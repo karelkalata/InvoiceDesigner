@@ -20,6 +20,7 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", maxLength: 3, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
                     Description = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
@@ -34,6 +35,7 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
                     TaxId = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
                     VatId = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true)
                 },
@@ -75,7 +77,8 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false)
+                    Name = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -351,12 +354,12 @@ namespace InvoiceDesigner.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "Currencies",
-                columns: new[] { "Id", "Description", "Name" },
+                columns: new[] { "Id", "Description", "IsDeleted", "Name" },
                 values: new object[,]
                 {
-                    { 1, "US Dollar", "USD" },
-                    { 2, "Euro", "EUR" },
-                    { 3, "Czech Koruna", "CZK" }
+                    { 1, "US Dollar", false, "USD" },
+                    { 2, "Euro", false, "EUR" },
+                    { 3, "Czech Koruna", false, "CZK" }
                 });
 
             migrationBuilder.InsertData(

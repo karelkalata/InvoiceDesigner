@@ -15,11 +15,16 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		}
 
 
-		public async Task<IReadOnlyCollection<Customer>> GetCustomersAsync(int pageSize, int page, string searchString, Func<IQueryable<Customer>, IOrderedQueryable<Customer>> orderBy)
+		public async Task<IReadOnlyCollection<Customer>> GetCustomersAsync(int pageSize, int page, string searchString, Func<IQueryable<Customer>, IOrderedQueryable<Customer>> orderBy, bool showDeleted = false)
 		{
 			int skip = (page - 1) * pageSize;
 
 			IQueryable<Customer> query = _context.Customers.AsNoTracking();
+
+			if (!showDeleted)
+			{
+				query = query.Where(e => e.IsDeleted == false);
+			}
 
 			if (!string.IsNullOrEmpty(searchString))
 			{
@@ -65,9 +70,16 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		}
 
 
-		public async Task<int> GetCountCustomersAsync()
+		public async Task<int> GetCountCustomersAsync(bool showDeleted)
 		{
-			return await _context.Customers.CountAsync();
+			IQueryable<Customer> query = _context.Customers;
+
+			if (!showDeleted)
+			{
+				query = query.Where(e => e.IsDeleted == false);
+			}
+
+			return await query.CountAsync();
 		}
 
 	}
