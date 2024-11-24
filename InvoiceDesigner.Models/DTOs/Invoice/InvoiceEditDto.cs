@@ -3,6 +3,7 @@ using InvoiceDesigner.Domain.Shared.DTOs.Company;
 using InvoiceDesigner.Domain.Shared.DTOs.Currency;
 using InvoiceDesigner.Domain.Shared.DTOs.Customer;
 using InvoiceDesigner.Domain.Shared.DTOs.InvoiceItem;
+using InvoiceDesigner.Domain.Shared.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace InvoiceDesigner.Domain.Shared.DTOs.Invoice
@@ -12,6 +13,12 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Invoice
 		public int Id { get; set; }
 
 		public int InvoiceNumber { get; set; }
+
+		public EInvoiceStatus Status { get; set; } = EInvoiceStatus.Active;
+
+		public bool IsDeleted { get; set; }
+
+		public bool IsArchived { get; set; }
 
 		public string PONumber { get; set; } = string.Empty;
 
@@ -39,7 +46,6 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Invoice
 
 		public decimal TotalAmount { get; set; }
 
-		public int FormDesignerId { get; set; } = 0;
 	}
 }
 

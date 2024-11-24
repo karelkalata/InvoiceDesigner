@@ -1,5 +1,6 @@
 ﻿using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,34 +22,32 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 				.ToListAsync();
 		}
 
-		public async Task<IReadOnlyCollection<Currency>> GetCurrenciesAsync(int pageSize, 
-																			int page, 
-																			string searchString, 
-																			Func<IQueryable<Currency>, IOrderedQueryable<Currency>> orderBy, 
-																			bool showDeleted = false)
+		public async Task<IReadOnlyCollection<Currency>> GetCurrenciesAsync(QueryPaged queryPaged, 
+																			Func<IQueryable<Currency>, IOrderedQueryable<Currency>> orderBy)
 		{
 
-			int skip = (page - 1) * pageSize;
+			int skip = (queryPaged.Page - 1) * queryPaged.PageSize;
 
 			IQueryable<Currency> query = _context.Currencies.AsNoTracking();
 
-			if (!showDeleted)
+			if (!queryPaged.ShowDeleted)
 			{
 				query = query.Where(e => e.IsDeleted == false);
 			}
 
-			if (!string.IsNullOrEmpty(searchString))
+			if (!string.IsNullOrEmpty(queryPaged.SearchString))
 			{
+				var searchString = queryPaged.SearchString.ToLower();
 				query = query.Where(c =>
-					c.Name.ToLower().Contains(searchString.ToLower()) ||
-					c.Description.ToLower().Contains(searchString.ToLower()));
+					c.Name.ToLower().Contains(searchString) ||
+					c.Description.ToLower().Contains(searchString));
 			}
 
 			query = orderBy(query);
 
 			return await query
 				.Skip(skip)
-				.Take(pageSize)
+				.Take(queryPaged.PageSize)
 				.ToListAsync();
 		}
 

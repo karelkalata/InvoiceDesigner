@@ -218,9 +218,18 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.Property<int>("InvoiceNumber")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("PONumber")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
 
                     b.Property<decimal>("TotalAmount")
                         .ValueGeneratedOnAdd()

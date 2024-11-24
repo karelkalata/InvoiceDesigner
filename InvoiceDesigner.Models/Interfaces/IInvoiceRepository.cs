@@ -1,12 +1,11 @@
 ﻿using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.QueryParameters;
 
 namespace InvoiceDesigner.Domain.Shared.Interfaces
 {
 	public interface IInvoiceRepository
 	{
-		Task<IReadOnlyCollection<Invoice>> GetInvoicesAsync(int pageSize,
-											int pageNumber,
-											string searchString,
+		Task<IReadOnlyCollection<Invoice>> GetInvoicesAsync(QueryPaged queryPaged,
 											Func<IQueryable<Invoice>, IOrderedQueryable<Invoice>> orderBy,
 											IReadOnlyCollection<Company> userAuthorizedCompanies);
 
@@ -18,7 +17,7 @@ namespace InvoiceDesigner.Domain.Shared.Interfaces
 
 		Task<bool> DeleteInvoiceAsync(Invoice entity);
 
-		Task<int> GetCountInvoicesAsync(IReadOnlyCollection<Company> userAuthorizedCompanies);
+		Task<int> GetCountInvoicesAsync(QueryPaged queryPaged, IReadOnlyCollection<Company> userAuthorizedCompanies);
 
 		Task<int> GetNextInvoiceNumberForCompanyAsync(int companyId);
 

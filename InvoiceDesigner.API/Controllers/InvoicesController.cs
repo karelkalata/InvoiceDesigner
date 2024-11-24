@@ -2,6 +2,7 @@
 using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Domain.Shared.DTOs;
 using InvoiceDesigner.Domain.Shared.DTOs.Invoice;
+using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,10 +35,26 @@ namespace InvoiceDesigner.API.Controllers
 
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponsePaged<InvoicesViewDto>))]
-		public async Task<IActionResult> Index(int pageSize = 10, int page = 1, string searchString = "", string sortLabel = "")
+		public async Task<IActionResult> Index([FromQuery] QueryPaged queryPaged)
 		{
-			var result = await _service.GetPagedInvoicesAsync(userId, isAdmin, pageSize, page, searchString, sortLabel);
-			return Ok(result);
+			if (!ModelState.IsValid)
+				return BadRequest(ModelState);
+
+			try
+			{
+				queryPaged.UserId = userId;
+				queryPaged.IsAdmin = isAdmin;
+				var result = await _service.GetPagedInvoicesAsync(queryPaged);
+				return Ok(result);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
+			}
+
 		}
 
 		[HttpPost]
@@ -76,6 +93,46 @@ namespace InvoiceDesigner.API.Controllers
 			}
 		}
 
+		[HttpGet("ArchiveUnarchive")]
+		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseBoolean))]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public async Task<IActionResult> ArchiveInvoice([FromQuery] QueryInvoiceChangeArchive queryArchive)
+		{
+			try
+			{
+				queryArchive.UserId = userId;
+				queryArchive.IsAdmin = isAdmin;
+
+				var result = await _service.ArchiveUnarchiveEntity(queryArchive);
+
+				return Ok(result);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(new { message = ex.Message });
+			}
+		}
+
+		[HttpGet("ChangeInvoiceStatus")]
+		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseBoolean))]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public async Task<IActionResult> ArchiveInvoice([FromQuery] QueryInvoiceChangeStatus queryStatus)
+		{
+			try
+			{
+				queryStatus.UserId = userId;
+				queryStatus.IsAdmin = isAdmin;
+
+				var result = await _service.ChangeInvoiceStatus(queryStatus);
+
+				return Ok(result);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(new { message = ex.Message });
+			}
+		}
+
 		[HttpPut]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseRedirect))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -103,6 +160,22 @@ namespace InvoiceDesigner.API.Controllers
 			try
 			{
 				var result = await _service.DeleteInvoiceAsync(userId, isAdmin, id);
+				return Ok(result);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(new { message = ex.Message });
+			}
+		}
+
+		[HttpDelete("{id:int}/{modeDelete:int}")]
+		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseBoolean))]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public async Task<IActionResult> DeleteOrMarkAdDeletedAsync(int id, int modeDelete)
+		{
+			try
+			{
+				var result = await _service.DeleteOrMarkAsDeletedAsync(userId, isAdmin, id, modeDelete);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)

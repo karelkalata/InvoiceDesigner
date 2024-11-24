@@ -1,14 +1,12 @@
 ﻿using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.QueryParameters;
 
 namespace InvoiceDesigner.Domain.Shared.Interfaces
 {
 	public interface IProductRepository
 	{
-		Task<IReadOnlyCollection<Product>> GetProductsAsync(int pageSize,
-															int pageNumber,
-															string searchString,
-															Func<IQueryable<Product>, IOrderedQueryable<Product>> orderBy,
-															bool showDeleted = false);
+		Task<IReadOnlyCollection<Product>> GetProductsAsync(QueryPaged queryPaged, 
+															Func<IQueryable<Product>, IOrderedQueryable<Product>> orderBy);
 
 		Task<int> CreateProductAsync(Product entity);
 

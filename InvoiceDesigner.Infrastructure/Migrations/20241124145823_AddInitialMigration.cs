@@ -284,6 +284,9 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     CompanyId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Status = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsArchived = table.Column<bool>(type: "INTEGER", nullable: false),
                     InvoiceNumber = table.Column<int>(type: "INTEGER", nullable: false),
                     PONumber = table.Column<string>(type: "TEXT", nullable: false),
                     Vat = table.Column<decimal>(type: "TEXT", nullable: false, defaultValue: 0m),

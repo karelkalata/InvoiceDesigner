@@ -1,10 +1,18 @@
-﻿namespace InvoiceDesigner.Domain.Shared.Models
+﻿using InvoiceDesigner.Domain.Shared.Enums;
+
+namespace InvoiceDesigner.Domain.Shared.Models
 {
 	public class Invoice
 	{
 		public int Id { get; init; }
 
 		public int CompanyId { get; set; }
+
+		public EInvoiceStatus Status { get; set; } = EInvoiceStatus.Active;
+
+		public bool IsDeleted { get; set; }
+
+		public bool IsArchived { get; set; }
 
 		public Company Company { get; set; } = null!;
 

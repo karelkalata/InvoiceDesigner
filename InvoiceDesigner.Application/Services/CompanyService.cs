@@ -4,6 +4,7 @@ using InvoiceDesigner.Application.Interfaces.InterfacesUser;
 using InvoiceDesigner.Domain.Shared.DTOs.Company;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Services
@@ -29,12 +30,12 @@ namespace InvoiceDesigner.Application.Services
 			_userAuthorizedData = userAuthorizedData;
 		}
 
-		public async Task<ResponsePaged<CompanyViewDto>> GetPagedCompaniesAsync(int pageSize, int page, string searchString, string sortLabel)
+		public async Task<ResponsePaged<CompanyViewDto>> GetPagedCompaniesAsync(QueryPaged queryPaged)
 		{
-			pageSize = pageSize > 0 ? pageSize : await _repository.GetCountCompaniesAsync();
-			page = Math.Max(page, 1);
+			queryPaged.PageSize = Math.Max(queryPaged.PageSize, 1);
+			queryPaged.Page = Math.Max(queryPaged.Page, 1);
 
-			var companiesTask = _repository.GetCompaniesAsync(pageSize, page, searchString, GetOrdering(sortLabel));
+			var companiesTask = _repository.GetCompaniesAsync(queryPaged, GetOrdering(queryPaged.SortLabel));
 			var totalCountTask = _repository.GetCountCompaniesAsync();
 
 			await Task.WhenAll(companiesTask, totalCountTask);
@@ -100,7 +101,7 @@ namespace InvoiceDesigner.Application.Services
 
 		public async Task<int> GetCompaniesCountAsync() => await _repository.GetCountCompaniesAsync();
 
-		public async Task<List<Company>> GetAuthorizedCompaniesAsync(int userId, bool isAdmin)
+		public async Task<IReadOnlyCollection<Company>> GetAuthorizedCompaniesAsync(int userId, bool isAdmin)
 		{
 			var companies = isAdmin
 				? await _repository.GetAllCompaniesDto()
@@ -114,9 +115,16 @@ namespace InvoiceDesigner.Application.Services
 			return _mapper.Map<IReadOnlyCollection<CompanyAutocompleteDto>>(await GetAuthorizedCompaniesAsync(userId, isAdmin));
 		}
 
-		public async Task<IReadOnlyCollection<CompanyAutocompleteDto>> FilteringData(string filter)
+		public async Task<IReadOnlyCollection<CompanyAutocompleteDto>> FilteringData(string searchText)
 		{
-			var companies = await _repository.GetCompaniesAsync(10, 1, filter, GetOrdering("Value"));
+			var queryPaged = new QueryPaged
+			{
+				PageSize = 10,
+				Page = 1,
+				SearchString = searchText
+			};
+
+			var companies = await _repository.GetCompaniesAsync(queryPaged, GetOrdering("Value"));
 			return _mapper.Map<IReadOnlyCollection<CompanyAutocompleteDto>>(companies);
 		}
 

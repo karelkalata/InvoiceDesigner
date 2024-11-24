@@ -1,6 +1,8 @@
 ﻿@page "/Currencies"
 @using System.Net.Http.Json
 @using InvoiceDesigner.Domain.Shared.DTOs.Currency
+@using InvoiceDesigner.Domain.Shared.Extensions
+@using InvoiceDesigner.Domain.Shared.QueryParameters
 @using InvoiceDesigner.Domain.Shared.Responses
 @using InvoiceDesigner.WebApp.Helpers
 @inject IHttpClientFactory HttpClientFactory
@@ -91,9 +93,18 @@
 
 	private async Task<TableData<CurrencyViewDto>> ServerReload(TableState state, CancellationToken token)
 	{
-		string order = $"{state.SortLabel}{(state.SortDirection == SortDirection.Descending ? "_desc" : "")}";
+		var queryParameters = new QueryPaged
+			{
+				PageSize = state.PageSize,
+				Page = state.Page + 1,
+				SearchString = _searchString,
+				SortLabel = $"{state.SortLabel}{(state.SortDirection == SortDirection.Descending ? "_desc" : "")}",
+				ShowDeleted = _showDeleted
+			};
 
-		_pagedResult = await _httpHelper.GetDataFromAPI<ResponsePaged<CurrencyViewDto>>($"api/{_controller}?pageSize={state.PageSize}&page={state.Page + 1}&searchString={_searchString}&sortLabel={order}&showDeleted={_showDeleted}");
+		string queryString = queryParameters.ToQueryString();
+
+		_pagedResult = await _httpHelper.GetDataFromAPI<ResponsePaged<CurrencyViewDto>>($"api/Currencies?{queryString}");
 
 		if (_pagedResult != null)
 			return new TableData<CurrencyViewDto>()

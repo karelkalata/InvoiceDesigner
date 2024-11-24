@@ -1,15 +1,13 @@
 ﻿using InvoiceDesigner.Domain.Shared.DTOs.Company;
 using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Interfaces
 {
 	public interface ICompanyService
 	{
-		Task<ResponsePaged<CompanyViewDto>> GetPagedCompaniesAsync(int pageSize,
-																	int page,
-																	string searchString,
-																	string sortLabel);
+		Task<ResponsePaged<CompanyViewDto>> GetPagedCompaniesAsync(QueryPaged queryPaged);
 
 		Task<ResponseRedirect> CreateCompanyAsync(CompanyEditDto companyCreateDto);
 
@@ -23,7 +21,7 @@ namespace InvoiceDesigner.Application.Interfaces
 
 		Task<int> GetCompaniesCountAsync();
 
-		Task<List<Company>> GetAuthorizedCompaniesAsync(int userId, bool isAdmin);
+		Task<IReadOnlyCollection<Company>> GetAuthorizedCompaniesAsync(int userId, bool isAdmin);
 
 		Task<IReadOnlyCollection<CompanyAutocompleteDto>> GetAllCompanyAutocompleteDto(int userId, bool isAdmin);
 

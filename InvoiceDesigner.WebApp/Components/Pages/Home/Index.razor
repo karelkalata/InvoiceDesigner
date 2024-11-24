@@ -1,5 +1,8 @@
 ﻿@page "/Invoices"
 @using InvoiceDesigner.Domain.Shared.DTOs.Invoice
+@using InvoiceDesigner.Domain.Shared.Enums
+@using InvoiceDesigner.Domain.Shared.Extensions
+@using InvoiceDesigner.Domain.Shared.QueryParameters
 @using InvoiceDesigner.Domain.Shared.Responses
 @using InvoiceDesigner.WebApp.Helpers
 @inject IHttpClientFactory HttpClientFactory
@@ -10,26 +13,28 @@
 
 
 <MudContainer>
-	<MudTable ServerData="ServerReload" @ref="table" Dense="true" Hover="true" RowsPerPage="10">
+	<MudTable ServerData="ServerReload" @ref="_table" Dense Hover RowsPerPage="10">
 		<ToolBarContent>
-			<MudText Typo="Typo.h6">Invoices</MudText>
+			<MudText Typo="Typo.h6">@_controller</MudText>
 			<MudSpacer />
 			<MudTextField T="string"
-						  ValueChanged="@(s=>OnSearch(s))"
-						  Placeholder="Search"
-						  Adornment="Adornment.Start"
-						  AdornmentIcon="@Icons.Material.Filled.Search"
-						  IconSize="Size.Medium"
-						  Class="mt-0" />
+			ValueChanged="@(s=>OnSearch(s))"
+			Placeholder="Search"
+			Adornment="Adornment.Start"
+			AdornmentIcon="@Icons.Material.Filled.Search"
+			IconSize="Size.Medium"
+			Class="mt-0" />
 			<MudSpacer />
-			<MudButton Href="/Invoices/Edit/0"
-					   Variant="Variant.Filled"
-					   StartIcon="@Icons.Material.Filled.Add"
-					   Color="Color.Default">
-				New
-			</MudButton>
+			<MudIconButton Icon="@Icons.Material.Filled.PlaylistAdd" Size="Size.Medium" Href="/Invoices/0" />
+			<MudMenu Icon="@Icons.Material.Filled.Settings" Size="Size.Medium" Style="margin-left: auto;" Dense>
+				<MudMenuItem>
+					<MudCheckBox Dense @bind-Value="_showDeleted" Label="Show Deleted" onclick="@(()=>OnCheckedShowDeletedChanged())"></MudCheckBox>
+				</MudMenuItem>
+				<MudMenuItem>
+					<MudCheckBox Dense @bind-Value="_showArchived" Label="Show Archived" onclick="@(()=>OnCheckedShowArchivedChanged())"></MudCheckBox>
+				</MudMenuItem>
+			</MudMenu>
 		</ToolBarContent>
-
 		<HeaderContent>
 			<MudTh>Id</MudTh>
 			<MudTh>Date</MudTh>
@@ -37,6 +42,8 @@
 			<MudTh>Customer</MudTh>
 			<MudTh>Amount</MudTh>
 			<MudTh>Currency</MudTh>
+			<MudTh>Status</MudTh>
+			<MudTh></MudTh>
 			<MudTh></MudTh>
 			<MudTh></MudTh>
 		</HeaderContent>
@@ -47,17 +54,48 @@
 			<MudTd DataLabel="Custome">@context.CustomerName</MudTd>
 			<MudTd DataLabel="Amount">@context.TotalAmount.ToString("N2")</MudTd>
 			<MudTd DataLabel="Currency">@context.CurrencyName</MudTd>
-			<MudTd Class="text-right" Style="width:25px">
-				<MudIconButton Href="@($"/Invoices/Edit/{context.Id}")"
-							   Icon="@Icons.Material.Filled.Edit"
-							   Size="Size.Small"
-							   Color="Color.Default" />
+			<MudTd DataLabel="Status">
+				<MudSelect T="EInvoiceStatus"
+				Value="@context.Status"
+				ValueChanged="@(val => OnChangedInvoiceStatus(context, val))"
+				Style="width: 50px;">
+					<MudSelectItem T="EInvoiceStatus" Value="EInvoiceStatus.Active">
+						<MudChip Class="ma-0" T="EInvoiceStatus" Style="height: 25px;" Color="Color.Primary">
+							@EInvoiceStatus.Active
+						</MudChip>
+					</MudSelectItem>
+					<MudSelectItem T="EInvoiceStatus" Value="EInvoiceStatus.Paid">
+						<MudChip Class="ma-0" T="EInvoiceStatus" Style="height: 25px;" Color="Color.Success">
+							@EInvoiceStatus.Paid
+						</MudChip>
+
+					</MudSelectItem>
+					<MudSelectItem T="EInvoiceStatus" Value="EInvoiceStatus.Canceled">
+						<MudChip Class="ma-0" T="EInvoiceStatus" Style="height: 25px;" Color="Color.Warning">
+							@EInvoiceStatus.Canceled
+						</MudChip>
+
+					</MudSelectItem>
+				</MudSelect>
+
 			</MudTd>
-			<MudTd Class="text-right" Style="width:25px">
-				<MudIconButton Icon="@Icons.Material.Filled.Delete"
-							   Color="Color.Default"
-							   Size="Size.Small"
-							   OnClick="() => RedirectToDeleteRow(context.Id)" />
+			<MudTd Style="width:25px" Class="pa-0">
+				<MudIconButton Href="@($"/Invoices/{context.Id}")"
+				Icon="@Icons.Material.Filled.Edit"
+				Size="Size.Small"
+				Color="Color.Default" />
+			</MudTd>
+			<MudTd Style="width:25px" Class="pa-0">
+				<MudIconButton Icon="@(context.IsDeleted ? Icons.Material.Filled.DeleteForever : Icons.Material.Filled.Delete)"
+				Color="Color.Default"
+				Size="Size.Small"
+				OnClick="() => RedirectToDeleteRow(context.Id)" />
+			</MudTd>
+			<MudTd Style="width:25px" Class="pa-0">
+				<MudIconButton Icon="@(context.IsArchived ? Icons.Material.Outlined.Unarchive : Icons.Material.Filled.Archive)"
+				Color="Color.Default"
+				Size="Size.Small"
+				OnClick="() => ArchiveUnarchiveEntity(context.Id, !context.IsArchived)" />
 			</MudTd>
 		</RowTemplate>
 		<NoRecordsContent>
@@ -67,7 +105,7 @@
 			<MudText>Loading...</MudText>
 		</LoadingContent>
 		<PagerContent>
-			<MudTablePager />
+			<MudTablePager PageSizeOptions="new int[] {10, 20, 30, 40, 50}" />
 		</PagerContent>
 	</MudTable>
 
@@ -77,32 +115,98 @@
 	private static string _controller = "Invoices";
 	private HttpRequestHelper _httpHelper = null!;
 
-	private MudTable<InvoicesViewDto> table = new();
-	private ResponsePaged<InvoicesViewDto>? pagedResult;
-	private string searchString = "";
+	private MudTable<InvoicesViewDto> _table = new();
+	private ResponsePaged<InvoicesViewDto>? _pagedResult;
+	private string _searchString = "";
+	private bool _showDeleted = false;
+	private bool _showArchived = false;
+
+	protected override async Task OnInitializedAsync()
+	{
+		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav, DialogService);
+		await Task.Delay(1);
+	}
 
 	private async Task<TableData<InvoicesViewDto>> ServerReload(TableState state, CancellationToken token)
 	{
-		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav, DialogService);
+		var queryParameters = new QueryPaged
+			{
+				PageSize = state.PageSize,
+				Page = state.Page + 1,
+				SearchString = _searchString,
+				SortLabel = "Id_desc",
+				ShowDeleted = _showDeleted,
+				ShowArchived = _showArchived
+			};
 
-		pagedResult = await _httpHelper.GetDataFromAPI<ResponsePaged<InvoicesViewDto>>($"api/Invoices?pageSize={state.PageSize}&page={state.Page + 1}&searchString={searchString}&sortLabel=Id_desc");
+		string queryString = queryParameters.ToQueryString();
 
-		if (pagedResult != null)
-			return new TableData<InvoicesViewDto>() { TotalItems = pagedResult.TotalCount, Items = pagedResult.Items };
+		_pagedResult = await _httpHelper.GetDataFromAPI<ResponsePaged<InvoicesViewDto>>($"api/Invoices?{queryString}");
+
+		if (_pagedResult != null)
+			return new TableData<InvoicesViewDto>()
+				{
+					TotalItems = _pagedResult.TotalCount,
+					Items = _pagedResult.Items
+				};
 
 		return new();
 	}
 
 	private void OnSearch(string text)
 	{
-		searchString = text;
-		table.ReloadServerData();
+		_searchString = text;
+		_table.ReloadServerData();
 	}
 
 	private async void RedirectToDeleteRow(int id)
 	{
-		if (await _httpHelper.DeleteWithConfirmationAsync(id))
-			await table.ReloadServerData();
+		if (await _httpHelper.DeleteOrMarkAdDeletedAsync(id))
+			await _table.ReloadServerData();
 	}
 
+	private async Task OnCheckedShowArchivedChanged()
+	{
+		_showArchived = !_showArchived;
+		await _table.ReloadServerData();
+	}
+
+	private async Task OnCheckedShowDeletedChanged()
+	{
+		_showDeleted = !_showDeleted;
+		await _table.ReloadServerData();
+	}
+
+	private async Task ArchiveUnarchiveEntity(int id, bool archive)
+	{
+		var queryParameters = new QueryInvoiceChangeArchive
+			{
+				EntityId = id,
+				Archive = archive
+			};
+
+		string queryString = queryParameters.ToQueryString();
+
+		var result = await _httpHelper.GetDataFromAPI<ResponseBoolean>($"api/Invoices/ArchiveUnarchive?{queryString}");
+		if (result.Result)
+			await _table.ReloadServerData();
+	}
+
+	private async Task OnChangedInvoiceStatus(InvoicesViewDto entity, EInvoiceStatus newStatus)
+	{
+		var queryParameters = new QueryInvoiceChangeStatus
+			{
+				EntityId = entity.Id,
+				Status = newStatus
+			}; 
+
+		string queryString = queryParameters.ToQueryString();
+
+		var result = await _httpHelper.GetDataFromAPI<ResponseBoolean>($"api/Invoices/ChangeInvoiceStatus?{queryString}");
+
+		if (result.Result){
+			entity.Status = newStatus;
+			Snackbar.Add("Status updated!", Severity.Success);
+		}
+	}
 }

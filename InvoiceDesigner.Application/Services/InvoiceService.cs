@@ -5,6 +5,7 @@ using InvoiceDesigner.Domain.Shared.DTOs;
 using InvoiceDesigner.Domain.Shared.DTOs.Invoice;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Services
@@ -54,15 +55,15 @@ namespace InvoiceDesigner.Application.Services
 			return result;
 		}
 
-		public async Task<ResponsePaged<InvoicesViewDto>> GetPagedInvoicesAsync(int userId, bool isAdmin, int pageSize, int page, string searchString, string sortLabel)
+		public async Task<ResponsePaged<InvoicesViewDto>> GetPagedInvoicesAsync(QueryPaged queryPaged)
 		{
-			pageSize = Math.Max(pageSize, 1);
-			page = Math.Max(page, 1);
+			queryPaged.PageSize = Math.Max(queryPaged.PageSize, 1);
+			queryPaged.Page = Math.Max(queryPaged.Page, 1);
 
-			var userAuthorizedCompanies = await _companyService.GetAuthorizedCompaniesAsync(userId, isAdmin);
+			var userAuthorizedCompanies = await _companyService.GetAuthorizedCompaniesAsync(queryPaged.UserId, queryPaged.IsAdmin);
 
-			var invoices = _repository.GetInvoicesAsync(pageSize, page, searchString, GetOrdering(sortLabel), userAuthorizedCompanies);
-			var totalCount = _repository.GetCountInvoicesAsync(userAuthorizedCompanies);
+			var invoices = _repository.GetInvoicesAsync(queryPaged, GetOrdering(queryPaged.SortLabel), userAuthorizedCompanies);
+			var totalCount = _repository.GetCountInvoicesAsync(queryPaged, userAuthorizedCompanies);
 
 			await Task.WhenAll(invoices, totalCount);
 
@@ -78,7 +79,7 @@ namespace InvoiceDesigner.Application.Services
 			var (currency, company, bank, customer) = await ValidateInputAsync(invoiceDto);
 
 			var userAuthorizedCompanies = await _companyService.GetAuthorizedCompaniesAsync(userId, isAdmin);
-			if (!userAuthorizedCompanies.Contains(company))
+			if (!userAuthorizedCompanies.Any(c => c.Id == company.Id))
 				throw new InvalidOperationException("Access Denied");
 
 			var existsInvoice = new Invoice
@@ -105,13 +106,13 @@ namespace InvoiceDesigner.Application.Services
 
 		public async Task<InvoiceEditDto> GetInvoiceDtoByIdAsync(int userId, bool isAdmin, int id)
 		{
-			var invoice = await ValidateExistsInvoiceAsync(userId, isAdmin, id);
+			var invoice = await ValidateExistsEntityAsync(userId, isAdmin, id);
 			return _mapper.Map<InvoiceEditDto>(invoice);
 		}
 
 		public async Task<ResponseRedirect> UpdateInvoiceAsync(int userId, bool isAdmin, InvoiceEditDto invoiceDto)
 		{
-			var existsInvoice = await ValidateExistsInvoiceAsync(userId, isAdmin, invoiceDto.Id);
+			var existsInvoice = await ValidateExistsEntityAsync(userId, isAdmin, invoiceDto.Id);
 			var (currency, company, bank, customer) = await ValidateInputAsync(invoiceDto);
 
 			await MapInvoice(existsInvoice, invoiceDto, company, currency, bank, customer);
@@ -127,14 +128,55 @@ namespace InvoiceDesigner.Application.Services
 
 		public async Task<ResponseBoolean> DeleteInvoiceAsync(int userId, bool isAdmin, int id)
 		{
-			var invoice = await ValidateExistsInvoiceAsync(userId, isAdmin, id);
+			var invoice = await ValidateExistsEntityAsync(userId, isAdmin, id);
 			return new ResponseBoolean
 			{
 				Result = await _repository.DeleteInvoiceAsync(invoice)
 			};
 		}
 
-		private async Task<Invoice> ValidateExistsInvoiceAsync(int userId, bool isAdmin, int id)
+		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(int userId, bool isAdmin, int id, int modeDelete)
+		{
+			if (modeDelete == 0)
+			{
+				var existsEntity = await ValidateExistsEntityAsync(userId, isAdmin, id);
+				existsEntity.IsDeleted = true;
+
+				await _repository.UpdateInvoiceAsync(existsEntity);
+
+				return new ResponseBoolean { Result = true };
+			}
+			return await DeleteInvoiceAsync(userId, isAdmin, id);
+		}
+
+		public async Task<ResponseBoolean> ArchiveUnarchiveEntity(QueryInvoiceChangeArchive queryArchive)
+		{
+			var existsEntity = await ValidateExistsEntityAsync(queryArchive.UserId, queryArchive.IsAdmin, queryArchive.EntityId);
+			existsEntity.IsArchived = queryArchive.Archive;
+
+			var entityId = await _repository.UpdateInvoiceAsync(existsEntity);
+
+			return new ResponseBoolean
+			{
+				Result = true
+			};
+		}
+
+
+		public async Task<ResponseBoolean> ChangeInvoiceStatus(QueryInvoiceChangeStatus queryStatus)
+		{
+			var existsEntity = await ValidateExistsEntityAsync(queryStatus.UserId, queryStatus.IsAdmin, queryStatus.EntityId);
+			existsEntity.Status = queryStatus.Status;
+
+			var entityId = await _repository.UpdateInvoiceAsync(existsEntity);
+
+			return new ResponseBoolean
+			{
+				Result = true
+			};
+		}
+
+		private async Task<Invoice> ValidateExistsEntityAsync(int userId, bool isAdmin, int id)
 		{
 			var userAuthorizedCompanies = await _companyService.GetAuthorizedCompaniesAsync(userId, isAdmin);
 			var existsInvoice = await _repository.GetInvoiceByIdAsync(id, userAuthorizedCompanies)
@@ -159,13 +201,6 @@ namespace InvoiceDesigner.Application.Services
 
 			return (currency, company, bank, customer);
 		}
-
-		public async Task<int> GetInvoiceCountAsync(int userId, bool isAdmin)
-		{
-			var userAuthorizedCompanies = await _companyService.GetAuthorizedCompaniesAsync(userId, isAdmin);
-			return await _repository.GetCountInvoicesAsync(userAuthorizedCompanies);
-		}
-
 
 		private decimal CalculateTotalAmount(IEnumerable<InvoiceItem> items, bool enabledVat, decimal vat)
 		{
@@ -217,7 +252,6 @@ namespace InvoiceDesigner.Application.Services
 
 			return orderingOptions.GetValueOrDefault(sortLabel, q => q.OrderBy(e => e.Id));
 		}
-
 
 	}
 

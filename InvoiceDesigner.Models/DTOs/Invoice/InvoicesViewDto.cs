@@ -1,10 +1,18 @@
-﻿namespace InvoiceDesigner.Domain.Shared.DTOs.Invoice
+﻿using InvoiceDesigner.Domain.Shared.Enums;
+
+namespace InvoiceDesigner.Domain.Shared.DTOs.Invoice
 {
 	public class InvoicesViewDto
 	{
 		public int Id { get; set; }
 
 		public int InvoiceNumber { get; set; }
+
+		public EInvoiceStatus Status { get; set; }
+
+		public bool IsDeleted { get; set; }
+
+		public bool IsArchived { get; set; }
 
 		public DateTime DateTime { get; set; }
 

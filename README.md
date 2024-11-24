@@ -5,7 +5,7 @@ With InvoiceDesigner, customizing your invoice print form is super easy. You can
  - No JavaScript/TypeScript/React/Angular/Vuejs and other frontend framework
  - No npm dependencies
  - C#
- - MudBlazor UI
+ - [MudBlazor](https://github.com/MudBlazor/MudBlazor)
  
 ## Screenshots
 <p align="center">

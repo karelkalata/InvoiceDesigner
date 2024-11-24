@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InvoiceDesigner.Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20241120180839_AddInitialMigration")]
+    [Migration("20241124145823_AddInitialMigration")]
     partial class AddInitialMigration
     {
         /// <inheritdoc />
@@ -221,9 +221,18 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.Property<int>("InvoiceNumber")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("PONumber")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
 
                     b.Property<decimal>("TotalAmount")
                         .ValueGeneratedOnAdd()

@@ -1,16 +1,13 @@
 ﻿using InvoiceDesigner.Domain.Shared.DTOs.Product;
 using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Interfaces
 {
 	public interface IProductService
 	{
-		Task<ResponsePaged<ProductsViewDto>> GetPagedProductsAsync(	int pageSize, 
-																	int page, 
-																	string searchString, 
-																	string sortLabel,
-																	bool showDeleted);
+		Task<ResponsePaged<ProductsViewDto>> GetPagedProductsAsync(QueryPaged queryPaged);
 
 		Task<ResponseRedirect> CreateProductAsync(ProductEditDto productEditDto);
 

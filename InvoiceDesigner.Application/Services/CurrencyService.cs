@@ -3,6 +3,7 @@ using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Domain.Shared.DTOs.Currency;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Services
@@ -31,13 +32,13 @@ namespace InvoiceDesigner.Application.Services
 			_productServiceHelper = productServiceHelper;
 		}
 
-		public async Task<ResponsePaged<CurrencyViewDto>> GetPagedCurrenciesAsync(int pageSize, int page, string searchString, string sortLabel, bool showDeleted = false)
+		public async Task<ResponsePaged<CurrencyViewDto>> GetPagedCurrenciesAsync(QueryPaged queryPaged)
 		{
-			pageSize = pageSize > 0 ? pageSize : await _repository.GetCountCurrenciesAsync();
-			page = page > 0 ? page : 1;
+			queryPaged.PageSize = Math.Max(queryPaged.PageSize, 1);
+			queryPaged.Page = Math.Max(queryPaged.Page, 1);
 
-			var currenciesTask = _repository.GetCurrenciesAsync(pageSize, page, searchString, GetOrdering(sortLabel), showDeleted);
-			var totalCountTask = _repository.GetCountCurrenciesAsync(showDeleted);
+			var currenciesTask = _repository.GetCurrenciesAsync(queryPaged, GetOrdering(queryPaged.SortLabel));
+			var totalCountTask = _repository.GetCountCurrenciesAsync(queryPaged.ShowDeleted);
 
 			await Task.WhenAll(currenciesTask, totalCountTask);
 
@@ -132,9 +133,16 @@ namespace InvoiceDesigner.Application.Services
 			return _mapper.Map<IReadOnlyCollection<CurrencyAutocompleteDto>>(currencies);
 		}
 
-		public async Task<IReadOnlyCollection<CurrencyAutocompleteDto>> FilteringData(string f)
+		public async Task<IReadOnlyCollection<CurrencyAutocompleteDto>> FilteringData(string searchText)
 		{
-			var currencies = await _repository.GetCurrenciesAsync(10, 1, f, GetOrdering("Value"));
+			var queryPaged = new QueryPaged
+			{
+				PageSize = 10,
+				Page = 1,
+				SearchString = searchText
+			};
+
+			var currencies = await _repository.GetCurrenciesAsync(queryPaged, GetOrdering("Value"));
 			return _mapper.Map<IReadOnlyCollection<CurrencyAutocompleteDto>>(currencies);
 		}
 

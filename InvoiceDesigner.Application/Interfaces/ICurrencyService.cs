@@ -1,16 +1,13 @@
 ﻿using InvoiceDesigner.Domain.Shared.DTOs.Currency;
 using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Interfaces
 {
 	public interface ICurrencyService
 	{
-		Task<ResponsePaged<CurrencyViewDto>> GetPagedCurrenciesAsync(	int pageSize, 
-																		int page, 
-																		string searchString, 
-																		string sortLabel,
-																		bool showDeleted = false);
+		Task<ResponsePaged<CurrencyViewDto>> GetPagedCurrenciesAsync(QueryPaged queryPaged);
 
 		Task<ResponseRedirect> CreateCurrencyAsync(CurrencyEditDto currencyEditDto);
 

@@ -1,5 +1,6 @@
 ﻿using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,15 +16,15 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		}
 
 
-		public async Task<IReadOnlyCollection<Company>> GetCompaniesAsync(int pageSize, int page, string searchString, Func<IQueryable<Company>, IOrderedQueryable<Company>> orderBy)
+		public async Task<IReadOnlyCollection<Company>> GetCompaniesAsync(QueryPaged queryPaged, Func<IQueryable<Company>, IOrderedQueryable<Company>> orderBy)
 		{
-			int skip = (page - 1) * pageSize;
+			int skip = (queryPaged.Page - 1) * queryPaged.PageSize;
 
 			IQueryable<Company> query = _context.Companies.AsNoTracking();
 
-			if (!string.IsNullOrEmpty(searchString))
+			if (!string.IsNullOrEmpty(queryPaged.SearchString))
 			{
-				searchString = searchString.ToLower();
+				var searchString = queryPaged.SearchString.ToLower();
 				query = query.Where(c => c.Name.ToLower().Contains(searchString) || c.TaxId.ToLower().Contains(searchString));
 			}
 
@@ -32,7 +33,7 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 			return await query
 				.Include(a => a.Currency)
 				.Skip(skip)
-				.Take(pageSize)
+				.Take(queryPaged.PageSize)
 				.ToListAsync();
 		}
 

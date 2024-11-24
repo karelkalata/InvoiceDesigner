@@ -1,5 +1,6 @@
 ﻿using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,13 +15,11 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 			_context = context;
 		}
 
-		public async Task<IReadOnlyCollection<Invoice>> GetInvoicesAsync(	int pageSize, 
-																			int page, 
-																			string searchString, 
+		public async Task<IReadOnlyCollection<Invoice>> GetInvoicesAsync(QueryPaged queryPaged,
 																			Func<IQueryable<Invoice>, IOrderedQueryable<Invoice>> orderBy,
 																			IReadOnlyCollection<Company> userAuthorizedCompanies)
 		{
-			int skip = (page - 1) * pageSize;
+			int skip = (queryPaged.Page - 1) * queryPaged.PageSize;
 
 			IQueryable<Invoice> query = _context.Invoices.AsNoTracking()
 												.AsNoTracking()
@@ -29,17 +28,27 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 												.Include(b => b.Currency)
 												.Include(c => c.Customer);
 
-			if (!string.IsNullOrEmpty(searchString))
+			if (!queryPaged.ShowDeleted)
 			{
-				searchString = searchString.ToLower();
-				query = query.Where(c => c.Company.Name.ToLower().Contains(searchString) || c.Customer.Name.ToLower().Contains(searchString));
+				query = query.Where(e => e.IsDeleted == false);
+			}
+
+			if (!queryPaged.ShowArchived)
+			{
+				query = query.Where(e => e.IsArchived == false);
+			}
+
+			if (!string.IsNullOrEmpty(queryPaged.SearchString))
+			{
+				queryPaged.SearchString = queryPaged.SearchString.ToLower();
+				query = query.Where(c => c.Company.Name.ToLower().Contains(queryPaged.SearchString) || c.Customer.Name.ToLower().Contains(queryPaged.SearchString));
 			}
 
 			query = orderBy(query);
 
 			return await query
 				.Skip(skip)
-				.Take(pageSize)
+				.Take(queryPaged.PageSize)
 				.ToListAsync();
 		}
 
@@ -79,9 +88,21 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 			return await _context.SaveChangesAsync() > 0;
 		}
 
-		public async Task<int> GetCountInvoicesAsync(IReadOnlyCollection<Company> userAuthorizedCompanies)
+		public async Task<int> GetCountInvoicesAsync(QueryPaged queryPaged, IReadOnlyCollection<Company> userAuthorizedCompanies)
 		{
-			return await _context.Invoices
+			IQueryable<Invoice> query = _context.Invoices.AsNoTracking();
+
+			if (!queryPaged.ShowDeleted)
+			{
+				query = query.Where(e => e.IsDeleted == false);
+			}
+
+			if (!queryPaged.ShowArchived)
+			{
+				query = query.Where(e => e.IsArchived == false);
+			}
+
+			return await query
 						.Where(invoice => userAuthorizedCompanies.Contains(invoice.Company))
 						.CountAsync();
 		}

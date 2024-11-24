@@ -1,4 +1,4 @@
-﻿@page "/Invoices/Edit/{id:int}"
+﻿@page "/Invoices/{id:int}"
 @using InvoiceDesigner.Domain.Shared.DTOs
 @using InvoiceDesigner.Domain.Shared.DTOs.DtoFormDesigners
 @using InvoiceDesigner.Domain.Shared.DTOs.InvoiceItem
@@ -324,7 +324,7 @@
 		var infoForNewInvoiceDto = await _httpHelper.GetDataFromAPI<InfoForNewInvoiceDto>($"api/Invoices/GetInfoForNewInvoice?id={id}");
 		if (infoForNewInvoiceDto.Companies.Count == 0)
 		{
-			nav.NavigateTo("/Companies/Edit/0");
+			nav.NavigateTo("/Companies/0");
 			return;
 		}
 		_formDesignersAutocompleteDto = await _httpHelper.GetDataFromAPI<List<FormDesignersAutocompleteDto>>($"api/FormDesigner/GetAllFormDesignersAutocompleteDto");
@@ -344,7 +344,7 @@
 
 			if (defaultCompany == null)
 			{
-				nav.NavigateTo("/Companies/Edit/0");
+				nav.NavigateTo("/Companies/0");
 				return;
 			}
 
@@ -436,7 +436,7 @@
 	private async Task OnValidSubmit()
 	{
 		id = await _httpHelper.SendRequest(_invoiceEditDto, id.HasValue && id > 0);
-		nav.NavigateTo($"/Invoices/Edit/{id}");
+		nav.NavigateTo($"/Invoices/{id}");
 	}
 
 	private Task<IEnumerable<T>> SearchElements<T>(string value, IEnumerable<T> items, CancellationToken token) where T : IHasIdAndName

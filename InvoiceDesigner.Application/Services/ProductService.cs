@@ -4,6 +4,7 @@ using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Domain.Shared.DTOs.Product;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Services
@@ -26,13 +27,13 @@ namespace InvoiceDesigner.Application.Services
 			_currencyService = currencyService;
 		}
 
-		public async Task<ResponsePaged<ProductsViewDto>> GetPagedProductsAsync(int pageSize, int page, string searchString, string sortLabel, bool showDeleted)
+		public async Task<ResponsePaged<ProductsViewDto>> GetPagedProductsAsync(QueryPaged queryPaged)
 		{
-			pageSize = Math.Max(pageSize, 1);
-			page = Math.Max(page, 1);
+			queryPaged.PageSize = Math.Max(queryPaged.PageSize, 1);
+			queryPaged.Page = Math.Max(queryPaged.Page, 1);
 
-			var productsTask = _repository.GetProductsAsync(pageSize, page, searchString, GetOrdering(sortLabel), showDeleted);
-			var totalCountTask = _repository.GetCountProductsAsync(showDeleted);
+			var productsTask = _repository.GetProductsAsync(queryPaged, GetOrdering(queryPaged.SortLabel));
+			var totalCountTask = _repository.GetCountProductsAsync(queryPaged.ShowDeleted);
 
 			await Task.WhenAll(productsTask, totalCountTask);
 
@@ -110,7 +111,14 @@ namespace InvoiceDesigner.Application.Services
 
 		public async Task<IReadOnlyCollection<ProductAutocompleteDto>> FilteringData(string searchText)
 		{
-			var products = await _repository.GetProductsAsync(10, 1, searchText, GetOrdering("Value"));
+			var queryPaged = new QueryPaged
+			{
+				PageSize = 10,
+				Page = 1,
+				SearchString = searchText
+			};
+
+			var products = await _repository.GetProductsAsync(queryPaged, GetOrdering("Value"));
 			return _mapper.Map<IReadOnlyCollection<ProductAutocompleteDto>>(products);
 		}
 

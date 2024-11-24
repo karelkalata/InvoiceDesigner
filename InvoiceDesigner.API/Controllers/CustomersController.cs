@@ -1,5 +1,6 @@
 ﻿using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Domain.Shared.DTOs.Customer;
+using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,11 +21,23 @@ namespace InvoiceDesigner.API.Controllers
 
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponsePaged<CustomerViewDto>))]
-		public async Task<IActionResult> Index(int pageSize = 10, int page = 1, string searchString = "", string sortLabel = "", bool showDeleted = false)
+		public async Task<IActionResult> Index([FromQuery] QueryPaged queryPaged)
 		{
+			if (!ModelState.IsValid)
+				return BadRequest(ModelState);
 
-			var result = await _service.GetPagedCustomersAsync(pageSize, page, searchString, sortLabel, showDeleted);
-			return Ok(result);
+			try
+			{
+				var result = await _service.GetPagedCustomersAsync(queryPaged);
+				return Ok(result);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
+			}
 		}
 
 		[HttpPost]

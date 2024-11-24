@@ -1,5 +1,7 @@
 ﻿@page "/Products"
 @using InvoiceDesigner.Domain.Shared.DTOs.Product
+@using InvoiceDesigner.Domain.Shared.Extensions
+@using InvoiceDesigner.Domain.Shared.QueryParameters
 @using InvoiceDesigner.Domain.Shared.Responses
 @using InvoiceDesigner.WebApp.Helpers
 @inject IHttpClientFactory HttpClientFactory
@@ -45,7 +47,7 @@
 		<RowTemplate>
 			<MudTd DataLabel="Id">@context.Id</MudTd>
 			<MudTd DataLabel="Name">@context.Name</MudTd>
-			<MudTd Class="pa-0" Style="width:30px" >
+			<MudTd Class="pa-0" Style="width:30px">
 				<MudIconButton Href="@($"/Products/{context.Id}")"
 							   Icon="@Icons.Material.Filled.Edit"
 							   Size="Size.Small"
@@ -88,9 +90,18 @@
 	private async Task<TableData<ProductsViewDto>> ServerReload(TableState state, CancellationToken token)
 	{
 
-		string order = $"{state.SortLabel}{(state.SortDirection == SortDirection.Descending ? "_desc" : "")}";
+		var queryParameters = new QueryPaged
+			{
+				PageSize = state.PageSize,
+				Page = state.Page + 1,
+				SearchString = _searchString,
+				SortLabel = $"{state.SortLabel}{(state.SortDirection == SortDirection.Descending ? "_desc" : "")}",
+				ShowDeleted = _showDeleted
+			};
 
-		_pagedResult = await _httpHelper.GetDataFromAPI<ResponsePaged<ProductsViewDto>>($"api/Products?pageSize={state.PageSize}&page={state.Page + 1}&searchString={_searchString}&sortLabel={order}&showDeleted={_showDeleted}");
+		string queryString = queryParameters.ToQueryString();
+
+		_pagedResult = await _httpHelper.GetDataFromAPI<ResponsePaged<ProductsViewDto>>($"api/Products?{queryString}");
 
 		if (_pagedResult != null)
 			return new TableData<ProductsViewDto>()

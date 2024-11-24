@@ -1,15 +1,13 @@
 ﻿using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.QueryParameters;
 
 namespace InvoiceDesigner.Domain.Shared.Interfaces
 {
 	public interface ICustomerRepository
 	{
 
-		Task<IReadOnlyCollection<Customer>> GetCustomersAsync	(int pageSize,
-																int pageNumber,
-																string searchString,
-																Func<IQueryable<Customer>, IOrderedQueryable<Customer>> orderBy,
-																bool showDeleted = false);
+		Task<IReadOnlyCollection<Customer>> GetCustomersAsync(QueryPaged queryPaged,
+																Func<IQueryable<Customer>, IOrderedQueryable<Customer>> orderBy);
 
 		Task<int> CreateCustomerAsync(Customer entity);
 

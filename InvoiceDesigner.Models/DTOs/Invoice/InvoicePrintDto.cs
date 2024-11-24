@@ -3,6 +3,7 @@ using InvoiceDesigner.Domain.Shared.DTOs.Company;
 using InvoiceDesigner.Domain.Shared.DTOs.Currency;
 using InvoiceDesigner.Domain.Shared.DTOs.Customer;
 using InvoiceDesigner.Domain.Shared.DTOs.InvoiceItem;
+using InvoiceDesigner.Domain.Shared.Enums;
 using InvoiceDesigner.Domain.Shared.Helpers;
 
 namespace InvoiceDesigner.Domain.Shared.DTOs.Invoice
@@ -10,6 +11,8 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Invoice
 	public class InvoicePrintDto : IPrintable
 	{
 		public int InvoiceNumber { get; set; } = 0;
+
+		public EInvoiceStatus Status { get; set; }
 
 		public string PONumber { get; set; } = string.Empty;
 

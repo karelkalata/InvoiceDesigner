@@ -3,6 +3,7 @@ using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Domain.Shared.DTOs.Customer;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Services
@@ -22,13 +23,13 @@ namespace InvoiceDesigner.Application.Services
 			_invoiceServiceHelper = invoiceServiceHelper;
 		}
 
-		public async Task<ResponsePaged<CustomerViewDto>> GetPagedCustomersAsync(int pageSize, int page, string searchString, string sortLabel, bool showDeleted = false)
+		public async Task<ResponsePaged<CustomerViewDto>> GetPagedCustomersAsync(QueryPaged queryPaged)
 		{
-			pageSize = Math.Max(pageSize, 1);
-			page = Math.Max(page, 1);
+			queryPaged.PageSize = Math.Max(queryPaged.PageSize, 1);
+			queryPaged.Page = Math.Max(queryPaged.Page, 1);
 
-			var clientsTask = _repository.GetCustomersAsync(pageSize, page, searchString, GetOrdering(sortLabel), showDeleted);
-			var totalCountTask = _repository.GetCountCustomersAsync(showDeleted);
+			var clientsTask = _repository.GetCustomersAsync(queryPaged, GetOrdering(queryPaged.SortLabel));
+			var totalCountTask = _repository.GetCountCustomersAsync(queryPaged.ShowDeleted);
 
 			await Task.WhenAll(clientsTask, totalCountTask);
 
@@ -104,10 +105,16 @@ namespace InvoiceDesigner.Application.Services
 
 		public Task<int> GetCustomerCountAsync() => _repository.GetCountCustomersAsync();
 
-		public async Task<IReadOnlyCollection<CustomerAutocompleteDto>> FilteringData(string f)
+		public async Task<IReadOnlyCollection<CustomerAutocompleteDto>> FilteringData(string searchText)
 		{
-			var customersTask = _repository.GetCustomersAsync(10, 1, f, GetOrdering("Value"));
-			var customers = await customersTask;
+			var queryPaged = new QueryPaged
+			{
+				PageSize = 10,
+				Page = 1,
+				SearchString = searchText
+			};
+
+			var customers = await _repository.GetCustomersAsync(queryPaged, GetOrdering("Value"));
 			return _mapper.Map<IReadOnlyCollection<CustomerAutocompleteDto>>(customers);
 		}
 
