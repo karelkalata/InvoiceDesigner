@@ -24,5 +24,6 @@ namespace InvoiceDesigner.Application.Interfaces
 		Task<int> GetCustomerCountAsync();
 
 		Task<IReadOnlyCollection<CustomerAutocompleteDto>> FilteringData(string f);
+
 	}
 }

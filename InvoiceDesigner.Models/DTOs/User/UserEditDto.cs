@@ -12,6 +12,5 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.User
 
 		[StringLength(50, MinimumLength = 5, ErrorMessage = "The {0} field must be exactly {1} characters long.")]
 		public string? Password { get; set; } = null;
-
 	}
 }

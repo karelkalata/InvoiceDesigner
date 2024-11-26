@@ -1,3 +1,5 @@
+1.0.0 Release
+	All functionality is realized
 0.3.1-alpha
 	Implemented soft delete functionality for Invoices.
 	Implemented archiving functionality for invoices.

@@ -9,6 +9,5 @@
 		public int Column { get; set; } = 0;
 
 		public int FormDesignerId { get; set; }
-
 	}
 }

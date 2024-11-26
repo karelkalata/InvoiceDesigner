@@ -40,5 +40,6 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Invoice
 		{
 			return "Invoice";
 		}
+
 	}
 }

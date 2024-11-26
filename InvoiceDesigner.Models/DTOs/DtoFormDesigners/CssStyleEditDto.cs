@@ -13,5 +13,6 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.DtoFormDesigners
 		public string Value { get; set; } = string.Empty;
 
 		public int DropItemId { get; set; }
+
 	}
 }

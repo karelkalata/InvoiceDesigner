@@ -11,5 +11,6 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Company
 		public string TaxId { get; set; } = string.Empty;
 
 		public string CurrencyName { get; set; } = string.Empty;
+
 	}
 }

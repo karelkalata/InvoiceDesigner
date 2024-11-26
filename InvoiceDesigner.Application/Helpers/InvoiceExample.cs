@@ -71,6 +71,7 @@ namespace InvoiceDesigner.Application.Helpers
 
 			invoicePrintDto.TotalAmount = invoicePrintDto.InvoiceItems.Sum(item => item.Price * item.Quantity);
 			return invoicePrintDto;
+
 		}
 	}
 }

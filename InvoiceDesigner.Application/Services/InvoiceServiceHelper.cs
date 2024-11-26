@@ -36,5 +36,6 @@ namespace InvoiceDesigner.Application.Services
 		{
 			return await _repository.IsProductUsedInInvoiceItems(productId);
 		}
+
 	}
 }

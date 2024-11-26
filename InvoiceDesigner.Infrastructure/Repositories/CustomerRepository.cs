@@ -15,7 +15,6 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 			_context = context;
 		}
 
-
 		public async Task<IReadOnlyCollection<Customer>> GetCustomersAsync(QueryPaged queryPaged, 
 																			Func<IQueryable<Customer>, IOrderedQueryable<Customer>> orderBy)
 		{

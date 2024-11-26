@@ -12,6 +12,7 @@ namespace InvoiceDesigner.API.Helpers
 			_httpContextAccessor = httpContextAccessor;
 		}
 
+
 		public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
 		{
 			var userIdClaim = context.HttpContext.User.FindFirst("userId")?.Value;

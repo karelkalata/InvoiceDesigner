@@ -11,5 +11,6 @@
 		public Currency Currency { get; set; } = null!;
 
 		public decimal Price { get; set; }
+
 	}
 }

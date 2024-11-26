@@ -15,6 +15,7 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 			_context = context;
 		}
 
+
 		public async Task<IReadOnlyCollection<Currency>> GetAllCurrenciesAsync()
 		{
 			return await _context.Currencies

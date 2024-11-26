@@ -8,9 +8,13 @@ namespace InvoiceDesigner.Application.Mapper
 	{
 		public MapperUser()
 		{
+
 			CreateMap<User, UserViewDto>();
+
 			CreateMap<User, UserEditDto>();
+
 			CreateMap<User, AdminUserEditDto>();
+
 		}
 	}
 }

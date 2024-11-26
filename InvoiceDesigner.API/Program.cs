@@ -15,7 +15,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
 builder.Services.AddControllers();
 
 var jwtOption = builder.Configuration.GetSection("JWTOption");
@@ -43,7 +42,6 @@ builder.Services.AddAuthorization(option =>
 {
 	option.AddPolicy(UserPolicy.IsAdmin, policy => policy.RequireClaim(UserPolicy.IsAdmin, "true"));
 });
-
 
 //	AutoMapper is used solely to convert models to DTOs.
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -93,8 +91,6 @@ builder.Services.AddScoped<ICssStyleService, CssStyleService>();
 builder.Services.AddScoped<IPrintInvoiceRepository, PrintInvoiceRepository>();
 builder.Services.AddScoped<IPrintInvoiceService, PrintInvoiceService>();
 
-
-
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
@@ -107,6 +103,5 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
 
 app.Run();

@@ -20,6 +20,5 @@ namespace InvoiceDesigner.Domain.Shared.Interfaces
 		Task<bool> DeleteUserAsync(User entity);
 
 		Task<int> GetCountUsersAsync();
-
 	}
 }

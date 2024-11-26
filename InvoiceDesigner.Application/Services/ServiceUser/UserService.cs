@@ -195,6 +195,5 @@ namespace InvoiceDesigner.Application.Services.ServiceUser
 
 			return orderingOptions.GetValueOrDefault(sortLabel, q => q.OrderBy(e => e.Id));
 		}
-
 	}
 }

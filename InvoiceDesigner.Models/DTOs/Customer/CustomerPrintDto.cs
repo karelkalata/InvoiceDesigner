@@ -18,5 +18,6 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Customer
 		{
 			return Name;
 		}
+
 	}
 }

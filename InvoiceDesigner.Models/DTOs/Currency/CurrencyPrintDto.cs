@@ -19,5 +19,6 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Currency
 		{
 			return Name;
 		}
+
 	}
 }

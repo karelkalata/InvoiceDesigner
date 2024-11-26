@@ -11,5 +11,6 @@
 		Task<bool> IsCurrencyUsedInInvoices(int currencyId);
 
 		Task<bool> IsProductUsedInInvoiceItems(int productId);
+
 	}
 }

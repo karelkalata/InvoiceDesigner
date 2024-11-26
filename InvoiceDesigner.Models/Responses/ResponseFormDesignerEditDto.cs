@@ -7,5 +7,6 @@ namespace InvoiceDesigner.Domain.Shared.Responses
 		public FormDesignerEditDto FormDesignerEditDto { get; set; } = new FormDesignerEditDto();
 
 		public List<DropItemEditDto> DropItemEditDto { get; set; } = new List<DropItemEditDto>();
+
 	}
 }

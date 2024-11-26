@@ -9,5 +9,6 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.User
 
 		[Required]
 		public string Password { get; set; } = string.Empty;
+
 	}
 }

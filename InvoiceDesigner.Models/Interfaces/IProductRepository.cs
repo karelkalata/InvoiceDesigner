@@ -19,5 +19,6 @@ namespace InvoiceDesigner.Domain.Shared.Interfaces
 		Task<int> GetCountProductsAsync(bool showDeleted = false);
 
 		Task<bool> IsCurrencyUsedInProduct(int currencyId);
+
 	}
 }

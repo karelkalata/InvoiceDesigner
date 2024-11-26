@@ -45,7 +45,6 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Invoice
 		public List<InvoiceItemDto> InvoiceItems { get; set; } = new();
 
 		public decimal TotalAmount { get; set; }
-
 	}
 }
 

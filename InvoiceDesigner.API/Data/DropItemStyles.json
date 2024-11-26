@@ -1,590 +1,590 @@
 [
-    {
-        "DropItemId": 967,
-        "Id": 5925,
-        "Name": "flex-grow",
-        "Value": "1"
-    },
-    {
-        "DropItemId": 967,
-        "Id": 5926,
-        "Name": "text-align",
-        "Value": "center"
-    },
-    {
-        "DropItemId": 967,
-        "Id": 5927,
-        "Name": "font-size",
-        "Value": "16px"
-    },
-    {
-        "DropItemId": 967,
-        "Id": 5928,
-        "Name": "height",
-        "Value": "25px"
-    },
-    {
-        "DropItemId": 967,
-        "Id": 5929,
-        "Name": "font-style",
-        "Value": "normal"
-    },
-    {
-        "DropItemId": 967,
-        "Id": 5930,
-        "Name": "font-weight",
-        "Value": "bold"
-    },
-    {
-        "DropItemId": 968,
-        "Id": 5931,
-        "Name": "flex-grow",
-        "Value": "1"
-    },
-    {
-        "DropItemId": 968,
-        "Id": 5932,
-        "Name": "text-align",
-        "Value": "right"
-    },
-    {
-        "DropItemId": 968,
-        "Id": 5933,
-        "Name": "font-size",
-        "Value": "10px"
-    },
-    {
-        "DropItemId": 968,
-        "Id": 5934,
-        "Name": "height",
-        "Value": "25px"
-    },
-    {
-        "DropItemId": 968,
-        "Id": 5935,
-        "Name": "font-style",
-        "Value": "normal"
-    },
-    {
-        "DropItemId": 968,
-        "Id": 5936,
-        "Name": "font-weight",
-        "Value": "normal"
-    },
-    {
-        "DropItemId": 969,
-        "Id": 5937,
-        "Name": "flex-grow",
-        "Value": "1"
-    },
-    {
-        "DropItemId": 969,
-        "Id": 5938,
-        "Name": "text-align",
-        "Value": "right"
-    },
-    {
-        "DropItemId": 969,
-        "Id": 5939,
-        "Name": "font-size",
-        "Value": "10px"
-    },
-    {
-        "DropItemId": 969,
-        "Id": 5940,
-        "Name": "height",
-        "Value": "25px"
-    },
-    {
-        "DropItemId": 969,
-        "Id": 5941,
-        "Name": "font-style",
-        "Value": "normal"
-    },
-    {
-        "DropItemId": 969,
-        "Id": 5942,
-        "Name": "font-weight",
-        "Value": "normal"
-    },
-    {
-        "DropItemId": 970,
-        "Id": 5943,
-        "Name": "flex-grow",
-        "Value": "1"
-    },
-    {
-        "DropItemId": 970,
-        "Id": 5944,
-        "Name": "text-align",
-        "Value": "right"
-    },
-    {
-        "DropItemId": 970,
-        "Id": 5945,
-        "Name": "font-size",
-        "Value": "10px"
-    },
-    {
-        "DropItemId": 970,
-        "Id": 5946,
-        "Name": "height",
-        "Value": "25px"
-    },
-    {
-        "DropItemId": 970,
-        "Id": 5947,
-        "Name": "font-style",
-        "Value": "normal"
-    },
-    {
-        "DropItemId": 970,
-        "Id": 5948,
-        "Name": "font-weight",
-        "Value": "normal"
-    },
-    {
-        "DropItemId": 971,
-        "Id": 5949,
-        "Name": "flex-grow",
-        "Value": "1"
-    },
-    {
-        "DropItemId": 971,
-        "Id": 5950,
-        "Name": "text-align",
-        "Value": "left"
-    },
-    {
-        "DropItemId": 971,
-        "Id": 5951,
-        "Name": "font-size",
-        "Value": "10px"
-    },
-    {
-        "DropItemId": 971,
-        "Id": 5952,
-        "Name": "height",
-        "Value": "25px"
-    },
-    {
-        "DropItemId": 971,
-        "Id": 5953,
-        "Name": "font-style",
-        "Value": "italic"
-    },
-    {
-        "DropItemId": 971,
-        "Id": 5954,
-        "Name": "font-weight",
-        "Value": "normal"
-    },
-    {
-        "DropItemId": 971,
-        "Id": 5955,
-        "Name": "AddCurrencySymbol",
-        "Value": "left"
-    },
-    {
-        "DropItemId": 971,
-        "Id": 5956,
-        "Name": "AddCurrencySymbolFooter",
-        "Value": "right"
-    },
-    {
-        "DropItemId": 972,
-        "Id": 5957,
-        "Name": "flex-grow",
-        "Value": "1"
-    },
-    {
-        "DropItemId": 972,
-        "Id": 5958,
-        "Name": "text-align",
-        "Value": "left"
-    },
-    {
-        "DropItemId": 972,
-        "Id": 5959,
-        "Name": "font-size",
-        "Value": "12px"
-    },
-    {
-        "DropItemId": 972,
-        "Id": 5960,
-        "Name": "height",
-        "Value": "25px"
-    },
-    {
-        "DropItemId": 972,
-        "Id": 5961,
-        "Name": "font-style",
-        "Value": "normal"
-    },
-    {
-        "DropItemId": 972,
-        "Id": 5962,
-        "Name": "font-weight",
-        "Value": "normal"
-    },
-    {
-        "DropItemId": 973,
-        "Id": 5963,
-        "Name": "flex-grow",
-        "Value": "1"
-    },
-    {
-        "DropItemId": 973,
-        "Id": 5964,
-        "Name": "text-align",
-        "Value": "left"
-    },
-    {
-        "DropItemId": 973,
-        "Id": 5965,
-        "Name": "font-size",
-        "Value": "10px"
-    },
-    {
-        "DropItemId": 973,
-        "Id": 5966,
-        "Name": "height",
-        "Value": "25px"
-    },
-    {
-        "DropItemId": 973,
-        "Id": 5967,
-        "Name": "font-style",
-        "Value": "normal"
-    },
-    {
-        "DropItemId": 973,
-        "Id": 5968,
-        "Name": "font-weight",
-        "Value": "normal"
-    },
-    {
-        "DropItemId": 974,
-        "Id": 5969,
-        "Name": "flex-grow",
-        "Value": "1"
-    },
-    {
-        "DropItemId": 974,
-        "Id": 5970,
-        "Name": "text-align",
-        "Value": "left"
-    },
-    {
-        "DropItemId": 974,
-        "Id": 5971,
-        "Name": "font-size",
-        "Value": "12px"
-    },
-    {
-        "DropItemId": 974,
-        "Id": 5972,
-        "Name": "height",
-        "Value": "25px"
-    },
-    {
-        "DropItemId": 974,
-        "Id": 5973,
-        "Name": "font-style",
-        "Value": "normal"
-    },
-    {
-        "DropItemId": 974,
-        "Id": 5974,
-        "Name": "font-weight",
-        "Value": "bold"
-    },
-    {
-        "DropItemId": 975,
-        "Id": 5975,
-        "Name": "flex-grow",
-        "Value": "1"
-    },
-    {
-        "DropItemId": 975,
-        "Id": 5976,
-        "Name": "text-align",
-        "Value": "left"
-    },
-    {
-        "DropItemId": 975,
-        "Id": 5977,
-        "Name": "font-size",
-        "Value": "10px"
-    },
-    {
-        "DropItemId": 975,
-        "Id": 5978,
-        "Name": "height",
-        "Value": "25px"
-    },
-    {
-        "DropItemId": 975,
-        "Id": 5979,
-        "Name": "font-style",
-        "Value": "normal"
-    },
-    {
-        "DropItemId": 975,
-        "Id": 5980,
-        "Name": "font-weight",
-        "Value": "normal"
-    },
-    {
-        "DropItemId": 976,
-        "Id": 5981,
-        "Name": "flex-grow",
-        "Value": "1"
-    },
-    {
-        "DropItemId": 976,
-        "Id": 5982,
-        "Name": "text-align",
-        "Value": "left"
-    },
-    {
-        "DropItemId": 976,
-        "Id": 5983,
-        "Name": "font-size",
-        "Value": "10px"
-    },
-    {
-        "DropItemId": 976,
-        "Id": 5984,
-        "Name": "height",
-        "Value": "25px"
-    },
-    {
-        "DropItemId": 976,
-        "Id": 5985,
-        "Name": "font-style",
-        "Value": "normal"
-    },
-    {
-        "DropItemId": 976,
-        "Id": 5986,
-        "Name": "font-weight",
-        "Value": "normal"
-    },
-    {
-        "DropItemId": 977,
-        "Id": 5987,
-        "Name": "flex-grow",
-        "Value": "1"
-    },
-    {
-        "DropItemId": 977,
-        "Id": 5988,
-        "Name": "text-align",
-        "Value": "left"
-    },
-    {
-        "DropItemId": 977,
-        "Id": 5989,
-        "Name": "font-size",
-        "Value": "10px"
-    },
-    {
-        "DropItemId": 977,
-        "Id": 5990,
-        "Name": "height",
-        "Value": "25px"
-    },
-    {
-        "DropItemId": 977,
-        "Id": 5991,
-        "Name": "font-style",
-        "Value": "normal"
-    },
-    {
-        "DropItemId": 977,
-        "Id": 5992,
-        "Name": "font-weight",
-        "Value": "bold"
-    },
-    {
-        "DropItemId": 978,
-        "Id": 5993,
-        "Name": "flex-grow",
-        "Value": "1"
-    },
-    {
-        "DropItemId": 978,
-        "Id": 5994,
-        "Name": "text-align",
-        "Value": "center"
-    },
-    {
-        "DropItemId": 978,
-        "Id": 5995,
-        "Name": "font-size",
-        "Value": "10px"
-    },
-    {
-        "DropItemId": 978,
-        "Id": 5996,
-        "Name": "height",
-        "Value": "25px"
-    },
-    {
-        "DropItemId": 978,
-        "Id": 5997,
-        "Name": "font-style",
-        "Value": "italic"
-    },
-    {
-        "DropItemId": 978,
-        "Id": 5998,
-        "Name": "font-weight",
-        "Value": "normal"
-    },
-    {
-        "DropItemId": 979,
-        "Id": 5999,
-        "Name": "flex-grow",
-        "Value": "1"
-    },
-    {
-        "DropItemId": 979,
-        "Id": 6000,
-        "Name": "text-align",
-        "Value": "left"
-    },
-    {
-        "DropItemId": 979,
-        "Id": 6001,
-        "Name": "font-size",
-        "Value": "12px"
-    },
-    {
-        "DropItemId": 979,
-        "Id": 6002,
-        "Name": "height",
-        "Value": "25px"
-    },
-    {
-        "DropItemId": 979,
-        "Id": 6003,
-        "Name": "font-style",
-        "Value": "normal"
-    },
-    {
-        "DropItemId": 979,
-        "Id": 6004,
-        "Name": "font-weight",
-        "Value": "normal"
-    },
-    {
-        "DropItemId": 980,
-        "Id": 6005,
-        "Name": "flex-grow",
-        "Value": "1"
-    },
-    {
-        "DropItemId": 980,
-        "Id": 6006,
-        "Name": "text-align",
-        "Value": "left"
-    },
-    {
-        "DropItemId": 980,
-        "Id": 6007,
-        "Name": "font-size",
-        "Value": "12px"
-    },
-    {
-        "DropItemId": 980,
-        "Id": 6008,
-        "Name": "height",
-        "Value": "25px"
-    },
-    {
-        "DropItemId": 980,
-        "Id": 6009,
-        "Name": "font-style",
-        "Value": "normal"
-    },
-    {
-        "DropItemId": 980,
-        "Id": 6010,
-        "Name": "font-weight",
-        "Value": "bold"
-    },
-    {
-        "DropItemId": 981,
-        "Id": 6011,
-        "Name": "flex-grow",
-        "Value": "1"
-    },
-    {
-        "DropItemId": 981,
-        "Id": 6012,
-        "Name": "text-align",
-        "Value": "left"
-    },
-    {
-        "DropItemId": 981,
-        "Id": 6013,
-        "Name": "font-size",
-        "Value": "12px"
-    },
-    {
-        "DropItemId": 981,
-        "Id": 6014,
-        "Name": "height",
-        "Value": "25px"
-    },
-    {
-        "DropItemId": 981,
-        "Id": 6015,
-        "Name": "font-style",
-        "Value": "normal"
-    },
-    {
-        "DropItemId": 981,
-        "Id": 6016,
-        "Name": "font-weight",
-        "Value": "bold"
-    },
-    {
-        "DropItemId": 982,
-        "Id": 6017,
-        "Name": "flex-grow",
-        "Value": "1"
-    },
-    {
-        "DropItemId": 982,
-        "Id": 6018,
-        "Name": "text-align",
-        "Value": "left"
-    },
-    {
-        "DropItemId": 982,
-        "Id": 6019,
-        "Name": "font-size",
-        "Value": "10px"
-    },
-    {
-        "DropItemId": 982,
-        "Id": 6020,
-        "Name": "height",
-        "Value": "25px"
-    },
-    {
-        "DropItemId": 982,
-        "Id": 6021,
-        "Name": "font-style",
-        "Value": "italic"
-    },
-    {
-        "DropItemId": 982,
-        "Id": 6022,
-        "Name": "font-weight",
-        "Value": "normal"
-    }
+  {
+    "DropItemId": 967,
+    "Id": 5925,
+    "Name": "flex-grow",
+    "Value": "1"
+  },
+  {
+    "DropItemId": 967,
+    "Id": 5926,
+    "Name": "text-align",
+    "Value": "center"
+  },
+  {
+    "DropItemId": 967,
+    "Id": 5927,
+    "Name": "font-size",
+    "Value": "16px"
+  },
+  {
+    "DropItemId": 967,
+    "Id": 5928,
+    "Name": "height",
+    "Value": "25px"
+  },
+  {
+    "DropItemId": 967,
+    "Id": 5929,
+    "Name": "font-style",
+    "Value": "normal"
+  },
+  {
+    "DropItemId": 967,
+    "Id": 5930,
+    "Name": "font-weight",
+    "Value": "bold"
+  },
+  {
+    "DropItemId": 968,
+    "Id": 5931,
+    "Name": "flex-grow",
+    "Value": "1"
+  },
+  {
+    "DropItemId": 968,
+    "Id": 5932,
+    "Name": "text-align",
+    "Value": "right"
+  },
+  {
+    "DropItemId": 968,
+    "Id": 5933,
+    "Name": "font-size",
+    "Value": "10px"
+  },
+  {
+    "DropItemId": 968,
+    "Id": 5934,
+    "Name": "height",
+    "Value": "25px"
+  },
+  {
+    "DropItemId": 968,
+    "Id": 5935,
+    "Name": "font-style",
+    "Value": "normal"
+  },
+  {
+    "DropItemId": 968,
+    "Id": 5936,
+    "Name": "font-weight",
+    "Value": "normal"
+  },
+  {
+    "DropItemId": 969,
+    "Id": 5937,
+    "Name": "flex-grow",
+    "Value": "1"
+  },
+  {
+    "DropItemId": 969,
+    "Id": 5938,
+    "Name": "text-align",
+    "Value": "right"
+  },
+  {
+    "DropItemId": 969,
+    "Id": 5939,
+    "Name": "font-size",
+    "Value": "10px"
+  },
+  {
+    "DropItemId": 969,
+    "Id": 5940,
+    "Name": "height",
+    "Value": "25px"
+  },
+  {
+    "DropItemId": 969,
+    "Id": 5941,
+    "Name": "font-style",
+    "Value": "normal"
+  },
+  {
+    "DropItemId": 969,
+    "Id": 5942,
+    "Name": "font-weight",
+    "Value": "normal"
+  },
+  {
+    "DropItemId": 970,
+    "Id": 5943,
+    "Name": "flex-grow",
+    "Value": "1"
+  },
+  {
+    "DropItemId": 970,
+    "Id": 5944,
+    "Name": "text-align",
+    "Value": "right"
+  },
+  {
+    "DropItemId": 970,
+    "Id": 5945,
+    "Name": "font-size",
+    "Value": "10px"
+  },
+  {
+    "DropItemId": 970,
+    "Id": 5946,
+    "Name": "height",
+    "Value": "25px"
+  },
+  {
+    "DropItemId": 970,
+    "Id": 5947,
+    "Name": "font-style",
+    "Value": "normal"
+  },
+  {
+    "DropItemId": 970,
+    "Id": 5948,
+    "Name": "font-weight",
+    "Value": "normal"
+  },
+  {
+    "DropItemId": 971,
+    "Id": 5949,
+    "Name": "flex-grow",
+    "Value": "1"
+  },
+  {
+    "DropItemId": 971,
+    "Id": 5950,
+    "Name": "text-align",
+    "Value": "left"
+  },
+  {
+    "DropItemId": 971,
+    "Id": 5951,
+    "Name": "font-size",
+    "Value": "10px"
+  },
+  {
+    "DropItemId": 971,
+    "Id": 5952,
+    "Name": "height",
+    "Value": "25px"
+  },
+  {
+    "DropItemId": 971,
+    "Id": 5953,
+    "Name": "font-style",
+    "Value": "italic"
+  },
+  {
+    "DropItemId": 971,
+    "Id": 5954,
+    "Name": "font-weight",
+    "Value": "normal"
+  },
+  {
+    "DropItemId": 971,
+    "Id": 5955,
+    "Name": "AddCurrencySymbol",
+    "Value": "left"
+  },
+  {
+    "DropItemId": 971,
+    "Id": 5956,
+    "Name": "AddCurrencySymbolFooter",
+    "Value": "right"
+  },
+  {
+    "DropItemId": 972,
+    "Id": 5957,
+    "Name": "flex-grow",
+    "Value": "1"
+  },
+  {
+    "DropItemId": 972,
+    "Id": 5958,
+    "Name": "text-align",
+    "Value": "left"
+  },
+  {
+    "DropItemId": 972,
+    "Id": 5959,
+    "Name": "font-size",
+    "Value": "12px"
+  },
+  {
+    "DropItemId": 972,
+    "Id": 5960,
+    "Name": "height",
+    "Value": "25px"
+  },
+  {
+    "DropItemId": 972,
+    "Id": 5961,
+    "Name": "font-style",
+    "Value": "normal"
+  },
+  {
+    "DropItemId": 972,
+    "Id": 5962,
+    "Name": "font-weight",
+    "Value": "normal"
+  },
+  {
+    "DropItemId": 973,
+    "Id": 5963,
+    "Name": "flex-grow",
+    "Value": "1"
+  },
+  {
+    "DropItemId": 973,
+    "Id": 5964,
+    "Name": "text-align",
+    "Value": "left"
+  },
+  {
+    "DropItemId": 973,
+    "Id": 5965,
+    "Name": "font-size",
+    "Value": "10px"
+  },
+  {
+    "DropItemId": 973,
+    "Id": 5966,
+    "Name": "height",
+    "Value": "25px"
+  },
+  {
+    "DropItemId": 973,
+    "Id": 5967,
+    "Name": "font-style",
+    "Value": "normal"
+  },
+  {
+    "DropItemId": 973,
+    "Id": 5968,
+    "Name": "font-weight",
+    "Value": "normal"
+  },
+  {
+    "DropItemId": 974,
+    "Id": 5969,
+    "Name": "flex-grow",
+    "Value": "1"
+  },
+  {
+    "DropItemId": 974,
+    "Id": 5970,
+    "Name": "text-align",
+    "Value": "left"
+  },
+  {
+    "DropItemId": 974,
+    "Id": 5971,
+    "Name": "font-size",
+    "Value": "12px"
+  },
+  {
+    "DropItemId": 974,
+    "Id": 5972,
+    "Name": "height",
+    "Value": "25px"
+  },
+  {
+    "DropItemId": 974,
+    "Id": 5973,
+    "Name": "font-style",
+    "Value": "normal"
+  },
+  {
+    "DropItemId": 974,
+    "Id": 5974,
+    "Name": "font-weight",
+    "Value": "bold"
+  },
+  {
+    "DropItemId": 975,
+    "Id": 5975,
+    "Name": "flex-grow",
+    "Value": "1"
+  },
+  {
+    "DropItemId": 975,
+    "Id": 5976,
+    "Name": "text-align",
+    "Value": "left"
+  },
+  {
+    "DropItemId": 975,
+    "Id": 5977,
+    "Name": "font-size",
+    "Value": "10px"
+  },
+  {
+    "DropItemId": 975,
+    "Id": 5978,
+    "Name": "height",
+    "Value": "25px"
+  },
+  {
+    "DropItemId": 975,
+    "Id": 5979,
+    "Name": "font-style",
+    "Value": "normal"
+  },
+  {
+    "DropItemId": 975,
+    "Id": 5980,
+    "Name": "font-weight",
+    "Value": "normal"
+  },
+  {
+    "DropItemId": 976,
+    "Id": 5981,
+    "Name": "flex-grow",
+    "Value": "1"
+  },
+  {
+    "DropItemId": 976,
+    "Id": 5982,
+    "Name": "text-align",
+    "Value": "left"
+  },
+  {
+    "DropItemId": 976,
+    "Id": 5983,
+    "Name": "font-size",
+    "Value": "10px"
+  },
+  {
+    "DropItemId": 976,
+    "Id": 5984,
+    "Name": "height",
+    "Value": "25px"
+  },
+  {
+    "DropItemId": 976,
+    "Id": 5985,
+    "Name": "font-style",
+    "Value": "normal"
+  },
+  {
+    "DropItemId": 976,
+    "Id": 5986,
+    "Name": "font-weight",
+    "Value": "normal"
+  },
+  {
+    "DropItemId": 977,
+    "Id": 5987,
+    "Name": "flex-grow",
+    "Value": "1"
+  },
+  {
+    "DropItemId": 977,
+    "Id": 5988,
+    "Name": "text-align",
+    "Value": "left"
+  },
+  {
+    "DropItemId": 977,
+    "Id": 5989,
+    "Name": "font-size",
+    "Value": "10px"
+  },
+  {
+    "DropItemId": 977,
+    "Id": 5990,
+    "Name": "height",
+    "Value": "25px"
+  },
+  {
+    "DropItemId": 977,
+    "Id": 5991,
+    "Name": "font-style",
+    "Value": "normal"
+  },
+  {
+    "DropItemId": 977,
+    "Id": 5992,
+    "Name": "font-weight",
+    "Value": "bold"
+  },
+  {
+    "DropItemId": 978,
+    "Id": 5993,
+    "Name": "flex-grow",
+    "Value": "1"
+  },
+  {
+    "DropItemId": 978,
+    "Id": 5994,
+    "Name": "text-align",
+    "Value": "center"
+  },
+  {
+    "DropItemId": 978,
+    "Id": 5995,
+    "Name": "font-size",
+    "Value": "10px"
+  },
+  {
+    "DropItemId": 978,
+    "Id": 5996,
+    "Name": "height",
+    "Value": "25px"
+  },
+  {
+    "DropItemId": 978,
+    "Id": 5997,
+    "Name": "font-style",
+    "Value": "italic"
+  },
+  {
+    "DropItemId": 978,
+    "Id": 5998,
+    "Name": "font-weight",
+    "Value": "normal"
+  },
+  {
+    "DropItemId": 979,
+    "Id": 5999,
+    "Name": "flex-grow",
+    "Value": "1"
+  },
+  {
+    "DropItemId": 979,
+    "Id": 6000,
+    "Name": "text-align",
+    "Value": "left"
+  },
+  {
+    "DropItemId": 979,
+    "Id": 6001,
+    "Name": "font-size",
+    "Value": "12px"
+  },
+  {
+    "DropItemId": 979,
+    "Id": 6002,
+    "Name": "height",
+    "Value": "25px"
+  },
+  {
+    "DropItemId": 979,
+    "Id": 6003,
+    "Name": "font-style",
+    "Value": "normal"
+  },
+  {
+    "DropItemId": 979,
+    "Id": 6004,
+    "Name": "font-weight",
+    "Value": "normal"
+  },
+  {
+    "DropItemId": 980,
+    "Id": 6005,
+    "Name": "flex-grow",
+    "Value": "1"
+  },
+  {
+    "DropItemId": 980,
+    "Id": 6006,
+    "Name": "text-align",
+    "Value": "left"
+  },
+  {
+    "DropItemId": 980,
+    "Id": 6007,
+    "Name": "font-size",
+    "Value": "12px"
+  },
+  {
+    "DropItemId": 980,
+    "Id": 6008,
+    "Name": "height",
+    "Value": "25px"
+  },
+  {
+    "DropItemId": 980,
+    "Id": 6009,
+    "Name": "font-style",
+    "Value": "normal"
+  },
+  {
+    "DropItemId": 980,
+    "Id": 6010,
+    "Name": "font-weight",
+    "Value": "bold"
+  },
+  {
+    "DropItemId": 981,
+    "Id": 6011,
+    "Name": "flex-grow",
+    "Value": "1"
+  },
+  {
+    "DropItemId": 981,
+    "Id": 6012,
+    "Name": "text-align",
+    "Value": "left"
+  },
+  {
+    "DropItemId": 981,
+    "Id": 6013,
+    "Name": "font-size",
+    "Value": "12px"
+  },
+  {
+    "DropItemId": 981,
+    "Id": 6014,
+    "Name": "height",
+    "Value": "25px"
+  },
+  {
+    "DropItemId": 981,
+    "Id": 6015,
+    "Name": "font-style",
+    "Value": "normal"
+  },
+  {
+    "DropItemId": 981,
+    "Id": 6016,
+    "Name": "font-weight",
+    "Value": "bold"
+  },
+  {
+    "DropItemId": 982,
+    "Id": 6017,
+    "Name": "flex-grow",
+    "Value": "1"
+  },
+  {
+    "DropItemId": 982,
+    "Id": 6018,
+    "Name": "text-align",
+    "Value": "left"
+  },
+  {
+    "DropItemId": 982,
+    "Id": 6019,
+    "Name": "font-size",
+    "Value": "10px"
+  },
+  {
+    "DropItemId": 982,
+    "Id": 6020,
+    "Name": "height",
+    "Value": "25px"
+  },
+  {
+    "DropItemId": 982,
+    "Id": 6021,
+    "Name": "font-style",
+    "Value": "italic"
+  },
+  {
+    "DropItemId": 982,
+    "Id": 6022,
+    "Name": "font-weight",
+    "Value": "normal"
+  }
 ]

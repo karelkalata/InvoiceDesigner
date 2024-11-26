@@ -2,6 +2,7 @@
 {
 	public static class ConstsCssProperty
 	{
+
 		public const string Height = "height";
 		public const string Width = "width";
 		public const string FlexGrow = "flex-grow";

@@ -17,5 +17,6 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Company
 		public decimal DefaultVat { get; set; } = 21;
 
 		public ICollection<BankAutocompleteDto> Banks { get; set; } = new List<BankAutocompleteDto>();
+
 	}
 }

@@ -11,5 +11,6 @@
 		public string? TaxId { get; set; }
 
 		public string? VatId { get; set; }
+
 	}
 }

@@ -15,5 +15,6 @@ namespace InvoiceDesigner.Domain.Shared.Interfaces
 		Task<bool> DeleteFormDesignerAsync(FormDesigner formDesigner);
 
 		void DeleteDropItemsFromContext(DropItem dropItem);
+
 	}
 }

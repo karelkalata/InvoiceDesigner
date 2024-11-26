@@ -11,5 +11,6 @@
 		public int DropItemId { get; set; }
 
 		public DropItem DropItem { get; set; } = null!;
+
 	}
 }

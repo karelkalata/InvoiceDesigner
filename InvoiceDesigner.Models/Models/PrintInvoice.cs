@@ -9,5 +9,6 @@
 		public int InvoiceId { get; set; }
 
 		public int PrintFormId { get; set; }
+
 	}
 }

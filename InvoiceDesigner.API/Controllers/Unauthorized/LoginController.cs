@@ -34,6 +34,5 @@ namespace InvoiceDesigner.API.Controllers.Unauthorized
 				return BadRequest(new { message = ex.Message });
 			}
 		}
-
 	}
 }

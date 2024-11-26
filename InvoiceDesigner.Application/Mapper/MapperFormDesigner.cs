@@ -11,6 +11,7 @@ namespace InvoiceDesigner.Application.Mapper
 			CreateMap<FormDesigner, FormDesignerEditDto>();
 
 			CreateMap<FormDesigner, FormDesignersAutocompleteDto>();
+
 		}
 	}
 }

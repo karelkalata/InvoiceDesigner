@@ -8,5 +8,6 @@ namespace InvoiceDesigner.Application.Interfaces
 		Task<Bank?> GetBankByIdAsync(int id);
 
 		Task<IReadOnlyCollection<BankAutocompleteDto>> GetAllBanksAutocompleteDto();
+
 	}
 }

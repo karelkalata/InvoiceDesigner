@@ -11,5 +11,6 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Bank
 		public int CurrencyId { get; set; }
 
 		public int CompanyId { get; set; }
+
 	}
 }

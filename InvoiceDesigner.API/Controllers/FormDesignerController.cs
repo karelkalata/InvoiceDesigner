@@ -101,8 +101,15 @@ namespace InvoiceDesigner.API.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IReadOnlyCollection<FormDesignersAutocompleteDto>))]
 		public async Task<IActionResult> GetAllDesignersAutocompleteDto()
 		{
-			var result = await _service.GetAllFormDesignersAutocompleteDto();
-			return Ok(result);
+			try
+			{
+				var result = await _service.GetAllFormDesignersAutocompleteDto();
+				return Ok(result);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(new { message = ex.Message });
+			}
 		}
 
 
@@ -110,8 +117,15 @@ namespace InvoiceDesigner.API.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DropItemEditDto))]
 		public IActionResult AddEmptyBox()
 		{
-			var result = _service.AddEmptyBox();
-			return Ok(result);
+			try
+			{
+				var result = _service.AddEmptyBox();
+				return Ok(result);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(new { message = ex.Message });
+			}
 		}
 
 	}

@@ -10,5 +10,6 @@
 
 		public ICollection<ProductPrice> ProductPrice { get; set; } = new List<ProductPrice>();
 
+
 	}
 }

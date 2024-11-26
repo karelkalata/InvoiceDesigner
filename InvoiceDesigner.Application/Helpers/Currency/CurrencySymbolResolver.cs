@@ -9,7 +9,9 @@ namespace InvoiceDesigner.Application.Mapper
 	{
 		public string Resolve(Currency source, CurrencyPrintDto destination, string destMember, ResolutionContext context)
 		{
+
 			return CurrencyUnicodeHEX.GetCurrencyUnicodeHEX(source.Name);
+
 		}
 	}
 }

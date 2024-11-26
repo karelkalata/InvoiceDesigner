@@ -5,6 +5,8 @@ namespace InvoiceDesigner.Application.Interfaces
 {
 	public interface ILoginService
 	{
+
 		Task<ResponseJwtToken> LoginAsync(UserLoginDto dto);
+
 	}
 }

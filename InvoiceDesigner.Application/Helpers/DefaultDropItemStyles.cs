@@ -28,5 +28,4 @@ namespace InvoiceDesigner.Application.Helpers
 			};
 		}
 	}
-
 }

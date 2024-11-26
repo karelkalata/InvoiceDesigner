@@ -13,6 +13,7 @@ namespace InvoiceDesigner.Application.Mapper
 			CreateMap<Bank, BankEditDto>();
 
 			CreateMap<Bank, BankPrintDto>();
+
 		}
 	}
 }

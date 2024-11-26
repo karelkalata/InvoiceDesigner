@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Net.Http.Headers;
 
+
 namespace InvoiceDesigner.WebApp.Helpers
 {
 	public class HttpRequestHelper

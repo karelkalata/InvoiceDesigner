@@ -13,7 +13,6 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.InvoiceItem
 		public decimal Quantity { get; set; } = 1;
 
 		public decimal Total => Price * Quantity;
-
 	}
 }
 

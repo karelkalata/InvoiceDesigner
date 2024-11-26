@@ -20,6 +20,7 @@ namespace InvoiceDesigner.Application.Services.ServiceUser
 				return new List<Company>();
 
 			return user.Companies.ToList();
+
 		}
 	}
 }

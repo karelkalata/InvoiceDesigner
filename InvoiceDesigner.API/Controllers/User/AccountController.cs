@@ -49,6 +49,5 @@ namespace InvoiceDesigner.API.Controllers.User
 				return BadRequest(new { message = ex.Message });
 			}
 		}
-
 	}
 }

@@ -2,6 +2,8 @@
 {
 	public static class Constants
 	{
+
 		public const int SetupRows = 32;
+
 	}
 }

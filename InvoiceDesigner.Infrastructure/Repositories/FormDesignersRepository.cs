@@ -14,7 +14,6 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 			_context = context;
 		}
 
-
 		public async Task<IReadOnlyCollection<FormDesigner>> GetAllFormDesignersAsync()
 		{
 			return await _context.FormDesigners

@@ -55,6 +55,7 @@ namespace InvoiceDesigner.Application.Services
 			return result;
 		}
 
+
 		public async Task<ResponsePaged<InvoicesViewDto>> GetPagedInvoicesAsync(QueryPaged queryPaged)
 		{
 			queryPaged.PageSize = Math.Max(queryPaged.PageSize, 1);

@@ -11,5 +11,6 @@ namespace InvoiceDesigner.Domain.Shared.DTOs
 		public IReadOnlyCollection<CurrencyAutocompleteDto> Currencies { get; set; } = null!;
 
 		public IReadOnlyCollection<BankAutocompleteDto> FileredBanks { get; set; } = new List<BankAutocompleteDto>();
+
 	}
 }

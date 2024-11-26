@@ -14,6 +14,7 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 			_context = context;
 		}
 
+
 		public async Task<Guid> GenerateDownloadLinkAsync(PrintInvoice entity)
 		{
 			await _context.PrintInvoices.AddAsync(entity);

@@ -42,6 +42,7 @@ namespace InvoiceDesigner.Application.Services
 			};
 		}
 
+
 		public async Task<ResponseRedirect> CreateCustomerAsync(CustomerEditDto newCustomer)
 		{
 			var existsCustomer = new Customer();

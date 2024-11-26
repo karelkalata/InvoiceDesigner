@@ -12,6 +12,7 @@
 							 select $"{Uri.EscapeDataString(p.Name)}={Uri.EscapeDataString(value.ToString() ?? string.Empty)}";
 
 			return string.Join("&", properties);
+
 		}
 	}
 }

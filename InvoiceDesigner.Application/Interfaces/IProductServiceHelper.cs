@@ -2,6 +2,8 @@
 {
 	public interface IProductServiceHelper
 	{
+
 		Task<bool> IsCurrencyUsedInProduct(int currencyId);
+
 	}
 }

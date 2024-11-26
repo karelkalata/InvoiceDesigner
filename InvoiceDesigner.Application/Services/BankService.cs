@@ -27,5 +27,6 @@ namespace InvoiceDesigner.Application.Services
 			var banks = await _repository.GetAllBanksAsync();
 			return _mapper.Map<IReadOnlyCollection<BankAutocompleteDto>>(banks);
 		}
+
 	}
 }

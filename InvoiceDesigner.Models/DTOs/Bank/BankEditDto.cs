@@ -24,5 +24,6 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Bank
 		public CurrencyAutocompleteDto Currency { get; set; } = null!;
 
 		public int CompanyId { get; set; }
+
 	}
 }

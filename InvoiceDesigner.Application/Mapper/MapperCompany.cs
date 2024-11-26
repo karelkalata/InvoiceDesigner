@@ -15,7 +15,6 @@ namespace InvoiceDesigner.Application.Mapper
 			CreateMap<Company, CompanyViewDto>();
 
 			CreateMap<Company, CompanyPrintDto>();
-
 		}
 	}
 }

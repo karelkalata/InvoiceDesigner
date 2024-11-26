@@ -21,7 +21,5 @@ namespace InvoiceDesigner.Application.Interfaces.InterfacesUser
 
 		Task<ResponseBoolean> CheckLoginName(string loginName);
 
-
-
 	}
 }

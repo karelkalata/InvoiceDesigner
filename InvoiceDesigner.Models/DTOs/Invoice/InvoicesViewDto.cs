@@ -25,6 +25,5 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Invoice
 		public string CurrencyName { get; set; } = string.Empty;
 
 		public decimal TotalAmount { get; set; } = decimal.Zero;
-
 	}
 }

@@ -30,5 +30,6 @@ namespace InvoiceDesigner.Domain.Shared.Interfaces
 		Task<bool> IsCurrencyUsedInInvoices(int currencyId);
 
 		Task<bool> IsProductUsedInInvoiceItems(int productId);
+
 	}
 }

@@ -10,5 +10,6 @@ namespace InvoiceDesigner.Domain.Shared.Interfaces
 		Task<Bank?> GetBankByIdAsync(int id);
 
 		Task<bool> IsCurrencyUsedInBanksAsync(int currencyId);
+
 	}
 }

@@ -13,6 +13,7 @@ namespace InvoiceDesigner.Application.Mapper
 					dest => dest.CssStyleEditDto,
 					opt => opt.MapFrom(src => src.CssStyle)
 				);
+
 		}
 	}
 }

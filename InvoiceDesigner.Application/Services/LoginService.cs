@@ -22,7 +22,6 @@ namespace InvoiceDesigner.Application.Services
 			_configuration = configuration;
 		}
 
-
 		public async Task<ResponseJwtToken> LoginAsync(UserLoginDto dto)
 		{
 			var result = new ResponseJwtToken

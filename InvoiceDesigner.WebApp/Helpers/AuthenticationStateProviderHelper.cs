@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
 using System.Text.Json;
 
+
 namespace InvoiceDesigner.WebApp.Helpers
 {
 	public class AuthenticationStateProviderHelper : AuthenticationStateProvider

@@ -132,8 +132,15 @@ namespace InvoiceDesigner.API.Controllers.Admin
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<CurrencyAutocompleteDto>))]
 		public async Task<IActionResult> GetCurrencyAutocompleteDto()
 		{
-			var result = await _service.GetCurrencyAutocompleteDto();
-			return Ok(result);
+			try
+			{
+				var result = await _service.GetCurrencyAutocompleteDto();
+				return Ok(result);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(new { message = ex.Message });
+			}
 		}
 
 		[HttpGet("FilteringData")]

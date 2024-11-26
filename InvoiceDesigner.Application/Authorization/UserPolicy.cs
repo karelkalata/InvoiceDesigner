@@ -2,6 +2,8 @@
 {
 	public class UserPolicy
 	{
+
 		public const string IsAdmin = "IsAdmin";
+
 	}
 }

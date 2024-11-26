@@ -9,6 +9,5 @@
 		public decimal Quantity { get; set; } = 1;
 
 		public decimal Total => Price * Quantity;
-
 	}
 }

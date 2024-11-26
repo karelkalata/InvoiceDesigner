@@ -14,6 +14,7 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 			_context = context;
 		}
 
+
 		public async Task<IReadOnlyCollection<User>> GetUsersAsync(int pageSize, int pageNumber, string searchString, Func<IQueryable<User>, IOrderedQueryable<User>> orderBy)
 		{
 			int skip = (pageNumber - 1) * pageSize;

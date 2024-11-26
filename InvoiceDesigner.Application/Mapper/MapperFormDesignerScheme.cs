@@ -9,6 +9,7 @@ namespace InvoiceDesigner.Application.Mapper
 		public MapperFormDesignerScheme()
 		{
 			CreateMap<FormDesignerScheme, FormDesignerSchemeEditDto>();
+
 		}
 	}
 }

@@ -47,6 +47,7 @@ namespace InvoiceDesigner.Application.Services
 			};
 		}
 
+
 		public async Task<ResponseRedirect> CreateCompanyAsync(CompanyEditDto companyEditDto)
 		{
 			var currency = await ValidateInputAsync(companyEditDto);

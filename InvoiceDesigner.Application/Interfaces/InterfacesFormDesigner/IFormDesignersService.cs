@@ -19,6 +19,5 @@ namespace InvoiceDesigner.Application.Interfaces.InterfacesFormDesigner
 		Task<ResponseBoolean> DeleteFormDesignerAsync(int id);
 
 		DropItemEditDto AddEmptyBox();
-
 	}
 }

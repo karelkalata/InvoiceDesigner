@@ -31,5 +31,6 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Company
 		{
 			return Name;
 		}
+
 	}
 }

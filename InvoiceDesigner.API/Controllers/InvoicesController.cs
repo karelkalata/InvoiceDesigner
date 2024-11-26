@@ -32,7 +32,6 @@ namespace InvoiceDesigner.API.Controllers
 			_service = service;
 		}
 
-
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponsePaged<InvoicesViewDto>))]
 		public async Task<IActionResult> Index([FromQuery] QueryPaged queryPaged)
@@ -198,6 +197,5 @@ namespace InvoiceDesigner.API.Controllers
 				return BadRequest(new { message = ex.Message });
 			}
 		}
-
 	}
 }

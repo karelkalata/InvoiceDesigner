@@ -15,5 +15,6 @@
 		public string PasswordSalt { get; set; } = string.Empty;
 
 		public ICollection<Company> Companies { get; set; } = new List<Company>();
+
 	}
 }

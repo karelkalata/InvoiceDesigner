@@ -2,6 +2,8 @@
 {
 	public interface IBankServiceHelper
 	{
+
 		Task<bool> IsCurrencyUsedInBanks(int currencyId);
+
 	}
 }

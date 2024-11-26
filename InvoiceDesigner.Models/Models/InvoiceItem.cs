@@ -15,6 +15,7 @@
 		public decimal Price { get; set; } = decimal.Zero;
 
 		public decimal Quantity { get; set; } = decimal.Zero;
+
 	}
 
 }

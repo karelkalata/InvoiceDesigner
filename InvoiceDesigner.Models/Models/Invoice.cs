@@ -44,5 +44,6 @@ namespace InvoiceDesigner.Domain.Shared.Models
 
 		public ICollection<InvoiceItem> InvoiceItems { get; set; } = new List<InvoiceItem>();
 
+
 	}
 }

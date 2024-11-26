@@ -19,7 +19,6 @@ namespace InvoiceDesigner.Application.Mapper
 					dest => dest.CurrencySymbol,
 					opt => opt.MapFrom<CurrencySymbolResolver>()
 				);
-
 		}
 	}
 }

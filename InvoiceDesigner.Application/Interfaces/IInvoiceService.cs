@@ -27,6 +27,5 @@ namespace InvoiceDesigner.Application.Interfaces
 		Task<ResponseBoolean> ArchiveUnarchiveEntity(QueryInvoiceChangeArchive queryArchive);
 
 		Task<ResponseBoolean> ChangeInvoiceStatus(QueryInvoiceChangeStatus queryStatus);
-
 	}
 }

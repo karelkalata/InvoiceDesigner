@@ -21,5 +21,6 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.User
 		public string? Password { get; set; } = null;
 
 		public ICollection<CompanyAutocompleteDto> Companies { get; set; } = new List<CompanyAutocompleteDto>();
+
 	}
 }

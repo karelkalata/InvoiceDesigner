@@ -9,5 +9,6 @@ namespace InvoiceDesigner.Domain.Shared.Interfaces
 		Task<PrintInvoice?> GetPrintInvoicebyGuidAsync(Guid guid);
 
 		Task DeletePrintInvoicebyGuidAsync(PrintInvoice entity);
+
 	}
 }

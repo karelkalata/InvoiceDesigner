@@ -31,7 +31,6 @@ namespace InvoiceDesigner.API.Controllers
 			{
 				return BadRequest(new { message = ex.Message });
 			}
-
 		}
 
 		[AllowAnonymous]

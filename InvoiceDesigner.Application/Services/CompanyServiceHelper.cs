@@ -16,5 +16,6 @@ namespace InvoiceDesigner.Application.Services
 		{
 			return await _repository.IsCurrencyUsedInCompany(currencyId);
 		}
+
 	}
 }

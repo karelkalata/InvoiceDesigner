@@ -15,7 +15,6 @@ namespace InvoiceDesigner.Application.Mapper
 					dest => dest.ProductName,
 					opt => opt.MapFrom(src => src.Product.Name)
 				);
-
 		}
 	}
 }

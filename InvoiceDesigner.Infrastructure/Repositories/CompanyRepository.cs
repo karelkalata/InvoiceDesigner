@@ -15,7 +15,6 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 			_context = context;
 		}
 
-
 		public async Task<IReadOnlyCollection<Company>> GetCompaniesAsync(QueryPaged queryPaged, Func<IQueryable<Company>, IOrderedQueryable<Company>> orderBy)
 		{
 			int skip = (queryPaged.Page - 1) * queryPaged.PageSize;

@@ -18,5 +18,6 @@ namespace InvoiceDesigner.Domain.Shared.Interfaces
 		Task<bool> DeleteCurrencyAsync(Currency entity);
 
 		Task<int> GetCountCurrenciesAsync(bool showDeleted = false);
+
 	}
 }

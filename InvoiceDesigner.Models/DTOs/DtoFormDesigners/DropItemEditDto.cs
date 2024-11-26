@@ -21,5 +21,6 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.DtoFormDesigners
 		public int FormDesignerSchemeId { get; set; }
 
 		public List<CssStyleEditDto> CssStyleEditDto { get; set; } = new List<CssStyleEditDto>();
+
 	}
 }

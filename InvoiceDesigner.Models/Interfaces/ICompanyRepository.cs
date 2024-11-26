@@ -21,5 +21,6 @@ namespace InvoiceDesigner.Domain.Shared.Interfaces
 		Task<IReadOnlyCollection<Company>> GetAllCompaniesDto();
 
 		Task<bool> IsCurrencyUsedInCompany(int currencyId);
+
 	}
 }

@@ -3,5 +3,7 @@
 	public class ResponseJwtToken
 	{
 		public string JwtToken { get; set; } = string.Empty;
+
 	}
+
 }

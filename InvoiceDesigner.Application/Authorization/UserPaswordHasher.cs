@@ -9,6 +9,7 @@ namespace InvoiceDesigner.Application.Authorization
 		private const int iterations = 10000;
 		private static HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA512;
 
+
 		public static (string, string) CreateHash(string password)
 		{
 			byte[] salt = RandomNumberGenerator.GetBytes(keySize);
@@ -22,6 +23,7 @@ namespace InvoiceDesigner.Application.Authorization
 
 			return (Convert.ToHexString(hash), Convert.ToHexString(salt));
 		}
+
 
 		public static bool VerifyPassword(string password, string hash, string salt)
 		{

@@ -101,8 +101,15 @@ namespace InvoiceDesigner.API.Controllers.Admin
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> CheckLoginName(string f = "")
 		{
-			var result = await _service.CheckLoginName(f);
-			return Ok(result);
+			try
+			{
+				var result = await _service.CheckLoginName(f);
+				return Ok(result);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(new { message = ex.Message });
+			}
 		}
 
 	}

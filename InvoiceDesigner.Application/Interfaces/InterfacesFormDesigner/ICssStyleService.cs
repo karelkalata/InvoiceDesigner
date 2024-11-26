@@ -12,5 +12,6 @@ namespace InvoiceDesigner.Application.Interfaces.InterfacesFormDesigner
 		List<CssStyle> GetDefaultCssStyles();
 
 		void UpdateDefaultCssStyle(DropItem dropItem);
+
 	}
 }

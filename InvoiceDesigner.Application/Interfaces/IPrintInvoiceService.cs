@@ -7,5 +7,6 @@ namespace InvoiceDesigner.Application.Interfaces
 		Task<ResponsePdf> CreatePDF(Guid guid);
 
 		Task<ResponsePdfGuid> GenerateDownloadLink(int invoiceId, int printform);
+
 	}
 }

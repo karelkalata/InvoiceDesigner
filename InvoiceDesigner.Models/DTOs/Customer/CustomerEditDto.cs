@@ -15,5 +15,6 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Customer
 
 		[StringLength(50, ErrorMessage = "The {0} field must be a maximum of {1} characters long.")]
 		public string VatId { get; set; } = string.Empty;
+
 	}
 }

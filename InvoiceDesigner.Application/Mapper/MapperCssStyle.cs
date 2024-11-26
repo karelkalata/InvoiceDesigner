@@ -8,9 +8,7 @@ namespace InvoiceDesigner.Application.Mapper
 	{
 		public MapperCssStyle()
 		{
-
 			CreateMap<CssStyle, CssStyleEditDto>();
-
 		}
 	}
 }

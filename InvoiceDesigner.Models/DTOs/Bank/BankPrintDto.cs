@@ -20,5 +20,6 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Bank
 		{
 			return Name;
 		}
+
 	}
 }

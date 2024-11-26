@@ -28,7 +28,6 @@ namespace InvoiceDesigner.Application.Mapper
 					opt => opt.MapFrom(src => src.Company.Name)
 				);
 
-
 		}
 	}
 }

@@ -52,5 +52,6 @@ namespace InvoiceDesigner.Application.Services.ServiceFormDesigner
 					dropItem.CssStyle.Add(item);
 			}
 		}
+
 	}
 }

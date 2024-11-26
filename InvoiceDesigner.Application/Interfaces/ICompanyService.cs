@@ -26,6 +26,5 @@ namespace InvoiceDesigner.Application.Interfaces
 		Task<IReadOnlyCollection<CompanyAutocompleteDto>> GetAllCompanyAutocompleteDto(int userId, bool isAdmin);
 
 		Task<IReadOnlyCollection<CompanyAutocompleteDto>> FilteringData(string f);
-
 	}
 }

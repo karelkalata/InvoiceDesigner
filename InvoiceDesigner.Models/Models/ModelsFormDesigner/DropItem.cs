@@ -17,5 +17,4 @@
 		public List<CssStyle> CssStyle { get; set; } = new List<CssStyle>();
 
 	}
-
 }

@@ -11,5 +11,6 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Product
 		public CurrencyAutocompleteDto Currency { get; set; } = null!;
 
 		public decimal Price { get; set; }
+
 	}
 }

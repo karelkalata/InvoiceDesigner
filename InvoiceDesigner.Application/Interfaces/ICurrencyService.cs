@@ -26,6 +26,5 @@ namespace InvoiceDesigner.Application.Interfaces
 		Task<IReadOnlyCollection<CurrencyAutocompleteDto>> GetCurrencyAutocompleteDto();
 
 		Task<IReadOnlyCollection<CurrencyAutocompleteDto>> FilteringData(string f);
-
 	}
 }

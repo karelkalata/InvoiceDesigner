@@ -35,5 +35,6 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		{
 			return await _context.Invoices.AnyAsync(a => a.CurrencyId == currencyId);
 		}
+
 	}
 }

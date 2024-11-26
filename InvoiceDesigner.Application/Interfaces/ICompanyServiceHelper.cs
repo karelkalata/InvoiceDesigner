@@ -2,6 +2,8 @@
 {
 	public interface ICompanyServiceHelper
 	{
+
 		Task<bool> IsCurrencyUsedInCompany(int currencyId);
+
 	}
 }

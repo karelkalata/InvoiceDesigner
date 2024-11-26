@@ -10,5 +10,6 @@ namespace InvoiceDesigner.Application.Interfaces.InterfacesFormDesigner
 		List<DropItem> CreateListDropItems(FormDesigner formDesigner);
 
 		DropItem AddEmptyBox();
+
 	}
 }

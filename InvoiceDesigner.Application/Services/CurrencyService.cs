@@ -51,6 +51,7 @@ namespace InvoiceDesigner.Application.Services
 			};
 		}
 
+
 		public async Task<ResponseRedirect> CreateCurrencyAsync(CurrencyEditDto newCurrency)
 		{
 			var existingCurrency = new Currency();

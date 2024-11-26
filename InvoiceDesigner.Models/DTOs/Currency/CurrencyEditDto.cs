@@ -14,5 +14,6 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Currency
 		[Required]
 		[StringLength(100, ErrorMessage = "The {0} field must be a maximum of {1} characters long.")]
 		public string Description { get; set; } = string.Empty;
+
 	}
 }

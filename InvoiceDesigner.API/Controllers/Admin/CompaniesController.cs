@@ -20,7 +20,6 @@ namespace InvoiceDesigner.API.Controllers.Admin
 			_service = service;
 		}
 
-
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponsePaged<CompanyViewDto>))]
 		public async Task<IActionResult> Index([FromQuery] QueryPaged queryPaged)
@@ -117,8 +116,15 @@ namespace InvoiceDesigner.API.Controllers.Admin
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<CompanyAutocompleteDto>))]
 		public async Task<IActionResult> FilteringData(string f = "")
 		{
-			var result = await _service.FilteringData(f);
-			return Ok(result);
+			try
+			{
+				var result = await _service.FilteringData(f);
+				return Ok(result);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(new { message = ex.Message });
+			}
 		}
 
 		[HttpGet("GetAllCompanyAutocompleteDto")]

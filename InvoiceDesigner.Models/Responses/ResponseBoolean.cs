@@ -3,5 +3,6 @@
 	public class ResponseBoolean
 	{
 		public bool Result { get; set; }
+
 	}
 }

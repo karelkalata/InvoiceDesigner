@@ -11,5 +11,6 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Product
 		public string Name { get; set; } = string.Empty;
 
 		public ICollection<ProductPriceEditDto> ProductPrice { get; set; } = new List<ProductPriceEditDto>();
+
 	}
 }

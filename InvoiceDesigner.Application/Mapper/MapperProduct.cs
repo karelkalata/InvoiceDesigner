@@ -24,7 +24,6 @@ namespace InvoiceDesigner.Application.Mapper
 			CreateMap<Product, ProductsViewDto>();
 
 			CreateMap<ProductPrice, ProductPriceEditDto>();
-
 		}
 	}
 }
