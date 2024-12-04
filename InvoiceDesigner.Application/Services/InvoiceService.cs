@@ -152,7 +152,7 @@ namespace InvoiceDesigner.Application.Services
 
 		public async Task<ResponseBoolean> ArchiveUnarchiveEntity(QueryInvoiceChangeArchive queryArchive)
 		{
-			var existsEntity = await ValidateExistsEntityAsync(queryArchive.UserId, queryArchive.IsAdmin, queryArchive.EntityId);
+			var existsEntity = await ValidateExistsEntityAsync(queryArchive.UserId, queryArchive.IsAdmin, queryArchive.InvoiceId);
 			existsEntity.IsArchived = queryArchive.Archive;
 
 			var entityId = await _repository.UpdateInvoiceAsync(existsEntity);

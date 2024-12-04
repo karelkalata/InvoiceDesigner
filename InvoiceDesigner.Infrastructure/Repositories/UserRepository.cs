@@ -1,5 +1,6 @@
 ﻿using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,15 +16,20 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		}
 
 
-		public async Task<IReadOnlyCollection<User>> GetUsersAsync(int pageSize, int pageNumber, string searchString, Func<IQueryable<User>, IOrderedQueryable<User>> orderBy)
+		public async Task<IReadOnlyCollection<User>> GetUsersAsync(QueryPaged queryPaged, Func<IQueryable<User>, IOrderedQueryable<User>> orderBy)
 		{
-			int skip = (pageNumber - 1) * pageSize;
+			int skip = (queryPaged.Page - 1) * queryPaged.PageSize;
 
 			IQueryable<User> query = _context.Users.AsNoTracking();
 
-			if (!string.IsNullOrEmpty(searchString))
+			if (!queryPaged.ShowDeleted)
 			{
-				searchString = searchString.ToLower();
+				query = query.Where(e => e.IsDeleted == false);
+
+			}
+			if (!string.IsNullOrEmpty(queryPaged.SearchString))
+			{
+				var searchString = queryPaged.SearchString.ToLower();
 				query = query.Where(c => c.Name.ToLower().Contains(searchString) || c.Login.ToLower().Contains(searchString));
 			}
 
@@ -31,7 +37,7 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 
 			return await query
 				.Skip(skip)
-				.Take(pageSize)
+				.Take(queryPaged.PageSize)
 				.ToListAsync();
 		}
 
@@ -72,9 +78,16 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 			return await _context.SaveChangesAsync() > 0;
 		}
 
-		public async Task<int> GetCountUsersAsync()
+		public async Task<int> GetCountUsersAsync(bool showDeleted = false)
 		{
-			return await _context.Users.CountAsync();
+			IQueryable<User> query = _context.Users;
+
+			if (!showDeleted)
+			{
+				query = query.Where(e => e.IsDeleted == false);
+			}
+
+			return await query.CountAsync();
 		}
 
 	}

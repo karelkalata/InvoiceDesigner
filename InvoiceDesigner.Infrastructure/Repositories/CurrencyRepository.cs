@@ -23,10 +23,8 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 				.ToListAsync();
 		}
 
-		public async Task<IReadOnlyCollection<Currency>> GetCurrenciesAsync(QueryPaged queryPaged, 
-																			Func<IQueryable<Currency>, IOrderedQueryable<Currency>> orderBy)
+		public async Task<IReadOnlyCollection<Currency>> GetCurrenciesAsync(QueryPaged queryPaged, Func<IQueryable<Currency>, IOrderedQueryable<Currency>> orderBy)
 		{
-
 			int skip = (queryPaged.Page - 1) * queryPaged.PageSize;
 
 			IQueryable<Currency> query = _context.Currencies.AsNoTracking();

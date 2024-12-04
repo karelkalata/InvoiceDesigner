@@ -1,11 +1,12 @@
 ﻿using InvoiceDesigner.Domain.Shared.DTOs.User;
+using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Interfaces.InterfacesUser
 {
 	public interface IUserService
 	{
-		Task<ResponsePaged<UserViewDto>> GetPagedUsersAsync(int pageSize, int page, string searchString, string sortLabel);
+		Task<ResponsePaged<UserViewDto>> GetPagedUsersAsync(QueryPaged queryPaged);
 
 		Task<ResponseRedirect> CreateAdminUserAsync(AdminUserEditDto dto);
 
@@ -17,7 +18,7 @@ namespace InvoiceDesigner.Application.Interfaces.InterfacesUser
 
 		Task<ResponseRedirect> UpdateAdminUserAsync(AdminUserEditDto dto);
 
-		Task<ResponseBoolean> DeleteUserAsync(int id);
+		Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(QueryDeleteEntity queryDeleteEntity);
 
 		Task<ResponseBoolean> CheckLoginName(string loginName);
 

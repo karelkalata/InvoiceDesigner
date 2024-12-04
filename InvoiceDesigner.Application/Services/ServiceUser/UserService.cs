@@ -6,6 +6,7 @@ using InvoiceDesigner.Domain.Shared.DTOs.Company;
 using InvoiceDesigner.Domain.Shared.DTOs.User;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Services.ServiceUser
@@ -23,18 +24,22 @@ namespace InvoiceDesigner.Application.Services.ServiceUser
 			_companyService = companyService;
 		}
 
-		public async Task<ResponsePaged<UserViewDto>> GetPagedUsersAsync(int pageSize, int page, string searchString, string sortLabel)
+		public async Task<ResponsePaged<UserViewDto>> GetPagedUsersAsync(QueryPaged queryPaged)
 		{
-			pageSize = Math.Max(pageSize, 1);
-			page = Math.Max(page, 1);
+			queryPaged.PageSize = Math.Max(queryPaged.PageSize, 1);
+			queryPaged.Page = Math.Max(queryPaged.Page, 1);
 
-			var usersTask = _repository.GetUsersAsync(pageSize, page, searchString, GetOrdering(sortLabel));
-			var totalCountTask = _repository.GetCountUsersAsync();
+			var usersTask = _repository.GetUsersAsync(queryPaged, GetOrdering(queryPaged.SortLabel));
+			var totalCountTask = _repository.GetCountUsersAsync(queryPaged.ShowDeleted);
 
 			await Task.WhenAll(usersTask, totalCountTask);
 
 			var usersDtos = _mapper.Map<IReadOnlyCollection<UserViewDto>>(await usersTask);
-			return new ResponsePaged<UserViewDto> { Items = usersDtos, TotalCount = await totalCountTask };
+			return new ResponsePaged<UserViewDto>
+			{
+				Items = usersDtos,
+				TotalCount = await totalCountTask
+			};
 		}
 
 		public async Task<ResponseRedirect> CreateAdminUserAsync(AdminUserEditDto adminUserEditDto)
@@ -90,13 +95,27 @@ namespace InvoiceDesigner.Application.Services.ServiceUser
 			};
 		}
 
-		public async Task<ResponseBoolean> DeleteUserAsync(int id)
+		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(QueryDeleteEntity queryDeleteEntity)
 		{
-			var existEntity = await ValidateExistsEntityAsync(id);
-			return new ResponseBoolean
+			var existsEntity = await ValidateExistsEntityAsync(queryDeleteEntity.EntityId);
+
+			if (!queryDeleteEntity.MarkAsDeleted)
 			{
-				Result = await _repository.DeleteUserAsync(existEntity)
-			};
+				return new ResponseBoolean
+				{
+					Result = await _repository.DeleteUserAsync(existsEntity)
+				};
+			}
+			else
+			{
+				existsEntity.IsDeleted = true;
+				await _repository.UpdateUserAsync(existsEntity);
+
+				return new ResponseBoolean
+				{
+					Result = true
+				};  
+			}
 		}
 
 		public async Task<ResponseBoolean> CheckLoginName(string loginName)
@@ -108,8 +127,8 @@ namespace InvoiceDesigner.Application.Services.ServiceUser
 			}
 			else
 			{
-				var existUser = await _repository.GetUserByLoginAsync(loginName);
-				result.Result = existUser != null;
+				var existsUser = await _repository.GetUserByLoginAsync(loginName);
+				result.Result = existsUser != null;
 			}
 
 			return result;

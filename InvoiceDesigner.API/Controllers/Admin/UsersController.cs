@@ -1,6 +1,7 @@
 ﻿using InvoiceDesigner.Application.Authorization;
 using InvoiceDesigner.Application.Interfaces.InterfacesUser;
 using InvoiceDesigner.Domain.Shared.DTOs.User;
+using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,10 +22,22 @@ namespace InvoiceDesigner.API.Controllers.Admin
 
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponsePaged<UserViewDto>))]
-		public async Task<IActionResult> Index(int pageSize = 10, int page = 1, string searchString = "", string sortLabel = "")
+		public async Task<IActionResult> Index([FromQuery] QueryPaged queryPaged)
 		{
-			var result = await _service.GetPagedUsersAsync(pageSize, page, searchString, sortLabel);
-			return Ok(result);
+			if (!ModelState.IsValid)
+				return BadRequest(ModelState);
+			try
+			{
+				var result = await _service.GetPagedUsersAsync(queryPaged);
+				return Ok(result);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
+			}
 		}
 
 		[HttpPost]
@@ -69,6 +82,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 		{
 			if (!ModelState.IsValid)
 				return BadRequest(ModelState);
+
 			try
 			{
 				var result = await _service.UpdateAdminUserAsync(adminUserEditDto);
@@ -80,14 +94,23 @@ namespace InvoiceDesigner.API.Controllers.Admin
 			}
 		}
 
-		[HttpDelete("{id:int}")]
+		[HttpDelete("{id:int}/{modeDelete:int}")]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseBoolean))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> Delete(int id)
+		public async Task<IActionResult> DeleteOrMarkAsDeletedAsync(int id, int modeDelete)
 		{
 			try
 			{
-				var result = await _service.DeleteUserAsync(id);
+				var (userId, isAdmin) = GetValidatedFilters();
+				var queryDeleteEntity = new QueryDeleteEntity
+				{
+					UserId = userId,
+					IsAdmin = isAdmin,
+					EntityId = id,
+					MarkAsDeleted = modeDelete == 0
+				};
+
+				var result = await _service.DeleteOrMarkAsDeletedAsync(queryDeleteEntity);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -112,5 +135,16 @@ namespace InvoiceDesigner.API.Controllers.Admin
 			}
 		}
 
+
+		private (int, bool) GetValidatedFilters()
+		{
+			var userIdString = User.FindFirst("userId")?.Value;
+			int.TryParse(userIdString, out int userId);
+
+			var isAdminString = User.FindFirst("isAdmin")?.Value;
+			bool.TryParse(isAdminString, out bool isAdmin);
+
+			return (userId, isAdmin);
+		}
 	}
 }

@@ -1,14 +1,13 @@
 ﻿namespace InvoiceDesigner.Domain.Shared.QueryParameters
 {
-	public class QueryInvoiceChangeArchive
+	public class QueryDeleteEntity
 	{
 		public int UserId { get; set; }
 
 		public bool IsAdmin { get; set; } = false;
 
-		public int InvoiceId { get; set; }
+		public int EntityId { get; set; }
 
-		public bool Archive { get; set; }
-
+		public bool MarkAsDeleted { get; set; } = false;
 	}
 }
