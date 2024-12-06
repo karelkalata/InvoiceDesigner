@@ -90,7 +90,7 @@
 	{
 		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav);
 
-		_companyAutocompleteDto = await _httpHelper.GetDataFromAPI<List<CompanyAutocompleteDto>>("api/Companies/GetAllCompanyAutocompleteDto");
+		_companyAutocompleteDto = await _httpHelper.GetDataFromAPI<List<CompanyAutocompleteDto>>("api/Companies/GetAllAutocompleteDto");
 		listCompany = _companyAutocompleteDto.Select(c => c.Name).ToArray();
 
 		_adminUserEditDto = await _httpHelper.GetAsync<AdminUserEditDto>(id);

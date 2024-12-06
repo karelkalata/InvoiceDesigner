@@ -7,23 +7,21 @@ namespace InvoiceDesigner.Application.Interfaces
 {
 	public interface ICurrencyService
 	{
-		Task<ResponsePaged<CurrencyViewDto>> GetPagedCurrenciesAsync(QueryPaged queryPaged);
+		Task<ResponsePaged<CurrencyViewDto>> GetPagedEntitiesAsync(QueryPaged queryPaged);
 
-		Task<ResponseRedirect> CreateCurrencyAsync(CurrencyEditDto currencyEditDto);
+		Task<ResponseRedirect> CreateAsync(CurrencyEditDto currencyEditDto);
 
-		Task<CurrencyEditDto> GetCurrencyEditDtoByIdAsync(int id);
+		Task<CurrencyEditDto> GetEditDtoByIdAsync(int id);
 
-		Task<Currency> GetCurrencyByIdAsync(int id);
+		Task<Currency> GetByIdAsync(int id);
 
-		Task<ResponseRedirect> UpdateCurrencyAsync(CurrencyEditDto currencyEditDto);
+		Task<ResponseRedirect> UpdateAsync(CurrencyEditDto currencyEditDto);
 
-		Task<ResponseBoolean> DeleteCurrencyAsync(int id);
+		Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(QueryDeleteEntity queryDeleteEntity);
 
-		Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(int id, int modeDelete);
+		Task<int> GetCountAsync();
 
-		Task<int> GetCountCurrenciesAsync();
-
-		Task<IReadOnlyCollection<CurrencyAutocompleteDto>> GetCurrencyAutocompleteDto();
+		Task<IReadOnlyCollection<CurrencyAutocompleteDto>> GetAutocompleteDto();
 
 		Task<IReadOnlyCollection<CurrencyAutocompleteDto>> FilteringData(string f);
 	}

@@ -15,7 +15,7 @@
 <MudContainer>
 	<MudTable ServerData="ServerReload" @ref="_table" Dense="true" Hover="true" RowsPerPage="10">
 		<ToolBarContent>
-			<MudText Typo="Typo.h6">Companies</MudText>
+						<MudText Typo="Typo.h6">@_controller</MudText>
 			<MudSpacer />
 			<MudTextField T="string"
 						  ValueChanged="@(s=>OnSearch(s))"
@@ -25,12 +25,12 @@
 						  IconSize="Size.Medium"
 						  Class="mt-0" />
 			<MudSpacer />
-			<MudButton Href="/Companies/0"
-					   Variant="Variant.Filled"
-					   StartIcon="@Icons.Material.Filled.Add"
-					   Color="Color.Default">
-				New
-			</MudButton>
+			<MudIconButton Icon="@Icons.Material.Filled.PlaylistAdd" Size="Size.Medium" Href="/Companies/0" />
+			<MudMenu Icon="@Icons.Material.Filled.Settings" Size="Size.Medium" Style="margin-left: auto;" Dense>
+				<MudMenuItem>
+					<MudCheckBox Dense @bind-Value="_showDeleted" Label="Show Deleted" onclick="@(()=>OnCheckedChanged())"></MudCheckBox>
+				</MudMenuItem>
+			</MudMenu>
 		</ToolBarContent>
 
 		<HeaderContent>
@@ -61,7 +61,7 @@
 							   Color="Color.Default" />
 			</MudTd>
 			<MudTd Class="text-right" Style="width:25px">
-				<MudIconButton Icon="@Icons.Material.Filled.Delete"
+				<MudIconButton Icon="@(context.IsDeleted ? Icons.Material.Filled.DeleteForever : Icons.Material.Filled.Delete)"
 							   Color="Color.Default"
 							   Size="Size.Small"
 							   OnClick="() => RedirectToDeleteRow(context.Id)" />
@@ -86,6 +86,7 @@
 	private MudTable<CompanyViewDto> _table = new();
 	private ResponsePaged<CompanyViewDto>? _pagedResult;
 	private string _searchString = "";
+	private bool _showDeleted = false;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -100,7 +101,8 @@
 				PageSize = state.PageSize,
 				Page = state.Page + 1,
 				SearchString = _searchString,
-				SortLabel = $"{state.SortLabel}{(state.SortDirection == SortDirection.Descending ? "_desc" : "")}"
+				SortLabel = $"{state.SortLabel}{(state.SortDirection == SortDirection.Descending ? "_desc" : "")}",
+				ShowDeleted = _showDeleted
 			};
 
 		string queryString = queryParameters.ToQueryString();
@@ -125,8 +127,13 @@
 
 	private async void RedirectToDeleteRow(int id)
 	{
-		if (await _httpHelper.DeleteWithConfirmationAsync(id))
+		if (await _httpHelper.DeleteOrMarkAsDeletedAsync(id))
 			await _table.ReloadServerData();
 	}
 
+	private async Task OnCheckedChanged()
+	{
+		_showDeleted = !_showDeleted;
+		await _table.ReloadServerData();
+	}
 }

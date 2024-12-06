@@ -52,7 +52,7 @@ namespace InvoiceDesigner.API.Controllers
 
 			try
 			{
-				var result = await _service.CreateProductAsync(productEditDto);
+				var result = await _service.CreateAsync(productEditDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -69,7 +69,7 @@ namespace InvoiceDesigner.API.Controllers
 		{
 			try
 			{
-				var result = await _service.GetProductEditDtoByIdAsync(id);
+				var result = await _service.GetEditDtoByIdAsync(id);
 
 				return Ok(result);
 			}
@@ -90,24 +90,7 @@ namespace InvoiceDesigner.API.Controllers
 
 			try
 			{
-				var result = await _service.UpdateProductAsync(productEditDto);
-				return Ok(result);
-			}
-			catch (InvalidOperationException ex)
-			{
-				return BadRequest(new { message = ex.Message });
-			}
-		}
-
-
-		[HttpDelete("{id:int}")]
-		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseBoolean))]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> DeleteAsync(int id)
-		{
-			try
-			{
-				var result = await _service.DeleteProductAsync(id);
+				var result = await _service.UpdateAsync(productEditDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -123,7 +106,16 @@ namespace InvoiceDesigner.API.Controllers
 		{
 			try
 			{
-				var result = await _service.DeleteOrMarkAsDeletedAsync(id, modeDelete);
+				var (userId, isAdmin) = GetValidatedFilters();
+				var queryDeleteEntity = new QueryDeleteEntity
+				{
+					UserId = userId,
+					IsAdmin = isAdmin,
+					EntityId = id,
+					MarkAsDeleted = modeDelete == 0
+				};
+
+				var result = await _service.DeleteOrMarkAsDeletedAsync(queryDeleteEntity);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -145,6 +137,17 @@ namespace InvoiceDesigner.API.Controllers
 			{
 				return BadRequest(new { message = ex.Message });
 			}
+		}
+
+		private (int, bool) GetValidatedFilters()
+		{
+			var userIdString = User.FindFirst("userId")?.Value;
+			int.TryParse(userIdString, out int userId);
+
+			var isAdminString = User.FindFirst("isAdmin")?.Value;
+			bool.TryParse(isAdminString, out bool isAdmin);
+
+			return (userId, isAdmin);
 		}
 	}
 }

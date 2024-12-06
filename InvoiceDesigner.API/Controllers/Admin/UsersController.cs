@@ -28,7 +28,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 				return BadRequest(ModelState);
 			try
 			{
-				var result = await _service.GetPagedUsersAsync(queryPaged);
+				var result = await _service.GetPagedEntitiesAsync(queryPaged);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)

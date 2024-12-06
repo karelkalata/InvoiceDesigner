@@ -10,21 +10,21 @@ namespace InvoiceDesigner.Application.Services
 {
 	public class CurrencyService : ICurrencyService
 	{
-		private readonly ICurrencyRepository _repository;
+		private readonly ICurrencyRepository _repoCurrency;
 		private readonly IMapper _mapper;
 		private readonly IBankServiceHelper _bankServiceHelper;
 		private readonly IInvoiceServiceHelper _invoiceServiceHelper;
 		private readonly ICompanyServiceHelper _companyServiceHelper;
 		private readonly IProductServiceHelper _productServiceHelper;
 
-		public CurrencyService(ICurrencyRepository repository,
+		public CurrencyService(ICurrencyRepository repoCurrency,
 								IMapper mapper,
 								IBankServiceHelper bankServiceHelper,
 								IInvoiceServiceHelper invoiceServiceHelper,
 								ICompanyServiceHelper companyServiceHelper,
 								IProductServiceHelper productServiceHelper)
 		{
-			_repository = repository;
+			_repoCurrency = repoCurrency;
 			_mapper = mapper;
 			_bankServiceHelper = bankServiceHelper;
 			_invoiceServiceHelper = invoiceServiceHelper;
@@ -32,13 +32,13 @@ namespace InvoiceDesigner.Application.Services
 			_productServiceHelper = productServiceHelper;
 		}
 
-		public async Task<ResponsePaged<CurrencyViewDto>> GetPagedCurrenciesAsync(QueryPaged queryPaged)
+		public async Task<ResponsePaged<CurrencyViewDto>> GetPagedEntitiesAsync(QueryPaged queryPaged)
 		{
 			queryPaged.PageSize = Math.Max(queryPaged.PageSize, 1);
 			queryPaged.Page = Math.Max(queryPaged.Page, 1);
 
-			var currenciesTask = _repository.GetCurrenciesAsync(queryPaged, GetOrdering(queryPaged.SortLabel));
-			var totalCountTask = _repository.GetCountCurrenciesAsync(queryPaged.ShowDeleted);
+			var currenciesTask = _repoCurrency.GetEntitiesAsync(queryPaged, GetOrdering(queryPaged.SortLabel));
+			var totalCountTask = _repoCurrency.GetCountAsync(queryPaged.ShowDeleted);
 
 			await Task.WhenAll(currenciesTask, totalCountTask);
 
@@ -52,12 +52,12 @@ namespace InvoiceDesigner.Application.Services
 		}
 
 
-		public async Task<ResponseRedirect> CreateCurrencyAsync(CurrencyEditDto newCurrency)
+		public async Task<ResponseRedirect> CreateAsync(CurrencyEditDto newCurrency)
 		{
 			var existingCurrency = new Currency();
 			MapCurrency(existingCurrency, newCurrency);
 
-			var entityId = await _repository.CreateCurrencyAsync(existingCurrency);
+			var entityId = await _repoCurrency.CreateAsync(existingCurrency);
 
 			return new ResponseRedirect
 			{
@@ -65,21 +65,21 @@ namespace InvoiceDesigner.Application.Services
 			};
 		}
 
-		public async Task<CurrencyEditDto> GetCurrencyEditDtoByIdAsync(int id)
+		public async Task<CurrencyEditDto> GetEditDtoByIdAsync(int id)
 		{
 			var existsEntity = await ValidateExistsEntityAsync(id);
 			return _mapper.Map<CurrencyEditDto>(existsEntity);
 		}
 
-		public async Task<Currency> GetCurrencyByIdAsync(int id) => await ValidateExistsEntityAsync(id);
+		public async Task<Currency> GetByIdAsync(int id) => await ValidateExistsEntityAsync(id);
 
 
-		public async Task<ResponseRedirect> UpdateCurrencyAsync(CurrencyEditDto editedCurrency)
+		public async Task<ResponseRedirect> UpdateAsync(CurrencyEditDto editedCurrency)
 		{
 			var existingCurrency = await ValidateExistsEntityAsync(editedCurrency.Id);
 			MapCurrency(existingCurrency, editedCurrency);
 
-			var entityId = await _repository.UpdateCurrencyAsync(existingCurrency);
+			var entityId = await _repoCurrency.UpdateAsync(existingCurrency);
 
 			return new ResponseRedirect
 			{
@@ -87,50 +87,49 @@ namespace InvoiceDesigner.Application.Services
 			};
 		}
 
-		public async Task<ResponseBoolean> DeleteCurrencyAsync(int id)
+		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(QueryDeleteEntity queryDeleteEntity)
 		{
-			var existsEntity = await ValidateExistsEntityAsync(id);
+			var existsEntity = await ValidateExistsEntityAsync(queryDeleteEntity.EntityId);
 
-			if (await _bankServiceHelper.IsCurrencyUsedInBanks(id))
-				throw new InvalidOperationException($"{existsEntity.Name} is in use in Banks and cannot be deleted.");
-
-			if (await _invoiceServiceHelper.IsCurrencyUsedInInvoices(id))
-				throw new InvalidOperationException($"{existsEntity.Name} is in use in Invoices and cannot be deleted.");
-
-			if (await _companyServiceHelper.IsCurrencyUsedInCompany(id))
-				throw new InvalidOperationException($"{existsEntity.Name} is in use in Company and cannot be deleted.");
-
-			if (await _productServiceHelper.IsCurrencyUsedInProduct(id))
-				throw new InvalidOperationException($"{existsEntity.Name} is in use in Products and cannot be deleted.");
-
-			return new ResponseBoolean
+			if (!queryDeleteEntity.MarkAsDeleted)
 			{
-				Result = await _repository.DeleteCurrencyAsync(existsEntity)
-			};
-		}
+				if (await _bankServiceHelper.IsCurrencyUsedInBanks(queryDeleteEntity.EntityId))
+					throw new InvalidOperationException($"{existsEntity.Name} is in use in Banks and cannot be deleted.");
 
-		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(int id, int modeDelete)
-		{
-			if (modeDelete == 0)
-			{
-				var existsEntity = await ValidateExistsEntityAsync(id);
-				existsEntity.IsDeleted = true;
+				if (await _invoiceServiceHelper.IsCurrencyUsedInInvoices(queryDeleteEntity.EntityId))
+					throw new InvalidOperationException($"{existsEntity.Name} is in use in Invoices and cannot be deleted.");
 
-				await _repository.UpdateCurrencyAsync(existsEntity);
+				if (await _companyServiceHelper.IsCurrencyUsedInCompany(queryDeleteEntity.EntityId))
+					throw new InvalidOperationException($"{existsEntity.Name} is in use in Company and cannot be deleted.");
 
-				return new ResponseBoolean { Result = true };
+				if (await _productServiceHelper.IsCurrencyUsedInProduct(queryDeleteEntity.EntityId))
+					throw new InvalidOperationException($"{existsEntity.Name} is in use in Products and cannot be deleted.");
+
+				return new ResponseBoolean
+				{
+					Result = await _repoCurrency.DeleteAsync(existsEntity)
+				};
 			}
-			return await DeleteCurrencyAsync(id);
+			else
+			{
+				existsEntity.IsDeleted = true;
+				await _repoCurrency.UpdateAsync(existsEntity);
+
+				return new ResponseBoolean
+				{
+					Result = true
+				};
+			}
 		}
 
-		public Task<int> GetCountCurrenciesAsync()
+		public Task<int> GetCountAsync()
 		{
-			return _repository.GetCountCurrenciesAsync();
+			return _repoCurrency.GetCountAsync();
 		}
 
-		public async Task<IReadOnlyCollection<CurrencyAutocompleteDto>> GetCurrencyAutocompleteDto()
+		public async Task<IReadOnlyCollection<CurrencyAutocompleteDto>> GetAutocompleteDto()
 		{
-			var currencies = await _repository.GetAllCurrenciesAsync();
+			var currencies = await _repoCurrency.GetAllAsync();
 			return _mapper.Map<IReadOnlyCollection<CurrencyAutocompleteDto>>(currencies);
 		}
 
@@ -143,13 +142,14 @@ namespace InvoiceDesigner.Application.Services
 				SearchString = searchText
 			};
 
-			var currencies = await _repository.GetCurrenciesAsync(queryPaged, GetOrdering("Value"));
+			var currencies = await _repoCurrency.GetEntitiesAsync(queryPaged, GetOrdering("Value"));
+
 			return _mapper.Map<IReadOnlyCollection<CurrencyAutocompleteDto>>(currencies);
 		}
 
 		private async Task<Currency> ValidateExistsEntityAsync(int id)
 		{
-			var existsEntity = await _repository.GetCurrencyByIdAsync(id);
+			var existsEntity = await _repoCurrency.GetByIdAsync(id);
 			if (existsEntity == null)
 				throw new InvalidOperationException("ValidateExistsEntityAsync: Not Found");
 

@@ -29,7 +29,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 
 			try
 			{
-				var result = await _service.GetPagedCompaniesAsync(queryPaged);
+				var result = await _service.GetPagedEntitiesAsync(queryPaged);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -51,7 +51,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 
 			try
 			{
-				var result = await _service.CreateCompanyAsync(companyCreateDto);
+				var result = await _service.CreateAsync(companyCreateDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -67,7 +67,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 		{
 			try
 			{
-				var result = await _service.GetCompanyEditDtoByIdAsync(id);
+				var result = await _service.GetEditDtoByIdAsync(id);
 
 				return Ok(result);
 			}
@@ -87,7 +87,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 
 			try
 			{
-				var result = await _service.UpdateCompanyAsync(companyCreateDto);
+				var result = await _service.UpdateAsync(companyCreateDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -96,14 +96,23 @@ namespace InvoiceDesigner.API.Controllers.Admin
 			}
 		}
 
-		[HttpDelete("{id:int}")]
+		[HttpDelete("{id:int}/{modeDelete:int}")]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseBoolean))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> Delete(int id)
+		public async Task<IActionResult> DeleteOrMarkAsDeletedAsync(int id, int modeDelete)
 		{
 			try
 			{
-				var result = await _service.DeleteCompanyAsync(id);
+				var (userId, isAdmin) = GetValidatedFilters();
+				var queryDeleteEntity = new QueryDeleteEntity
+				{
+					UserId = userId,
+					IsAdmin = isAdmin,
+					EntityId = id,
+					MarkAsDeleted = modeDelete == 0
+				};
+
+				var result = await _service.DeleteOrMarkAsDeletedAsync(queryDeleteEntity);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -127,7 +136,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 			}
 		}
 
-		[HttpGet("GetAllCompanyAutocompleteDto")]
+		[HttpGet("GetAllAutocompleteDto")]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<CompanyAutocompleteDto>))]
 		public async Task<IActionResult> GetAllCompanyAutocompleteDto()
 		{
@@ -139,7 +148,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 				var isAdminString = User.FindFirst("isAdmin")?.Value;
 				bool.TryParse(isAdminString, out bool isAdmin);
 
-				var result = await _service.GetAllCompanyAutocompleteDto(userId, isAdmin);
+				var result = await _service.GetAllAutocompleteDto(userId, isAdmin);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -148,5 +157,15 @@ namespace InvoiceDesigner.API.Controllers.Admin
 			}
 		}
 
+		private (int, bool) GetValidatedFilters()
+		{
+			var userIdString = User.FindFirst("userId")?.Value;
+			int.TryParse(userIdString, out int userId);
+
+			var isAdminString = User.FindFirst("isAdmin")?.Value;
+			bool.TryParse(isAdminString, out bool isAdmin);
+
+			return (userId, isAdmin);
+		}
 	}
 }

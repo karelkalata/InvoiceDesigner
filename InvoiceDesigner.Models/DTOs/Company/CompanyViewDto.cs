@@ -8,6 +8,8 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Company
 
 		public string Name { get; set; } = string.Empty;
 
+		public bool IsDeleted { get; set; }
+
 		public string TaxId { get; set; } = string.Empty;
 
 		public string CurrencyName { get; set; } = string.Empty;

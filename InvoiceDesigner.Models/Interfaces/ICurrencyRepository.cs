@@ -5,19 +5,19 @@ namespace InvoiceDesigner.Domain.Shared.Interfaces
 {
 	public interface ICurrencyRepository
 	{
-		Task<IReadOnlyCollection<Currency>> GetAllCurrenciesAsync();
+		Task<IReadOnlyCollection<Currency>> GetAllAsync();
 
-		Task<IReadOnlyCollection<Currency>> GetCurrenciesAsync(QueryPaged queryPaged,
-																Func<IQueryable<Currency>, IOrderedQueryable<Currency>> orderBy);
-		Task<int> CreateCurrencyAsync(Currency entity);
+		Task<IReadOnlyCollection<Currency>> GetEntitiesAsync(QueryPaged queryPaged, Func<IQueryable<Currency>, IOrderedQueryable<Currency>> orderBy);
 
-		Task<Currency?> GetCurrencyByIdAsync(int id);
+		Task<int> CreateAsync(Currency entity);
 
-		Task<int> UpdateCurrencyAsync(Currency entity);
+		Task<Currency?> GetByIdAsync(int id);
 
-		Task<bool> DeleteCurrencyAsync(Currency entity);
+		Task<int> UpdateAsync(Currency entity);
 
-		Task<int> GetCountCurrenciesAsync(bool showDeleted = false);
+		Task<bool> DeleteAsync(Currency entity);
+
+		Task<int> GetCountAsync(bool showDeleted = false);
 
 	}
 }

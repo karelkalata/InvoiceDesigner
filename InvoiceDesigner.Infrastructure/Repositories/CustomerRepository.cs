@@ -15,7 +15,7 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 			_context = context;
 		}
 
-		public async Task<IReadOnlyCollection<Customer>> GetCustomersAsync(QueryPaged queryPaged, 
+		public async Task<IReadOnlyCollection<Customer>> GetEntitiesAsync(QueryPaged queryPaged, 
 																			Func<IQueryable<Customer>, IOrderedQueryable<Customer>> orderBy)
 		{
 			int skip = (queryPaged.Page - 1) * queryPaged.PageSize;
@@ -41,7 +41,7 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		}
 
 
-		public async Task<int> CreateCustomerAsync(Customer entity)
+		public async Task<int> CreateAsync(Customer entity)
 		{
 			await _context.Customers.AddAsync(entity);
 			await _context.SaveChangesAsync();
@@ -49,14 +49,14 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		}
 
 
-		public async Task<Customer?> GetCustomerByIdAsync(int id)
+		public async Task<Customer?> GetByIdAsync(int id)
 		{
 			return await _context.Customers
 				.FirstOrDefaultAsync(c => c.Id == id);
 		}
 
 
-		public async Task<int> UpdateCustomerAsync(Customer entity)
+		public async Task<int> UpdateAsync(Customer entity)
 		{
 			_context.Customers.Update(entity);
 			await _context.SaveChangesAsync();
@@ -64,14 +64,14 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		}
 
 
-		public async Task<bool> DeleteCustomerAsync(Customer entity)
+		public async Task<bool> DeleteAsync(Customer entity)
 		{
 			_context.Customers.Remove(entity);
 			return await _context.SaveChangesAsync() > 0;
 		}
 
 
-		public async Task<int> GetCountCustomersAsync(bool showDeleted)
+		public async Task<int> GetCountAsync(bool showDeleted)
 		{
 			IQueryable<Customer> query = _context.Customers;
 

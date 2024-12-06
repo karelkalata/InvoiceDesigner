@@ -7,23 +7,23 @@ namespace InvoiceDesigner.Application.Interfaces
 {
 	public interface ICompanyService
 	{
-		Task<ResponsePaged<CompanyViewDto>> GetPagedCompaniesAsync(QueryPaged queryPaged);
+		Task<ResponsePaged<CompanyViewDto>> GetPagedEntitiesAsync(QueryPaged queryPaged);
 
-		Task<ResponseRedirect> CreateCompanyAsync(CompanyEditDto companyCreateDto);
+		Task<ResponseRedirect> CreateAsync(CompanyEditDto companyCreateDto);
 
-		Task<Company> GetCompanyByIdAsync(int id);
+		Task<Company> GetByIdAsync(int id);
 
-		Task<CompanyEditDto> GetCompanyEditDtoByIdAsync(int id);
+		Task<CompanyEditDto> GetEditDtoByIdAsync(int id);
 
-		Task<ResponseRedirect> UpdateCompanyAsync(CompanyEditDto companyCreateDto);
+		Task<ResponseRedirect> UpdateAsync(CompanyEditDto companyCreateDto);
 
-		Task<ResponseBoolean> DeleteCompanyAsync(int id);
+		Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(QueryDeleteEntity queryDeleteEntity);
 
-		Task<int> GetCompaniesCountAsync();
+		Task<int> GetCountAsync();
 
 		Task<IReadOnlyCollection<Company>> GetAuthorizedCompaniesAsync(int userId, bool isAdmin);
 
-		Task<IReadOnlyCollection<CompanyAutocompleteDto>> GetAllCompanyAutocompleteDto(int userId, bool isAdmin);
+		Task<IReadOnlyCollection<CompanyAutocompleteDto>> GetAllAutocompleteDto(int userId, bool isAdmin);
 
 		Task<IReadOnlyCollection<CompanyAutocompleteDto>> FilteringData(string f);
 	}

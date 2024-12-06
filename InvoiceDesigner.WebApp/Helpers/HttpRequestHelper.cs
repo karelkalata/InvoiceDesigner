@@ -61,7 +61,7 @@ namespace InvoiceDesigner.WebApp.Helpers
 			return null;
 		}
 
-		public async Task<bool> DeleteOrMarkAdDeletedAsync(int id)
+		public async Task<bool> DeleteOrMarkAsDeletedAsync(int id)
 		{
 			try
 			{

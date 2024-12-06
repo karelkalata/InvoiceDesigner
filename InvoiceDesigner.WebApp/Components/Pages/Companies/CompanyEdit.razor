@@ -184,7 +184,7 @@
 	{
 		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav);
 
-		_currenciesAutocomplete = await _httpHelper.GetDataFromAPI<List<CurrencyAutocompleteDto>>("api/Currencies/GetCurrencyAutocompleteDto");
+		_currenciesAutocomplete = await _httpHelper.GetDataFromAPI<List<CurrencyAutocompleteDto>>("api/Currencies/GetAutocompleteDto");
 
 		_companyEditDto = await _httpHelper.GetAsync<CompanyEditDto>(id);
 	}

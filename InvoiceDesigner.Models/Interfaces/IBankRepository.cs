@@ -5,9 +5,9 @@ namespace InvoiceDesigner.Domain.Shared.Interfaces
 	public interface IBankRepository
 	{
 
-		Task<IReadOnlyCollection<Bank>> GetAllBanksAsync();
+		Task<IReadOnlyCollection<Bank>> GetAllAsync();
 
-		Task<Bank?> GetBankByIdAsync(int id);
+		Task<Bank?> GetByIdAsync(int id);
 
 		Task<bool> IsCurrencyUsedInBanksAsync(int currencyId);
 

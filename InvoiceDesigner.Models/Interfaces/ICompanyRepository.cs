@@ -5,18 +5,17 @@ namespace InvoiceDesigner.Domain.Shared.Interfaces
 {
 	public interface ICompanyRepository
 	{
-		Task<IReadOnlyCollection<Company>> GetCompaniesAsync(QueryPaged queryPaged,
-																Func<IQueryable<Company>, IOrderedQueryable<Company>> orderBy);
+		Task<IReadOnlyCollection<Company>> GetEntitiesAsync(QueryPaged queryPaged, Func<IQueryable<Company>, IOrderedQueryable<Company>> orderBy);
 
-		Task<int> CreateCompanyAsync(Company entity);
+		Task<int> CreateAsync(Company entity);
 
-		Task<Company?> GetCompanyByIdAsync(int id);
+		Task<Company?> GetByIdAsync(int id);
 
-		Task<int> UpdateCompanyAsync(Company entity);
+		Task<int> UpdateAsync(Company entity);
 
-		Task<bool> DeleteCompanyAsync(Company entity);
+		Task<bool> DeleteAsync(Company entity);
 
-		Task<int> GetCountCompaniesAsync();
+		Task<int> GetCountAsync();
 
 		Task<IReadOnlyCollection<Company>> GetAllCompaniesDto();
 

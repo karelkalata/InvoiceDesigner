@@ -6,7 +6,7 @@ namespace InvoiceDesigner.Application.Interfaces.InterfacesUser
 {
 	public interface IUserService
 	{
-		Task<ResponsePaged<UserViewDto>> GetPagedUsersAsync(QueryPaged queryPaged);
+		Task<ResponsePaged<UserViewDto>> GetPagedEntitiesAsync(QueryPaged queryPaged);
 
 		Task<ResponseRedirect> CreateAdminUserAsync(AdminUserEditDto dto);
 

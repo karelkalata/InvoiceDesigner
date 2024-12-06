@@ -110,6 +110,7 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", maxLength: 300, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
                     TaxId = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     VatId = table.Column<string>(type: "TEXT", nullable: true),
                     WWW = table.Column<string>(type: "TEXT", nullable: true),

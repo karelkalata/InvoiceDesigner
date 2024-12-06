@@ -64,7 +64,7 @@
 			<MudTd Class="text-right" Style="width:25px">
 				@if (!context.IsAdmin)
 				{
-					<MudIconButton Icon="@Icons.Material.Filled.Delete"
+					<MudIconButton Icon="@(context.IsDeleted ? Icons.Material.Filled.DeleteForever : Icons.Material.Filled.Delete)"
 								   Color="Color.Default"
 								   Size="Size.Small"
 								   OnClick="() => RedirectToDeleteRow(context.Id)" />
@@ -132,7 +132,7 @@
 
 	private async void RedirectToDeleteRow(int id)
 	{
-		if (await _httpHelper.DeleteOrMarkAdDeletedAsync(id))
+		if (await _httpHelper.DeleteOrMarkAsDeletedAsync(id))
 			await _table.ReloadServerData();
 	}
 

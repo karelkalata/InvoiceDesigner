@@ -11,32 +11,32 @@ namespace InvoiceDesigner.Application.Services
 {
 	public class CompanyService : ICompanyService
 	{
-		private readonly ICompanyRepository _repository;
+		private readonly ICompanyRepository _repoCompany;
 		private readonly IMapper _mapper;
 		private readonly ICurrencyService _currencyService;
 		private readonly IInvoiceServiceHelper _invoiceServiceHelper;
 		private readonly IUserAuthorizedDataService _userAuthorizedData;
 
-		public CompanyService(ICompanyRepository repository,
+		public CompanyService(ICompanyRepository repoCompany,
 								IMapper mapper,
 								ICurrencyService currencyService,
 								IInvoiceServiceHelper invoiceServiceHelper,
 								IUserAuthorizedDataService userAuthorizedData)
 		{
-			_repository = repository;
+			_repoCompany = repoCompany;
 			_mapper = mapper;
 			_currencyService = currencyService;
 			_invoiceServiceHelper = invoiceServiceHelper;
 			_userAuthorizedData = userAuthorizedData;
 		}
 
-		public async Task<ResponsePaged<CompanyViewDto>> GetPagedCompaniesAsync(QueryPaged queryPaged)
+		public async Task<ResponsePaged<CompanyViewDto>> GetPagedEntitiesAsync(QueryPaged queryPaged)
 		{
 			queryPaged.PageSize = Math.Max(queryPaged.PageSize, 1);
 			queryPaged.Page = Math.Max(queryPaged.Page, 1);
 
-			var companiesTask = _repository.GetCompaniesAsync(queryPaged, GetOrdering(queryPaged.SortLabel));
-			var totalCountTask = _repository.GetCountCompaniesAsync();
+			var companiesTask = _repoCompany.GetEntitiesAsync(queryPaged, GetOrdering(queryPaged.SortLabel));
+			var totalCountTask = _repoCompany.GetCountAsync();
 
 			await Task.WhenAll(companiesTask, totalCountTask);
 
@@ -47,15 +47,14 @@ namespace InvoiceDesigner.Application.Services
 			};
 		}
 
-
-		public async Task<ResponseRedirect> CreateCompanyAsync(CompanyEditDto companyEditDto)
+		public async Task<ResponseRedirect> CreateAsync(CompanyEditDto companyEditDto)
 		{
 			var currency = await ValidateInputAsync(companyEditDto);
 
 			var company = new Company();
 			await MapCompany(company, companyEditDto, currency);
 
-			var entityId = await _repository.CreateCompanyAsync(company);
+			var entityId = await _repoCompany.CreateAsync(company);
 
 			return new ResponseRedirect
 			{
@@ -63,15 +62,15 @@ namespace InvoiceDesigner.Application.Services
 			};
 		}
 
-		public async Task<Company> GetCompanyByIdAsync(int id) => await ValidateExistsEntityAsync(id);
+		public async Task<Company> GetByIdAsync(int id) => await ValidateExistsEntityAsync(id);
 
-		public async Task<CompanyEditDto> GetCompanyEditDtoByIdAsync(int id)
+		public async Task<CompanyEditDto> GetEditDtoByIdAsync(int id)
 		{
 			var company = await ValidateExistsEntityAsync(id);
 			return _mapper.Map<CompanyEditDto>(company);
 		}
 
-		public async Task<ResponseRedirect> UpdateCompanyAsync(CompanyEditDto companyEditDto)
+		public async Task<ResponseRedirect> UpdateAsync(CompanyEditDto companyEditDto)
 		{
 			var existingCompanyTask = ValidateExistsEntityAsync(companyEditDto.Id);
 			var currencyTask = ValidateInputAsync(companyEditDto);
@@ -83,7 +82,7 @@ namespace InvoiceDesigner.Application.Services
 
 			await MapCompany(existingCompany, companyEditDto, currency);
 
-			var entityId = await _repository.UpdateCompanyAsync(existingCompany);
+			var entityId = await _repoCompany.UpdateAsync(existingCompany);
 
 			return new ResponseRedirect
 			{
@@ -91,27 +90,44 @@ namespace InvoiceDesigner.Application.Services
 			};
 		}
 
-		public async Task<ResponseBoolean> DeleteCompanyAsync(int id)
+		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(QueryDeleteEntity queryDeleteEntity)
 		{
-			var company = await ValidateExistsEntityAsync(id);
-			return new ResponseBoolean
+			var existsEntity = await ValidateExistsEntityAsync(queryDeleteEntity.EntityId);
+
+			if (!queryDeleteEntity.MarkAsDeleted)
 			{
-				Result = await _repository.DeleteCompanyAsync(company)
-			};
+				if (await _invoiceServiceHelper.IsCompanyUsedInInvoices(queryDeleteEntity.EntityId))
+					throw new InvalidOperationException($"{existsEntity.Name} is in use in Invoices and cannot be deleted.");
+
+				return new ResponseBoolean
+				{
+					Result = await _repoCompany.DeleteAsync(existsEntity)
+				};
+			}
+			else
+			{
+				existsEntity.IsDeleted = true;
+				await _repoCompany.UpdateAsync(existsEntity);
+
+				return new ResponseBoolean
+				{
+					Result = true
+				};
+			}
 		}
 
-		public async Task<int> GetCompaniesCountAsync() => await _repository.GetCountCompaniesAsync();
+		public async Task<int> GetCountAsync() => await _repoCompany.GetCountAsync();
 
 		public async Task<IReadOnlyCollection<Company>> GetAuthorizedCompaniesAsync(int userId, bool isAdmin)
 		{
 			var companies = isAdmin
-				? await _repository.GetAllCompaniesDto()
+				? await _repoCompany.GetAllCompaniesDto()
 				: await _userAuthorizedData.GetAuthorizedCompaniesAsync(userId);
 
 			return companies.ToList();
 		}
 
-		public async Task<IReadOnlyCollection<CompanyAutocompleteDto>> GetAllCompanyAutocompleteDto(int userId, bool isAdmin)
+		public async Task<IReadOnlyCollection<CompanyAutocompleteDto>> GetAllAutocompleteDto(int userId, bool isAdmin)
 		{
 			return _mapper.Map<IReadOnlyCollection<CompanyAutocompleteDto>>(await GetAuthorizedCompaniesAsync(userId, isAdmin));
 		}
@@ -125,20 +141,20 @@ namespace InvoiceDesigner.Application.Services
 				SearchString = searchText
 			};
 
-			var companies = await _repository.GetCompaniesAsync(queryPaged, GetOrdering("Value"));
+			var companies = await _repoCompany.GetEntitiesAsync(queryPaged, GetOrdering("Value"));
 			return _mapper.Map<IReadOnlyCollection<CompanyAutocompleteDto>>(companies);
 		}
 
 		private async Task<Company> ValidateExistsEntityAsync(int id)
 		{
-			var existsCompany = await _repository.GetCompanyByIdAsync(id)
+			var existsCompany = await _repoCompany.GetByIdAsync(id)
 							?? throw new InvalidOperationException("Company not found");
 			return existsCompany;
 		}
 
 		private async Task<Currency> ValidateInputAsync(CompanyEditDto dto)
 		{
-			var currency = await _currencyService.GetCurrencyByIdAsync(dto.Currency.Id)
+			var currency = await _currencyService.GetByIdAsync(dto.Currency.Id)
 							?? throw new InvalidOperationException($"Currency with ID {dto.Currency.Id} not found.");
 			return currency;
 		}
@@ -172,7 +188,7 @@ namespace InvoiceDesigner.Application.Services
 					};
 
 				}
-				var bankCurrency = await _currencyService.GetCurrencyByIdAsync(item.Currency.Id)
+				var bankCurrency = await _currencyService.GetByIdAsync(item.Currency.Id)
 									?? throw new InvalidOperationException($"Currency with ID {item.Currency.Id} not found.");
 
 				existsBank.CurrencyId = bankCurrency.Id;

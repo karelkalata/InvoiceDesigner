@@ -5,18 +5,17 @@ namespace InvoiceDesigner.Domain.Shared.Interfaces
 {
 	public interface IProductRepository
 	{
-		Task<IReadOnlyCollection<Product>> GetProductsAsync(QueryPaged queryPaged, 
-															Func<IQueryable<Product>, IOrderedQueryable<Product>> orderBy);
+		Task<IReadOnlyCollection<Product>> GetEntitiesAsync(QueryPaged queryPaged, Func<IQueryable<Product>, IOrderedQueryable<Product>> orderBy);
 
-		Task<int> CreateProductAsync(Product entity);
+		Task<int> CreateAsync(Product entity);
 
-		Task<Product?> GetProductByIdAsync(int id);
+		Task<Product?> GetByIdAsync(int id);
 
-		Task<int> UpdateProductAsync(Product entity);
+		Task<int> UpdateAsync(Product entity);
 
-		Task<bool> DeleteProductAsync(Product entity);
+		Task<bool> DeleteAsync(Product entity);
 
-		Task<int> GetCountProductsAsync(bool showDeleted = false);
+		Task<int> GetCountAsync(bool showDeleted = false);
 
 		Task<bool> IsCurrencyUsedInProduct(int currencyId);
 

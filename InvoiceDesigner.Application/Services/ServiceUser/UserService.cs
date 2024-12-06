@@ -24,7 +24,7 @@ namespace InvoiceDesigner.Application.Services.ServiceUser
 			_companyService = companyService;
 		}
 
-		public async Task<ResponsePaged<UserViewDto>> GetPagedUsersAsync(QueryPaged queryPaged)
+		public async Task<ResponsePaged<UserViewDto>> GetPagedEntitiesAsync(QueryPaged queryPaged)
 		{
 			queryPaged.PageSize = Math.Max(queryPaged.PageSize, 1);
 			queryPaged.Page = Math.Max(queryPaged.Page, 1);
@@ -195,7 +195,7 @@ namespace InvoiceDesigner.Application.Services.ServiceUser
 			List<Company> result = new List<Company>();
 			foreach (var item in companyAutocompleteDtos)
 			{
-				var company = await _companyService.GetCompanyByIdAsync(item.Id);
+				var company = await _companyService.GetByIdAsync(item.Id);
 				if (company != null)
 					result.Add(company);
 			}

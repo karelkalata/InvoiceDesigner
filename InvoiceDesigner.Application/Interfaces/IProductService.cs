@@ -9,19 +9,17 @@ namespace InvoiceDesigner.Application.Interfaces
 	{
 		Task<ResponsePaged<ProductsViewDto>> GetPagedProductsAsync(QueryPaged queryPaged);
 
-		Task<ResponseRedirect> CreateProductAsync(ProductEditDto productEditDto);
+		Task<ResponseRedirect> CreateAsync(ProductEditDto productEditDto);
 
-		Task<Product> GetProductByIdAsync(int id);
+		Task<Product> GetByIdAsync(int id);
 
-		Task<ProductEditDto> GetProductEditDtoByIdAsync(int id);
+		Task<ProductEditDto> GetEditDtoByIdAsync(int id);
 
-		Task<ResponseRedirect> UpdateProductAsync(ProductEditDto productEditDto);
+		Task<ResponseRedirect> UpdateAsync(ProductEditDto productEditDto);
 
-		Task<ResponseBoolean> DeleteProductAsync(int id);
+		Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(QueryDeleteEntity queryDeleteEntity);
 
-		Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(int id, int modeDelete);
-
-		Task<int> GetCountProductsAsync();
+		Task<int> GetCountAsync();
 
 		Task<IReadOnlyCollection<ProductAutocompleteDto>> FilteringData(string f);
 	}

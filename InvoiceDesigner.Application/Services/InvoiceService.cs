@@ -44,8 +44,8 @@ namespace InvoiceDesigner.Application.Services
 		{
 			InfoForNewInvoiceDto result = new InfoForNewInvoiceDto();
 
-			var companies = _companyService.GetAllCompanyAutocompleteDto(userId, isAdmin);
-			var currencies = _currencyService.GetCurrencyAutocompleteDto();
+			var companies = _companyService.GetAllAutocompleteDto(userId, isAdmin);
+			var currencies = _currencyService.GetAutocompleteDto();
 
 			await Task.WhenAll(companies, currencies);
 
@@ -188,16 +188,16 @@ namespace InvoiceDesigner.Application.Services
 
 		private async Task<(Currency, Company, Bank, Customer)> ValidateInputAsync(InvoiceEditDto invoiceDto)
 		{
-			var company = await _companyService.GetCompanyByIdAsync(invoiceDto.Company.Id)
+			var company = await _companyService.GetByIdAsync(invoiceDto.Company.Id)
 							?? throw new InvalidOperationException($"Company: {invoiceDto.Company.Id} not found.");
 
-			var currency = await _currencyService.GetCurrencyByIdAsync(invoiceDto.Currency.Id)
+			var currency = await _currencyService.GetByIdAsync(invoiceDto.Currency.Id)
 							?? throw new InvalidOperationException($"Company: {invoiceDto.Currency.Id} not found.");
 
-			var bank = await _bankService.GetBankByIdAsync(invoiceDto.Bank.Id)
+			var bank = await _bankService.GetByIdAsync(invoiceDto.Bank.Id)
 							?? throw new InvalidOperationException($"Bank: {invoiceDto.Bank.Id} not found.");
 
-			var customer = await _customerService.GetCustomerByIdAsync(invoiceDto.Customer.Id)
+			var customer = await _customerService.GetByIdAsync(invoiceDto.Customer.Id)
 							?? throw new InvalidOperationException($"Customer: {invoiceDto.Customer.Id} not found.");
 
 			return (currency, company, bank, customer);
@@ -228,7 +228,7 @@ namespace InvoiceDesigner.Application.Services
 			List<InvoiceItem> invoiceItem = new List<InvoiceItem>();
 			foreach (var item in dto.InvoiceItems)
 			{
-				var product = await _productService.GetProductByIdAsync(item.Product.Id);
+				var product = await _productService.GetByIdAsync(item.Product.Id);
 				invoiceItem.Add(new InvoiceItem
 				{
 					ProductId = product.Id,

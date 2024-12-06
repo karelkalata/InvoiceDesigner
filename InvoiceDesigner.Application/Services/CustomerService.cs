@@ -10,26 +10,24 @@ namespace InvoiceDesigner.Application.Services
 {
 	public class CustomerService : ICustomerService
 	{
-		private readonly ICustomerRepository _repository;
+		private readonly ICustomerRepository _repoCustomer;
 		private readonly IMapper _mapper;
 		private readonly IInvoiceServiceHelper _invoiceServiceHelper;
 
-		public CustomerService(ICustomerRepository repository,
-								IMapper mapper,
-								IInvoiceServiceHelper invoiceServiceHelper)
+		public CustomerService(ICustomerRepository repoCustomer, IMapper mapper, IInvoiceServiceHelper invoiceServiceHelper)
 		{
-			_repository = repository;
+			_repoCustomer = repoCustomer;
 			_mapper = mapper;
 			_invoiceServiceHelper = invoiceServiceHelper;
 		}
 
-		public async Task<ResponsePaged<CustomerViewDto>> GetPagedCustomersAsync(QueryPaged queryPaged)
+		public async Task<ResponsePaged<CustomerViewDto>> GetPagedEntitiesAsync(QueryPaged queryPaged)
 		{
 			queryPaged.PageSize = Math.Max(queryPaged.PageSize, 1);
 			queryPaged.Page = Math.Max(queryPaged.Page, 1);
 
-			var clientsTask = _repository.GetCustomersAsync(queryPaged, GetOrdering(queryPaged.SortLabel));
-			var totalCountTask = _repository.GetCountCustomersAsync(queryPaged.ShowDeleted);
+			var clientsTask = _repoCustomer.GetEntitiesAsync(queryPaged, GetOrdering(queryPaged.SortLabel));
+			var totalCountTask = _repoCustomer.GetCountAsync(queryPaged.ShowDeleted);
 
 			await Task.WhenAll(clientsTask, totalCountTask);
 
@@ -43,68 +41,64 @@ namespace InvoiceDesigner.Application.Services
 		}
 
 
-		public async Task<ResponseRedirect> CreateCustomerAsync(CustomerEditDto newCustomer)
+		public async Task<ResponseRedirect> CreateAsync(CustomerEditDto newCustomer)
 		{
 			var existsCustomer = new Customer();
 
 			MapCustomer(existsCustomer, newCustomer);
 
-			var entityId = await _repository.CreateCustomerAsync(existsCustomer);
+			var entityId = await _repoCustomer.CreateAsync(existsCustomer);
 			return new ResponseRedirect
 			{
 				RedirectUrl = "/Customers"
 			};
 		}
 
-		public async Task<Customer> GetCustomerByIdAsync(int id) => await ValidateExistsEntityAsync(id);
+		public async Task<Customer> GetByIdAsync(int id) => await ValidateExistsEntityAsync(id);
 
-		public async Task<CustomerEditDto> GetCustomerEditDtoByIdAsync(int id)
+		public async Task<CustomerEditDto> GetEditDtoByIdAsync(int id)
 		{
 			var existsEntity = await ValidateExistsEntityAsync(id);
 			return _mapper.Map<CustomerEditDto>(existsEntity);
 		}
 
-		public async Task<ResponseRedirect> UpdateCustomerAsync(CustomerEditDto editedCustomer)
+		public async Task<ResponseRedirect> UpdateAsync(CustomerEditDto editedCustomer)
 		{
 			var existsCustomer = await ValidateExistsEntityAsync(editedCustomer.Id);
 
 			MapCustomer(existsCustomer, editedCustomer);
 
-			var entityId = await _repository.UpdateCustomerAsync(existsCustomer);
+			var entityId = await _repoCustomer.UpdateAsync(existsCustomer);
 			return new ResponseRedirect
 			{
 				RedirectUrl = "/Customers"
 			};
 		}
 
-		public async Task<ResponseBoolean> DeleteCustomerAsync(int id)
+		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(QueryDeleteEntity queryDeleteEntity)
 		{
-			var existsEntity = await ValidateExistsEntityAsync(id);
+			var existsEntity = await ValidateExistsEntityAsync(queryDeleteEntity.EntityId);
 
-			if (await _invoiceServiceHelper.IsClientUsedInInvoices(id))
-				throw new InvalidOperationException($"Customer {existsEntity.Name} is in use in Invoices and cannot be deleted.");
-
-			return new ResponseBoolean
+			if (!queryDeleteEntity.MarkAsDeleted)
 			{
-				Result = await _repository.DeleteCustomerAsync(existsEntity)
-			};
-		}
-
-		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(int id, int modeDelete)
-		{
-			if (modeDelete == 0)
-			{
-				var existsEntity = await ValidateExistsEntityAsync(id);
-				existsEntity.IsDeleted = true;
-
-				await _repository.UpdateCustomerAsync(existsEntity);
-
-				return new ResponseBoolean { Result = true };
+				return new ResponseBoolean
+				{
+					Result = await _repoCustomer.DeleteAsync(existsEntity)
+				};
 			}
-			return await DeleteCustomerAsync(id);
+			else
+			{
+				existsEntity.IsDeleted = true;
+				await _repoCustomer.UpdateAsync(existsEntity);
+
+				return new ResponseBoolean
+				{
+					Result = true
+				};
+			}
 		}
 
-		public Task<int> GetCustomerCountAsync() => _repository.GetCountCustomersAsync();
+		public Task<int> GetCountAsync() => _repoCustomer.GetCountAsync();
 
 		public async Task<IReadOnlyCollection<CustomerAutocompleteDto>> FilteringData(string searchText)
 		{
@@ -115,13 +109,13 @@ namespace InvoiceDesigner.Application.Services
 				SearchString = searchText
 			};
 
-			var customers = await _repository.GetCustomersAsync(queryPaged, GetOrdering("Value"));
+			var customers = await _repoCustomer.GetEntitiesAsync(queryPaged, GetOrdering("Value"));
 			return _mapper.Map<IReadOnlyCollection<CustomerAutocompleteDto>>(customers);
 		}
 
 		private async Task<Customer> ValidateExistsEntityAsync(int id)
 		{
-			return await _repository.GetCustomerByIdAsync(id)
+			return await _repoCustomer.GetByIdAsync(id)
 				?? throw new InvalidOperationException("Customer not found");
 		}
 

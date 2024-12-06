@@ -15,11 +15,16 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 			_context = context;
 		}
 
-		public async Task<IReadOnlyCollection<Company>> GetCompaniesAsync(QueryPaged queryPaged, Func<IQueryable<Company>, IOrderedQueryable<Company>> orderBy)
+		public async Task<IReadOnlyCollection<Company>> GetEntitiesAsync(QueryPaged queryPaged, Func<IQueryable<Company>, IOrderedQueryable<Company>> orderBy)
 		{
 			int skip = (queryPaged.Page - 1) * queryPaged.PageSize;
 
 			IQueryable<Company> query = _context.Companies.AsNoTracking();
+
+			if (!queryPaged.ShowDeleted)
+			{
+				query = query.Where(e => e.IsDeleted == false);
+			}
 
 			if (!string.IsNullOrEmpty(queryPaged.SearchString))
 			{
@@ -37,7 +42,7 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		}
 
 
-		public async Task<int> CreateCompanyAsync(Company entity)
+		public async Task<int> CreateAsync(Company entity)
 		{
 			await _context.Companies.AddAsync(entity);
 			await _context.SaveChangesAsync();
@@ -45,7 +50,7 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		}
 
 
-		public async Task<Company?> GetCompanyByIdAsync(int id)
+		public async Task<Company?> GetByIdAsync(int id)
 		{
 			return await _context.Companies
 				.Include(c => c.Currency)
@@ -55,7 +60,7 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		}
 
 
-		public async Task<int> UpdateCompanyAsync(Company entity)
+		public async Task<int> UpdateAsync(Company entity)
 		{
 			_context.Companies.Update(entity);
 			await _context.SaveChangesAsync();
@@ -63,14 +68,14 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		}
 
 
-		public async Task<bool> DeleteCompanyAsync(Company entity)
+		public async Task<bool> DeleteAsync(Company entity)
 		{
 			_context.Companies.Remove(entity);
 			return await _context.SaveChangesAsync() > 0;
 		}
 
 
-		public async Task<int> GetCountCompaniesAsync()
+		public async Task<int> GetCountAsync()
 		{
 			return await _context.Companies.CountAsync();
 		}

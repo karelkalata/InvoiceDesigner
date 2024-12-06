@@ -15,7 +15,7 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 			_context = context;
 		}
 
-		public async Task<IReadOnlyCollection<Product>> GetProductsAsync(QueryPaged queryPaged,
+		public async Task<IReadOnlyCollection<Product>> GetEntitiesAsync(QueryPaged queryPaged,
 																		Func<IQueryable<Product>, IOrderedQueryable<Product>> orderBy)
 		{
 			int skip = (queryPaged.Page - 1) * queryPaged.PageSize;
@@ -42,7 +42,7 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		}
 
 
-		public async Task<int> CreateProductAsync(Product entity)
+		public async Task<int> CreateAsync(Product entity)
 		{
 			await _context.Products.AddAsync(entity);
 			await _context.SaveChangesAsync();
@@ -50,7 +50,7 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		}
 
 
-		public async Task<Product?> GetProductByIdAsync(int id)
+		public async Task<Product?> GetByIdAsync(int id)
 		{
 			return await _context.Products
 				.Include(a => a.ProductPrice)
@@ -60,7 +60,7 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		}
 
 
-		public async Task<int> UpdateProductAsync(Product entity)
+		public async Task<int> UpdateAsync(Product entity)
 		{
 			_context.Products.Update(entity);
 			await _context.SaveChangesAsync()
@@ -69,13 +69,13 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		}
 
 
-		public async Task<bool> DeleteProductAsync(Product entity)
+		public async Task<bool> DeleteAsync(Product entity)
 		{
 			_context.Products.Remove(entity);
 			return await _context.SaveChangesAsync() > 0;
 		}
 
-		public async Task<int> GetCountProductsAsync(bool showDeleted)
+		public async Task<int> GetCountAsync(bool showDeleted)
 		{
 			IQueryable<Product> query = _context.Products;
 

@@ -16,14 +16,14 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		}
 
 
-		public async Task<IReadOnlyCollection<Currency>> GetAllCurrenciesAsync()
+		public async Task<IReadOnlyCollection<Currency>> GetAllAsync()
 		{
 			return await _context.Currencies
 				.AsNoTracking()
 				.ToListAsync();
 		}
 
-		public async Task<IReadOnlyCollection<Currency>> GetCurrenciesAsync(QueryPaged queryPaged, Func<IQueryable<Currency>, IOrderedQueryable<Currency>> orderBy)
+		public async Task<IReadOnlyCollection<Currency>> GetEntitiesAsync(QueryPaged queryPaged, Func<IQueryable<Currency>, IOrderedQueryable<Currency>> orderBy)
 		{
 			int skip = (queryPaged.Page - 1) * queryPaged.PageSize;
 
@@ -51,7 +51,7 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		}
 
 
-		public async Task<int> CreateCurrencyAsync(Currency entity)
+		public async Task<int> CreateAsync(Currency entity)
 		{
 			await _context.Currencies.AddAsync(entity);
 			await _context.SaveChangesAsync();
@@ -59,7 +59,7 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		}
 
 
-		public async Task<Currency?> GetCurrencyByIdAsync(int id)
+		public async Task<Currency?> GetByIdAsync(int id)
 		{
 			return await _context.Currencies
 				.Where(a => a.Id == id)
@@ -67,7 +67,7 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		}
 
 
-		public async Task<int> UpdateCurrencyAsync(Currency entity)
+		public async Task<int> UpdateAsync(Currency entity)
 		{
 			_context.Currencies.Update(entity);
 			await _context.SaveChangesAsync();
@@ -75,14 +75,14 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		}
 
 
-		public async Task<bool> DeleteCurrencyAsync(Currency entity)
+		public async Task<bool> DeleteAsync(Currency entity)
 		{
 			_context.Currencies.Remove(entity);
 			return await _context.SaveChangesAsync() > 0;
 		}
 
 
-		public async Task<int> GetCountCurrenciesAsync(bool showDeleted = false)
+		public async Task<int> GetCountAsync(bool showDeleted = false)
 		{
 			IQueryable<Currency> query = _context.Currencies;
 

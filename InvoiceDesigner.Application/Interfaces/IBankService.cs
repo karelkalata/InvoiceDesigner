@@ -5,7 +5,7 @@ namespace InvoiceDesigner.Application.Interfaces
 {
 	public interface IBankService
 	{
-		Task<Bank?> GetBankByIdAsync(int id);
+		Task<Bank?> GetByIdAsync(int id);
 
 		Task<IReadOnlyCollection<BankAutocompleteDto>> GetAllBanksAutocompleteDto();
 

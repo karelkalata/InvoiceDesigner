@@ -78,6 +78,9 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.Property<string>("Info")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(300)

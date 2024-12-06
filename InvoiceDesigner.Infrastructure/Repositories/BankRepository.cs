@@ -14,14 +14,14 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 			_context = context;
 		}
 
-		public async Task<IReadOnlyCollection<Bank>> GetAllBanksAsync()
+		public async Task<IReadOnlyCollection<Bank>> GetAllAsync()
 		{
 			return await _context.Banks
 				.AsNoTracking()
 				.ToListAsync();
 		}
 
-		public async Task<Bank?> GetBankByIdAsync(int id)
+		public async Task<Bank?> GetByIdAsync(int id)
 		{
 			return await _context.Banks
 				.Include(a => a.Company)

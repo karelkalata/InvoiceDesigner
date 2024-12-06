@@ -17,14 +17,14 @@ namespace InvoiceDesigner.Application.Services
 			_mapper = mapper;
 		}
 
-		public async Task<Bank?> GetBankByIdAsync(int id)
+		public async Task<Bank?> GetByIdAsync(int id)
 		{
-			return await _repository.GetBankByIdAsync(id);
+			return await _repository.GetByIdAsync(id);
 		}
 
 		public async Task<IReadOnlyCollection<BankAutocompleteDto>> GetAllBanksAutocompleteDto()
 		{
-			var banks = await _repository.GetAllBanksAsync();
+			var banks = await _repository.GetAllAsync();
 			return _mapper.Map<IReadOnlyCollection<BankAutocompleteDto>>(banks);
 		}
 

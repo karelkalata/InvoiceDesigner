@@ -160,7 +160,7 @@
 
 	private async void RedirectToDeleteRow(int id)
 	{
-		if (await _httpHelper.DeleteOrMarkAdDeletedAsync(id))
+		if (await _httpHelper.DeleteOrMarkAsDeletedAsync(id))
 			await _table.ReloadServerData();
 	}
 
