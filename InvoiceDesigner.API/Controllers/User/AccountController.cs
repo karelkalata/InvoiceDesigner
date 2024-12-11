@@ -7,7 +7,7 @@ namespace InvoiceDesigner.API.Controllers.User
 {
 	[Route("api/User/[controller]")]
 	[ApiController]
-	public class AccountController : Controller
+	public class AccountController : ControllerBase
 	{
 		private readonly IUserService _service;
 
@@ -19,11 +19,12 @@ namespace InvoiceDesigner.API.Controllers.User
 		[HttpGet("{id:int}")]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserEditDto))]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public async Task<IActionResult> GetByIdAsync(int id)
+		public async Task<IActionResult> GetByIdAsync(int id = 0)
 		{
 			try
 			{
-				var result = await _service.GetUserEditDtoByIdAsync(id);
+				var (userId, isAdmin) = GetValidatedFilters();  // do not believe the data in the dto sent by the user
+				var result = await _service.GetEditDtoByIdAsync(userId);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -41,13 +42,25 @@ namespace InvoiceDesigner.API.Controllers.User
 				return BadRequest(ModelState);
 			try
 			{
-				var result = await _service.UpdateUserAsync(userEditDto);
+				var (userId, isAdmin) = GetValidatedFilters();
+				var result = await _service.UpdateAsync(userId, userEditDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
 			{
 				return BadRequest(new { message = ex.Message });
 			}
+		}
+
+		private (int, bool) GetValidatedFilters()
+		{
+			var userIdString = User.FindFirst("userId")?.Value;
+			int.TryParse(userIdString, out int userId);
+
+			var isAdminString = User.FindFirst("isAdmin")?.Value;
+			bool.TryParse(isAdminString, out bool isAdmin);
+
+			return (userId, isAdmin);
 		}
 	}
 }

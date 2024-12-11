@@ -1,3 +1,7 @@
+1.0.1
+	Introduced UserCurrenciesController to restrict currency access for regular users.
+	Refactored UserService into separate services for Admin and User roles to enhance security.
+	Minor bug fixes.
 1.0.0 Release
 	All functionality is realized
 0.3.1-alpha

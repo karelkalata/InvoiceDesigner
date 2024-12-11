@@ -47,7 +47,6 @@ namespace InvoiceDesigner.Application.Services
 			return result;
 		}
 
-
 		public async Task<ResponseRedirect> CreateAsync(ProductEditDto productEditDto)
 		{
 			var existsProduct = new Product();

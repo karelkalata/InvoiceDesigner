@@ -1,4 +1,4 @@
-﻿@page "/User/{id:int}"
+﻿@page "/User/Account"
 @using InvoiceDesigner.Domain.Shared.DTOs.User
 @using InvoiceDesigner.WebApp.Helpers;
 @inject IHttpClientFactory HttpClientFactory
@@ -41,8 +41,6 @@
 	}
 </MudContainer>
 @code {
-	[Parameter]
-	public int? id { get; set; }
 
 	private static string _controller = "User/Account";
 	private HttpRequestHelper _httpHelper = null!;
@@ -53,7 +51,7 @@
 	protected override async Task OnInitializedAsync()
 	{
 		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav);
-		_userEditDto = await _httpHelper.GetAsync<UserEditDto>(id);
+		_userEditDto = await _httpHelper.GetAsync<UserEditDto>(1);
 	}
 
 	private async Task OnValidSubmit()
@@ -63,13 +61,10 @@
 		if (_userEditDto == null)
 			return;
 
-		if (id == 0)
+		if (string.IsNullOrEmpty(_userEditDto.Password))
 		{
-			if (string.IsNullOrEmpty(_userEditDto.Password))
-			{
-				_isPasswordFieldEmpty = true;
-				return;
-			}
+			_isPasswordFieldEmpty = true;
+			return;
 		}
 
 		await _httpHelper.SendRequest(_userEditDto, true);

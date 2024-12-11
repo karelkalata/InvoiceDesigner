@@ -425,7 +425,7 @@
 
 	private void OnProductSelected(ProductAutocompleteDto product, InvoiceItemDto item)
 	{
-		if (product != null)
+		if (product != null && _invoiceEditDto.Currency != null)
 		{
 			item.Product = product;
 			item.Price = product.PriceByCurrency.GetValueOrDefault(_invoiceEditDto.Currency.Id, 0);

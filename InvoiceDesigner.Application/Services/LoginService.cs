@@ -30,7 +30,7 @@ namespace InvoiceDesigner.Application.Services
 			};
 
 			var existUser = await _repository.GetUserByLoginAsync(dto.Login);
-			if (existUser == null)
+			if (existUser == null || existUser.IsDeleted)
 				return result;
 
 			if (!UserPaswordHasher.VerifyPassword(dto.Password, existUser.PasswordHash, existUser.PasswordSalt))

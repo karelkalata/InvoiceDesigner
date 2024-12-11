@@ -1,5 +1,5 @@
 ﻿using InvoiceDesigner.Application.Authorization;
-using InvoiceDesigner.Application.Interfaces.InterfacesUser;
+using InvoiceDesigner.Application.Interfaces.AdminInterfaces;
 using InvoiceDesigner.Domain.Shared.DTOs.User;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
@@ -13,11 +13,11 @@ namespace InvoiceDesigner.API.Controllers.Admin
 	[ApiController]
 	public class UsersController : ControllerBase
 	{
-		private readonly IUserService _service;
+		private readonly IAdminUserInterface _serviceAdminUser;
 
-		public UsersController(IUserService service)
+		public UsersController(IAdminUserInterface serviceAdminUser)
 		{
-			_service = service;
+			_serviceAdminUser = serviceAdminUser;
 		}
 
 		[HttpGet]
@@ -28,7 +28,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 				return BadRequest(ModelState);
 			try
 			{
-				var result = await _service.GetPagedEntitiesAsync(queryPaged);
+				var result = await _serviceAdminUser.GetPagedEntitiesAsync(queryPaged);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -50,7 +50,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 
 			try
 			{
-				var result = await _service.CreateAdminUserAsync(adminUserEditDto);
+				var result = await _serviceAdminUser.CreateUserAsync(adminUserEditDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -66,7 +66,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 		{
 			try
 			{
-				var result = await _service.GetAdminUserEditDtoByIdAsync(id);
+				var result = await _serviceAdminUser.GetEditDtoByIdAsync(id);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -85,7 +85,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 
 			try
 			{
-				var result = await _service.UpdateAdminUserAsync(adminUserEditDto);
+				var result = await _serviceAdminUser.UpdateAsync(adminUserEditDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -110,7 +110,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 					MarkAsDeleted = modeDelete == 0
 				};
 
-				var result = await _service.DeleteOrMarkAsDeletedAsync(queryDeleteEntity);
+				var result = await _serviceAdminUser.DeleteOrMarkAsDeletedAsync(queryDeleteEntity);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -126,7 +126,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 		{
 			try
 			{
-				var result = await _service.CheckLoginName(f);
+				var result = await _serviceAdminUser.CheckLoginName(f);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)

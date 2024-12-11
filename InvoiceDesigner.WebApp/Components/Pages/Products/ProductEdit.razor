@@ -52,7 +52,7 @@
 													 Clearable="true"
 													 Required
 													 Dense="true"
-													 SearchFunc="@((value, token) => FilteringDataWithApi<CurrencyAutocompleteDto>(value, "Currencies", token))"
+													 SearchFunc="@((value, token) => FilteringDataWithApi<CurrencyAutocompleteDto>(value, "UserCurrencies", token))"
 													 ToStringFunc="@(c => c?.Name ?? "")"
 													 For="(() => context.Item.Currency)" />
 								</EditTemplate>

@@ -165,12 +165,12 @@ namespace InvoiceDesigner.Application.Services
 		private Func<IQueryable<Currency>, IOrderedQueryable<Currency>> GetOrdering(string sortLabel)
 		{
 			var sortingOptions = new Dictionary<string, Func<IQueryable<Currency>, IOrderedQueryable<Currency>>>
-		{
-			{"Id_desc", q => q.OrderByDescending(e => e.Id)},
-			{"Code", q => q.OrderBy(e => e.Name)},
-			{"Code_desc", q => q.OrderByDescending(e => e.Name)},
-			{"Id", q => q.OrderBy(e => e.Id)}
-		};
+			{
+				{"Id_desc", q => q.OrderByDescending(e => e.Id)},
+				{"Code", q => q.OrderBy(e => e.Name)},
+				{"Code_desc", q => q.OrderByDescending(e => e.Name)},
+				{"Id", q => q.OrderBy(e => e.Id)}
+			};
 
 			return sortingOptions.TryGetValue(sortLabel, out var orderFunc) ? orderFunc : sortingOptions["Id"];
 		}

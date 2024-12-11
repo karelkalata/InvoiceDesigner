@@ -13,11 +13,11 @@ namespace InvoiceDesigner.API.Controllers.Admin
 	[ApiController]
 	public class CurrenciesController : ControllerBase
 	{
-		private readonly ICurrencyService _service;
+		private readonly ICurrencyService _serviceAdminCurrency;
 
-		public CurrenciesController(ICurrencyService service)
+		public CurrenciesController(ICurrencyService serviceAdminCurrency)
 		{
-			_service = service;
+			_serviceAdminCurrency = serviceAdminCurrency;
 		}
 
 		[HttpGet]
@@ -29,7 +29,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 
 			try
 			{
-				var result = await _service.GetPagedEntitiesAsync(queryPaged);
+				var result = await _serviceAdminCurrency.GetPagedEntitiesAsync(queryPaged);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -51,7 +51,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 
 			try
 			{
-				var result = await _service.CreateAsync(currencyEditDto);
+				var result = await _serviceAdminCurrency.CreateAsync(currencyEditDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -67,7 +67,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 		{
 			try
 			{
-				var result = await _service.GetEditDtoByIdAsync(id);
+				var result = await _serviceAdminCurrency.GetEditDtoByIdAsync(id);
 
 				return Ok(result);
 			}
@@ -87,7 +87,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 
 			try
 			{
-				var result = await _service.UpdateAsync(currencyEditDto);
+				var result = await _serviceAdminCurrency.UpdateAsync(currencyEditDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -112,7 +112,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 					MarkAsDeleted = modeDelete == 0
 				};
 
-				var result = await _service.DeleteOrMarkAsDeletedAsync(queryDeleteEntity);
+				var result = await _serviceAdminCurrency.DeleteOrMarkAsDeletedAsync(queryDeleteEntity);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -127,7 +127,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 		{
 			try
 			{
-				var result = await _service.GetAutocompleteDto();
+				var result = await _serviceAdminCurrency.GetAutocompleteDto();
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -140,7 +140,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<CurrencyAutocompleteDto>))]
 		public async Task<IActionResult> FilteringData(string f = "")
 		{
-			var result = await _service.FilteringData(f);
+			var result = await _serviceAdminCurrency.FilteringData(f);
 			return Ok(result);
 		}
 

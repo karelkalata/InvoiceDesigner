@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace InvoiceDesigner.API.Controllers.Unauthorized
 {
+
 	[Route("api/[controller]")]
 	[ApiController]
 	public class LoginController : ControllerBase

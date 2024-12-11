@@ -1,9 +1,11 @@
 ﻿using InvoiceDesigner.API.Helpers;
 using InvoiceDesigner.Application.Authorization;
 using InvoiceDesigner.Application.Interfaces;
+using InvoiceDesigner.Application.Interfaces.AdminInterfaces;
 using InvoiceDesigner.Application.Interfaces.InterfacesFormDesigner;
 using InvoiceDesigner.Application.Interfaces.InterfacesUser;
 using InvoiceDesigner.Application.Services;
+using InvoiceDesigner.Application.Services.AdminService;
 using InvoiceDesigner.Application.Services.ServiceFormDesigner;
 using InvoiceDesigner.Application.Services.ServiceUser;
 using InvoiceDesigner.Domain.Shared.Interfaces;
@@ -78,6 +80,7 @@ builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<IInvoiceServiceHelper, InvoiceServiceHelper>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IAdminUserInterface, AdminUserService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserAuthorizedDataService, UserAuthorizedDataService>();
 builder.Services.AddScoped<ILoginService, LoginService>();

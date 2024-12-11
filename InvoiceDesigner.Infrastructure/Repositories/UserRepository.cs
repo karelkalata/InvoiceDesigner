@@ -51,10 +51,12 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		public async Task<User?> GetUserByIdAsync(int id)
 		{
 			return await _context.Users
-				.Where(c => c.Id == id)
-				.Include(c => c.Companies)
+				.Where(u => u.Id == id)
+				.Include(u => u.Companies)
+					.ThenInclude(company => company.Currency) 
+				.Include(u => u.Companies) 
 					.ThenInclude(company => company.Banks) 
-						.ThenInclude(bank => bank.Currency)
+						.ThenInclude(bank => bank.Currency) 
 				.SingleOrDefaultAsync();
 		}
 
