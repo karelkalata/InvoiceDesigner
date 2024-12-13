@@ -8,6 +8,7 @@ With InvoiceDesigner, customizing your invoice print form is super easy. You can
 - Enhanced UI/UX powered by [MudBlazor](https://github.com/MudBlazor/MudBlazor)
  
 ## Features
+- Works Locally/Lan/Internet
 - Fully customizable PDF invoices
 - Comprehensive Invoice Management
 - Client and Product Management
