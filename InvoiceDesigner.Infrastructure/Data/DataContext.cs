@@ -9,21 +9,23 @@ namespace InvoiceDesigner.Infrastructure.Data
 	{
 		public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
-		public DbSet<Company> Companies { get; set; }
-		public DbSet<Currency> Currencies { get; set; }
-		public DbSet<Bank> Banks { get; set; }
-		public DbSet<Customer> Customers { get; set; }
-		public DbSet<Product> Products { get; set; }
-		public DbSet<ProductPrice> ProductPrice { get; set; }
-		public DbSet<Invoice> Invoices { get; set; }
-		public DbSet<InvoiceItem> InvoiceItems { get; set; }
-		public DbSet<User> Users { get; set; }
-		public DbSet<PrintInvoice> PrintInvoices { get; set; }
+		public DbSet<Company> Companies { get; set; } = null!;
+		public DbSet<Currency> Currencies { get; set; } = null!;
+		public DbSet<Bank> Banks { get; set; } = null!;
+		public DbSet<Customer> Customers { get; set; } = null!;
+		public DbSet<Product> Products { get; set; } = null!;
+		public DbSet<ProductPrice> ProductPrice { get; set; } = null!;
+		public DbSet<Invoice> Invoices { get; set; } = null!;
+		public DbSet<InvoiceItem> InvoiceItems { get; set; } = null!;
+		public DbSet<User> Users { get; set; } = null!;
+		public DbSet<PrintInvoice> PrintInvoices { get; set; } = null!;
 
-		public DbSet<FormDesigner> FormDesigners { get; set; }
-		public DbSet<FormDesignerScheme> FormDesignerSchemes { get; set; }
-		public DbSet<DropItem> DropItems { get; set; }
-		public DbSet<CssStyle> DropItemStyles { get; set; }
+		public DbSet<FormDesigner> FormDesigners { get; set; } = null!;
+		public DbSet<FormDesignerScheme> FormDesignerSchemes { get; set; } = null!;
+		public DbSet<DropItem> DropItems { get; set; } = null!;
+		public DbSet<CssStyle> DropItemStyles { get; set; } = null!;
+
+		public DbSet<UserActivityLog> UserActivityLogs { get; set; } = null!;
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -95,7 +97,6 @@ namespace InvoiceDesigner.Infrastructure.Data
 					.HasForeignKey(e => e.CurrencyId)
 					.IsRequired();
 			});
-
 
 			modelBuilder.Entity<Customer>(customer =>
 			{
@@ -230,7 +231,7 @@ namespace InvoiceDesigner.Infrastructure.Data
 					.UsingEntity<Dictionary<string, object>>(
 						"UserCompany",
 						uc => uc.HasOne<Company>().WithMany().HasForeignKey("CompanyId").OnDelete(DeleteBehavior.Cascade),
-						uc => uc.HasOne<User>().WithMany().HasForeignKey("UserId").OnDelete(DeleteBehavior.Cascade)
+						uc => uc.HasOne<User>().WithMany().HasForeignKey("ActivityUserId").OnDelete(DeleteBehavior.Cascade)
 					);
 
 				// default login: admin, password: admin
@@ -246,6 +247,18 @@ namespace InvoiceDesigner.Infrastructure.Data
 						}
 					);
 			});
+
+			modelBuilder.Entity<UserActivityLog>(userActivityLog =>
+			{
+				userActivityLog.HasKey(e => e.Id);
+
+				userActivityLog.HasOne<User>()
+					.WithMany()
+					.HasForeignKey(e => e.UserId)
+					.OnDelete(DeleteBehavior.Cascade);
+
+			});
+
 
 			modelBuilder.Entity<PrintInvoice>(PrintInvoice =>
 			{

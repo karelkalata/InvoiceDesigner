@@ -53,10 +53,10 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 			return await _context.Users
 				.Where(u => u.Id == id)
 				.Include(u => u.Companies)
-					.ThenInclude(company => company.Currency) 
-				.Include(u => u.Companies) 
-					.ThenInclude(company => company.Banks) 
-						.ThenInclude(bank => bank.Currency) 
+					.ThenInclude(company => company.Currency)
+				.Include(u => u.Companies)
+					.ThenInclude(company => company.Banks)
+						.ThenInclude(bank => bank.Currency)
 				.SingleOrDefaultAsync();
 		}
 

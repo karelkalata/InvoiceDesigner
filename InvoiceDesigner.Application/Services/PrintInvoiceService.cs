@@ -36,7 +36,7 @@ namespace InvoiceDesigner.Application.Services
 			_mapper = mapper;
 			_formDesignersService = formDesignersService;
 		}
-		
+
 		public void Compose(IDocumentContainer container)
 		{
 			throw new NotImplementedException();
@@ -61,7 +61,7 @@ namespace InvoiceDesigner.Application.Services
 				_invoicePrintDto = _mapper.Map<InvoicePrintDto>(invoice);
 			}
 
-			var formDesigner = await _formDesignersService.GetFormDesignerByIdAsync(printform)
+			var formDesigner = await _formDesignersService.GetByIdAsync(printform)
 					?? throw new InvalidOperationException($"Form Designer: {printform} Not Found");
 
 			var addCurrencySymbol = ConstsCssProperty.Value_None;

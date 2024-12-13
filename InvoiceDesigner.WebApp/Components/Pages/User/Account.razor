@@ -27,10 +27,7 @@
 						<MudTextField @bind-Value="_userEditDto.Password"
 									  Label="Password"
 									  Class="d-flex pa-2"
-									  For="(() => _userEditDto.Password)"
-									  onchange="changePassword"
-									  Error="@_isPasswordFieldEmpty"
-									  ErrorText="Password cannot be empty" />
+									  For="(() => _userEditDto.Password)"/>
 					</MudPaper>
 				</MudCardContent>
 				<MudCardActions>
@@ -46,7 +43,6 @@
 	private HttpRequestHelper _httpHelper = null!;
 
 	private UserEditDto? _userEditDto = null;
-	private bool _isPasswordFieldEmpty;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -56,24 +52,10 @@
 
 	private async Task OnValidSubmit()
 	{
-		_isPasswordFieldEmpty = false;
-
 		if (_userEditDto == null)
 			return;
 
-		if (string.IsNullOrEmpty(_userEditDto.Password))
-		{
-			_isPasswordFieldEmpty = true;
-			return;
-		}
-
 		await _httpHelper.SendRequest(_userEditDto, true);
-	}
-
-	private void changePassword()
-	{
-		if (_userEditDto != null)
-			_isPasswordFieldEmpty = string.IsNullOrEmpty(_userEditDto.Password?.Trim());
 	}
 
 }

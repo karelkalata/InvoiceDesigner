@@ -51,7 +51,8 @@ namespace InvoiceDesigner.API.Controllers.Admin
 
 			try
 			{
-				var result = await _service.CreateAsync(companyCreateDto);
+				var (userId, isAdmin) = GetValidatedFilters();
+				var result = await _service.CreateAsync(userId, companyCreateDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -87,7 +88,8 @@ namespace InvoiceDesigner.API.Controllers.Admin
 
 			try
 			{
-				var result = await _service.UpdateAsync(companyCreateDto);
+				var (userId, isAdmin) = GetValidatedFilters();
+				var result = await _service.UpdateAsync(userId, companyCreateDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)

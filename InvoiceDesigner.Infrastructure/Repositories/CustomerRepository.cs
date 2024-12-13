@@ -15,7 +15,7 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 			_context = context;
 		}
 
-		public async Task<IReadOnlyCollection<Customer>> GetEntitiesAsync(QueryPaged queryPaged, 
+		public async Task<IReadOnlyCollection<Customer>> GetEntitiesAsync(QueryPaged queryPaged,
 																			Func<IQueryable<Customer>, IOrderedQueryable<Customer>> orderBy)
 		{
 			int skip = (queryPaged.Page - 1) * queryPaged.PageSize;

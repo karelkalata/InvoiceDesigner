@@ -4,6 +4,7 @@
 @using InvoiceDesigner.Domain.Shared.Extensions
 @using InvoiceDesigner.Domain.Shared.QueryParameters
 @using InvoiceDesigner.Domain.Shared.Responses
+@using InvoiceDesigner.WebApp.Components.Pages.Helpers
 @using InvoiceDesigner.WebApp.Helpers
 @inject IHttpClientFactory HttpClientFactory
 @inject ILocalStorageService LocalStorageService
@@ -17,12 +18,12 @@
 			<MudText Typo="Typo.h6">@_controller</MudText>
 			<MudSpacer />
 			<MudTextField T="string"
-			ValueChanged="@(s=>OnSearch(s))"
-			Placeholder="Search"
-			Adornment="Adornment.Start"
-			AdornmentIcon="@Icons.Material.Filled.Search"
-			IconSize="Size.Medium"
-			Class="mt-0" />
+						  ValueChanged="@(s=>OnSearch(s))"
+						  Placeholder="Search"
+						  Adornment="Adornment.Start"
+						  AdornmentIcon="@Icons.Material.Filled.Search"
+						  IconSize="Size.Medium"
+						  Class="mt-0" />
 			<MudSpacer />
 			<MudIconButton Icon="@Icons.Material.Filled.PlaylistAdd" Size="Size.Medium" Href="/Invoices/0" />
 			<MudMenu Icon="@Icons.Material.Filled.Settings" Size="Size.Medium" Style="margin-left: auto;" Dense>
@@ -45,6 +46,7 @@
 			<MudTh></MudTh>
 			<MudTh></MudTh>
 			<MudTh></MudTh>
+			<MudTh></MudTh>
 		</HeaderContent>
 		<RowTemplate>
 			<MudTd DataLabel="Id">@context.InvoiceNumber</MudTd>
@@ -55,9 +57,9 @@
 			<MudTd DataLabel="Currency">@context.CurrencyName</MudTd>
 			<MudTd DataLabel="Status">
 				<MudSelect T="EInvoiceStatus"
-				Value="@context.Status"
-				ValueChanged="@(val => OnChangedInvoiceStatus(context, val))"
-				Style="width: 50px;">
+						   Value="@context.Status"
+						   ValueChanged="@(val => OnChangedInvoiceStatus(context, val))"
+						   Style="width: 50px;">
 					<MudSelectItem T="EInvoiceStatus" Value="EInvoiceStatus.Active">
 						<MudChip Class="ma-0" T="EInvoiceStatus" Style="height: 25px;" Color="Color.Primary">
 							@EInvoiceStatus.Active
@@ -80,21 +82,27 @@
 			</MudTd>
 			<MudTd Style="width:25px" Class="pa-0">
 				<MudIconButton Href="@($"/Invoices/{context.Id}")"
-				Icon="@Icons.Material.Filled.Edit"
-				Size="Size.Small"
-				Color="Color.Default" />
+							   Icon="@Icons.Material.Filled.Edit"
+							   Size="Size.Small"
+							   Color="Color.Default" />
+			</MudTd>
+			<MudTd Style="width:25px" Class="pa-0">
+				<ActivityLogsHelper DialogService=DialogService
+									HttpHelper=_httpHelper
+									DocumentType=EDocumentsTypes.Invoice
+									EntityId="@context.Id" />
 			</MudTd>
 			<MudTd Style="width:25px" Class="pa-0">
 				<MudIconButton Icon="@(context.IsDeleted ? Icons.Material.Filled.DeleteForever : Icons.Material.Filled.Delete)"
-				Color="Color.Default"
-				Size="Size.Small"
-				OnClick="() => RedirectToDeleteRow(context.Id)" />
+							   Color="Color.Default"
+							   Size="Size.Small"
+							   OnClick="() => RedirectToDeleteRow(context.Id)" />
 			</MudTd>
 			<MudTd Style="width:25px" Class="pa-0">
 				<MudIconButton Icon="@(context.IsArchived ? Icons.Material.Outlined.Unarchive : Icons.Material.Filled.Archive)"
-				Color="Color.Default"
-				Size="Size.Small"
-				OnClick="() => ArchiveUnarchiveEntity(context.Id, !context.IsArchived)" />
+							   Color="Color.Default"
+							   Size="Size.Small"
+							   OnClick="() => ArchiveUnarchiveEntity(context.Id, !context.IsArchived)" />
 			</MudTd>
 		</RowTemplate>
 		<NoRecordsContent>
@@ -197,13 +205,14 @@
 			{
 				EntityId = entity.Id,
 				Status = newStatus
-			}; 
+			};
 
 		string queryString = queryParameters.ToQueryString();
 
 		var result = await _httpHelper.GetDataFromAPI<ResponseBoolean>($"api/Invoices/ChangeInvoiceStatus?{queryString}");
 
-		if (result.Result){
+		if (result.Result)
+		{
 			entity.Status = newStatus;
 			Snackbar.Add("Status updated!", Severity.Success);
 		}

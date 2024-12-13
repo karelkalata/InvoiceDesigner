@@ -10,9 +10,9 @@ namespace InvoiceDesigner.API.Controllers.Unauthorized
 	[ApiController]
 	public class LoginController : ControllerBase
 	{
-		private readonly ILoginService _service;
+		private readonly IAuthorizationUserService _service;
 
-		public LoginController(ILoginService service)
+		public LoginController(IAuthorizationUserService service)
 		{
 			_service = service;
 		}

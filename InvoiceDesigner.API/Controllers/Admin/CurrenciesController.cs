@@ -51,7 +51,8 @@ namespace InvoiceDesigner.API.Controllers.Admin
 
 			try
 			{
-				var result = await _serviceAdminCurrency.CreateAsync(currencyEditDto);
+				var (userId, isAdmin) = GetValidatedFilters();
+				var result = await _serviceAdminCurrency.CreateAsync(userId, currencyEditDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -87,7 +88,8 @@ namespace InvoiceDesigner.API.Controllers.Admin
 
 			try
 			{
-				var result = await _serviceAdminCurrency.UpdateAsync(currencyEditDto);
+				var (userId, isAdmin) = GetValidatedFilters();
+				var result = await _serviceAdminCurrency.UpdateAsync(userId, currencyEditDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)

@@ -8,11 +8,11 @@ namespace InvoiceDesigner.Application.Interfaces.AdminInterfaces
 	{
 		Task<ResponsePaged<UserViewDto>> GetPagedEntitiesAsync(QueryPaged queryPaged);
 
-		Task<ResponseRedirect> CreateUserAsync(AdminUserEditDto dto);
+		Task<ResponseRedirect> CreateUserAsync(int userId, AdminUserEditDto dto);
 
 		Task<AdminUserEditDto> GetEditDtoByIdAsync(int id);
 
-		Task<ResponseRedirect> UpdateAsync(AdminUserEditDto dto);
+		Task<ResponseRedirect> UpdateAsync(int userId, AdminUserEditDto dto);
 
 		Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(QueryDeleteEntity queryDeleteEntity);
 

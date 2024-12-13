@@ -82,8 +82,12 @@ builder.Services.AddScoped<IInvoiceServiceHelper, InvoiceServiceHelper>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAdminUserInterface, AdminUserService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserServiceHelper, UserServiceHelper>();
 builder.Services.AddScoped<IUserAuthorizedDataService, UserAuthorizedDataService>();
-builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<IAuthorizationUserService, AuthorizationUserService>();
+
+builder.Services.AddScoped<IUserActivityLogRepository, UserActivityLogRepository>();
+builder.Services.AddScoped<IUserActivityLogService, UserActivityLogService>();
 
 builder.Services.AddScoped<IFormDesignersRepository, FormDesignersRepository>();
 builder.Services.AddScoped<IFormDesignersService, FormDesignersService>();

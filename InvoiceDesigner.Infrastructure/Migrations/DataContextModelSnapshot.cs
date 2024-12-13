@@ -1561,17 +1561,53 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("UserCompany", b =>
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.UserActivityLog", b =>
                 {
-                    b.Property<int>("CompanyId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<int>("ActivitiesType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("DocumentTypes")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("EntityId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("EntityNumber")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("UserId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("CompanyId", "UserId");
+                    b.Property<int>("UserId1")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("UserId1");
+
+                    b.ToTable("UserActivityLogs");
+                });
+
+            modelBuilder.Entity("UserCompany", b =>
+                {
+                    b.Property<int>("ActivityUserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ActivityUserId", "CompanyId");
+
+                    b.HasIndex("CompanyId");
 
                     b.ToTable("UserCompany");
                 });
@@ -1706,17 +1742,34 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.Navigation("Currency");
                 });
 
-            modelBuilder.Entity("UserCompany", b =>
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.UserActivityLog", b =>
                 {
-                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Company", null)
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("InvoiceDesigner.Domain.Shared.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("UserCompany", b =>
+                {
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("ActivityUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Company", null)
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

@@ -8,8 +8,11 @@
 @inject IJSRuntime JS
 
 @using InvoiceDesigner.Domain.Shared.DTOs.DtoFormDesigners
+@using InvoiceDesigner.Domain.Shared.Enums
 @using InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner
 @using InvoiceDesigner.Domain.Shared.Responses
+@using InvoiceDesigner.WebApp.Components.Pages.Dialogs
+@using InvoiceDesigner.WebApp.Components.Pages.Helpers
 @using InvoiceDesigner.WebApp.Helpers
 @using System.Diagnostics
 
@@ -95,7 +98,6 @@ else
 										</MudButton>
 									</MudItem>
 
-
 									<MudItem xs="12">
 										<MudSelect T="FormDesignersAutocompleteDto"
 												   Typo="Typo.inherit"
@@ -111,7 +113,6 @@ else
 											}
 										</MudSelect>
 									</MudItem>
-
 								</MudGrid>
 
 
@@ -147,15 +148,26 @@ else
 
 										<MudDropZone T="DropItemEditDto" Identifier="_Other" Class="rounded mud-background-gray pa-1 ma-0 flex-grow-1" />
 									</MudExpansionPanel>
-									<MudExpansionPanel Text="Delete">
+									<MudExpansionPanel Text="Action">
 										<MudButton Variant="Variant.Filled"
-												   FullWidth="true"
+												   Class="pa-1 ma-1"
+										
 												   Disabled="_id==0"
 												   OnClick="RedirectToDeleteRow"
 												   Size="Size.Small"
 												   StartIcon="@Icons.Material.Filled.DeleteForever"
 												   Color="Color.Error">
 											Delete
+										</MudButton>
+										<MudButton Variant="Variant.Filled"
+												   Class="pa-1 ma-1"
+	
+												   Disabled="_id==0"
+												   OnClick="OpenActivityLogHistory"
+												   Size="Size.Small"
+												   StartIcon="@Icons.Material.Filled.History"
+												   Color="Color.Primary">
+											Activity Logs
 										</MudButton>
 									</MudExpansionPanel>
 								</MudExpansionPanels>
@@ -274,7 +286,7 @@ else
 	protected override async Task OnInitializedAsync()
 	{
 		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav, DialogService);
-		_formDesignersAutocompleteDto = await _httpHelper.GetDataFromAPI<List<FormDesignersAutocompleteDto>>($"api/FormDesigner/GetAllFormDesignersAutocompleteDto");
+		_formDesignersAutocompleteDto = await _httpHelper.GetDataFromAPI<List<FormDesignersAutocompleteDto>>($"api/FormDesigner/GetAllAutocompleteDto");
 		_loaded = true;
 	}
 
@@ -351,7 +363,7 @@ else
 
 				await OnValidSubmit();
 
-				_formDesignersAutocompleteDto = await _httpHelper.GetDataFromAPI<List<FormDesignersAutocompleteDto>>($"api/FormDesigner/GetAllFormDesignersAutocompleteDto");
+				_formDesignersAutocompleteDto = await _httpHelper.GetDataFromAPI<List<FormDesignersAutocompleteDto>>($"api/FormDesigner/GetAllAutocompleteDto");
 				_selectedDesignersAutocompleteDto = _formDesignersAutocompleteDto.Last();
 
 				await LoadForm(_selectedDesignersAutocompleteDto.Id);
@@ -370,7 +382,7 @@ else
 		var css = dropItem.CssStyleEditDto.FirstOrDefault(e => e.Name == name);
 		if (css != null)
 		{
-			switch(css.Name)
+			switch (css.Name)
 			{
 				case ConstsCssProperty.FontWight:
 				case ConstsCssProperty.FontStyle:
@@ -380,7 +392,7 @@ else
 					css.Value = value;
 					break;
 			}
-			
+
 		}
 
 		_mudDropContainerRef.Refresh();
@@ -429,7 +441,7 @@ else
 	{
 		if (await _httpHelper.DeleteWithConfirmationAsync(_id))
 		{
-			_formDesignersAutocompleteDto = await _httpHelper.GetDataFromAPI<List<FormDesignersAutocompleteDto>>($"api/FormDesigner/GetAllFormDesignersAutocompleteDto");
+			_formDesignersAutocompleteDto = await _httpHelper.GetDataFromAPI<List<FormDesignersAutocompleteDto>>($"api/FormDesigner/GetAllAutocompleteDto");
 			_selectedDesignersAutocompleteDto = null!;
 			_dropItemsEditDto = new();
 			_formDesigner = new();
@@ -447,5 +459,18 @@ else
 	{
 		public string? Message { get; set; }
 		public object? errors { get; set; }
+	}
+
+	private async Task OpenActivityLogHistory()
+	{
+		var parameters = new DialogParameters<ActivityLogs_dialog>
+		{
+			{ x => x.HttpHelper, _httpHelper },
+			{ x => x.DocumentType, EDocumentsTypes.FormDesigner },
+			{ x => x.EntityId, _id }
+		};
+		var options = new DialogOptions { CloseOnEscapeKey = true };
+		var dialog = await DialogService.ShowAsync<ActivityLogs_dialog>(string.Empty, parameters, options);
+		await dialog.Result;
 	}
 }

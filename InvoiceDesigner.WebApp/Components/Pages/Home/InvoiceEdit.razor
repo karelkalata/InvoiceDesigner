@@ -326,7 +326,7 @@
 			nav.NavigateTo("/Companies/0");
 			return;
 		}
-		_formDesignersAutocompleteDto = await _httpHelper.GetDataFromAPI<List<FormDesignersAutocompleteDto>>($"api/FormDesigner/GetAllFormDesignersAutocompleteDto");
+		_formDesignersAutocompleteDto = await _httpHelper.GetDataFromAPI<List<FormDesignersAutocompleteDto>>($"api/FormDesigner/GetAllAutocompleteDto");
 
 		_companiesAutocomplete = infoForNewInvoiceDto.Companies.ToList();
 		_currenciesAutocomplete = infoForNewInvoiceDto.Currencies.ToList();

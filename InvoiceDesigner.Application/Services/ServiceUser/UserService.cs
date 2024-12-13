@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using InvoiceDesigner.Application.Authorization;
+using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Application.Interfaces.InterfacesUser;
 using InvoiceDesigner.Domain.Shared.DTOs.User;
+using InvoiceDesigner.Domain.Shared.Enums;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models;
 using InvoiceDesigner.Domain.Shared.Responses;
@@ -12,11 +14,13 @@ namespace InvoiceDesigner.Application.Services.ServiceUser
 	{
 		private readonly IUserRepository _repoUser;
 		private readonly IMapper _mapper;
+		private readonly IUserActivityLogService _userActivity;
 
-		public UserService(IUserRepository repoUser, IMapper mapper)
+		public UserService(IUserRepository repoUser, IMapper mapper, IUserActivityLogService userActivity)
 		{
 			_repoUser = repoUser;
 			_mapper = mapper;
+			_userActivity = userActivity;
 		}
 
 		public async Task<UserEditDto> GetEditDtoByIdAsync(int id)
@@ -32,7 +36,9 @@ namespace InvoiceDesigner.Application.Services.ServiceUser
 
 			var existEntity = await ValidateExistsEntityAsync(dto.Id);
 			MapUser(existEntity, dto);
+
 			var entityId = await _repoUser.UpdateUserAsync(existEntity);
+			await _userActivity.CreateActivityLog(userId, EDocumentsTypes.User, EActivitiesType.Update, entityId);
 
 			return new ResponseRedirect
 			{
@@ -50,10 +56,7 @@ namespace InvoiceDesigner.Application.Services.ServiceUser
 		private void ValidateInputAsync(UserEditDto dto)
 		{
 			if (string.IsNullOrEmpty(dto.Name))
-				throw new InvalidOperationException($"Value can't be empty");
-
-			if (string.IsNullOrEmpty(dto.Password))
-				throw new InvalidOperationException($"Password can't be empty");
+				throw new InvalidOperationException($"Name can't be empty");
 		}
 
 		private void MapUser(User existUser, UserEditDto dto)

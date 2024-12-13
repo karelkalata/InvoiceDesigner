@@ -28,7 +28,7 @@ namespace InvoiceDesigner.API.Controllers
 
 			try
 			{
-				var result = await _service.GetPagedProductsAsync(queryPaged);
+				var result = await _service.GetPagedAsync(queryPaged);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -52,7 +52,8 @@ namespace InvoiceDesigner.API.Controllers
 
 			try
 			{
-				var result = await _service.CreateAsync(productEditDto);
+				var (userId, isAdmin) = GetValidatedFilters();
+				var result = await _service.CreateAsync(userId, productEditDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -70,7 +71,6 @@ namespace InvoiceDesigner.API.Controllers
 			try
 			{
 				var result = await _service.GetEditDtoByIdAsync(id);
-
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -90,7 +90,8 @@ namespace InvoiceDesigner.API.Controllers
 
 			try
 			{
-				var result = await _service.UpdateAsync(productEditDto);
+				var (userId, isAdmin) = GetValidatedFilters();
+				var result = await _service.UpdateAsync(userId, productEditDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)

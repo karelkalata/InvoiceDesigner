@@ -1,8 +1,10 @@
 ﻿@page "/Customers"
 @using InvoiceDesigner.Domain.Shared.DTOs.Customer
+@using InvoiceDesigner.Domain.Shared.Enums
 @using InvoiceDesigner.Domain.Shared.Extensions
 @using InvoiceDesigner.Domain.Shared.QueryParameters
 @using InvoiceDesigner.Domain.Shared.Responses
+@using InvoiceDesigner.WebApp.Components.Pages.Helpers
 @using InvoiceDesigner.WebApp.Helpers
 @inject IHttpClientFactory HttpClientFactory
 @inject ILocalStorageService LocalStorageService
@@ -45,6 +47,7 @@
 			<MudTh>TaxId</MudTh>
 			<MudTh></MudTh>
 			<MudTh></MudTh>
+			<MudTh></MudTh>
 		</HeaderContent>
 		<RowTemplate>
 
@@ -56,6 +59,12 @@
 							   Icon="@Icons.Material.Filled.Edit"
 							   Size="Size.Small"
 							   Color="Color.Default" />
+			</MudTd>
+			<MudTd Style="width:25px" Class="pa-0">
+				<ActivityLogsHelper DialogService=DialogService
+									HttpHelper=_httpHelper
+									DocumentType=EDocumentsTypes.Customer
+									EntityId="@context.Id" />
 			</MudTd>
 			<MudTd Class="text-right" Style="width:25px">
 				<MudIconButton Icon="@(context.IsDeleted ? Icons.Material.Filled.DeleteForever : Icons.Material.Filled.Delete)"

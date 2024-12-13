@@ -1,5 +1,4 @@
-﻿using InvoiceDesigner.API.Helpers;
-using InvoiceDesigner.Application.Interfaces;
+﻿using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Domain.Shared.DTOs;
 using InvoiceDesigner.Domain.Shared.DTOs.Invoice;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
@@ -10,22 +9,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace InvoiceDesigner.API.Controllers
 {
 	[Authorize]
-	[ServiceFilter(typeof(ValidateUserIdFilter))]
 	[Route("api/[controller]")]
 	[ApiController]
 	public class InvoicesController : ControllerBase
 	{
-		private int userId => GetItemFromContext<int>("userId");
-		private bool isAdmin => GetItemFromContext<bool>("isAdmin");
 		private readonly IInvoiceService _service;
-
-		private T GetItemFromContext<T>(string key)
-		{
-			if (HttpContext?.Items[key] is T value)
-				return value;
-
-			throw new UnauthorizedAccessException($"{key} is missing or invalid.");
-		}
 
 		public InvoicesController(IInvoiceService service)
 		{
@@ -41,6 +29,7 @@ namespace InvoiceDesigner.API.Controllers
 
 			try
 			{
+				var (userId, isAdmin) = GetValidatedFilters();
 				queryPaged.UserId = userId;
 				queryPaged.IsAdmin = isAdmin;
 				var result = await _service.GetPagedInvoicesAsync(queryPaged);
@@ -66,6 +55,7 @@ namespace InvoiceDesigner.API.Controllers
 
 			try
 			{
+				var (userId, isAdmin) = GetValidatedFilters();
 				var result = await _service.CreateInvoiceAsync(userId, isAdmin, invoiceDto);
 				return Ok(result);
 			}
@@ -82,8 +72,8 @@ namespace InvoiceDesigner.API.Controllers
 		{
 			try
 			{
+				var (userId, isAdmin) = GetValidatedFilters();
 				var result = await _service.GetInvoiceDtoByIdAsync(userId, isAdmin, id);
-
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -99,6 +89,8 @@ namespace InvoiceDesigner.API.Controllers
 		{
 			try
 			{
+				var (userId, isAdmin) = GetValidatedFilters();
+
 				queryArchive.UserId = userId;
 				queryArchive.IsAdmin = isAdmin;
 
@@ -119,6 +111,8 @@ namespace InvoiceDesigner.API.Controllers
 		{
 			try
 			{
+				var (userId, isAdmin) = GetValidatedFilters();
+
 				queryStatus.UserId = userId;
 				queryStatus.IsAdmin = isAdmin;
 
@@ -142,6 +136,7 @@ namespace InvoiceDesigner.API.Controllers
 
 			try
 			{
+				var (userId, isAdmin) = GetValidatedFilters();
 				var result = await _service.UpdateInvoiceAsync(userId, isAdmin, InvoiceDto);
 				return Ok(result);
 			}
@@ -158,6 +153,7 @@ namespace InvoiceDesigner.API.Controllers
 		{
 			try
 			{
+				var (userId, isAdmin) = GetValidatedFilters();
 				var result = await _service.DeleteInvoiceAsync(userId, isAdmin, id);
 				return Ok(result);
 			}
@@ -174,6 +170,7 @@ namespace InvoiceDesigner.API.Controllers
 		{
 			try
 			{
+				var (userId, isAdmin) = GetValidatedFilters();
 				var result = await _service.DeleteOrMarkAsDeletedAsync(userId, isAdmin, id, modeDelete);
 				return Ok(result);
 			}
@@ -189,6 +186,7 @@ namespace InvoiceDesigner.API.Controllers
 		{
 			try
 			{
+				var (userId, isAdmin) = GetValidatedFilters();
 				var result = await _service.GetInfoForNewInvoice(userId, isAdmin, invoiceId);
 				return Ok(result);
 			}
@@ -196,6 +194,17 @@ namespace InvoiceDesigner.API.Controllers
 			{
 				return BadRequest(new { message = ex.Message });
 			}
+		}
+
+		private (int, bool) GetValidatedFilters()
+		{
+			var userIdString = User.FindFirst("userId")?.Value;
+			int.TryParse(userIdString, out int userId);
+
+			var isAdminString = User.FindFirst("isAdmin")?.Value;
+			bool.TryParse(isAdminString, out bool isAdmin);
+
+			return (userId, isAdmin);
 		}
 	}
 }

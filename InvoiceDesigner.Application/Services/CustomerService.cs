@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Domain.Shared.DTOs.Customer;
+using InvoiceDesigner.Domain.Shared.Enums;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
@@ -13,12 +14,17 @@ namespace InvoiceDesigner.Application.Services
 		private readonly ICustomerRepository _repoCustomer;
 		private readonly IMapper _mapper;
 		private readonly IInvoiceServiceHelper _invoiceServiceHelper;
+		private readonly IUserActivityLogService _userActivity;
 
-		public CustomerService(ICustomerRepository repoCustomer, IMapper mapper, IInvoiceServiceHelper invoiceServiceHelper)
+		public CustomerService(ICustomerRepository repoCustomer, 
+								IMapper mapper, 
+								IInvoiceServiceHelper invoiceServiceHelper,
+								IUserActivityLogService userActivity)
 		{
 			_repoCustomer = repoCustomer;
 			_mapper = mapper;
 			_invoiceServiceHelper = invoiceServiceHelper;
+			_userActivity = userActivity;
 		}
 
 		public async Task<ResponsePaged<CustomerViewDto>> GetPagedEntitiesAsync(QueryPaged queryPaged)
@@ -41,13 +47,15 @@ namespace InvoiceDesigner.Application.Services
 		}
 
 
-		public async Task<ResponseRedirect> CreateAsync(CustomerEditDto newCustomer)
+		public async Task<ResponseRedirect> CreateAsync(int userId, CustomerEditDto newCustomer)
 		{
 			var existsCustomer = new Customer();
 
 			MapCustomer(existsCustomer, newCustomer);
 
 			var entityId = await _repoCustomer.CreateAsync(existsCustomer);
+			await _userActivity.CreateActivityLog(userId, EDocumentsTypes.Customer, EActivitiesType.Create, entityId);
+
 			return new ResponseRedirect
 			{
 				RedirectUrl = "/Customers"
@@ -62,13 +70,15 @@ namespace InvoiceDesigner.Application.Services
 			return _mapper.Map<CustomerEditDto>(existsEntity);
 		}
 
-		public async Task<ResponseRedirect> UpdateAsync(CustomerEditDto editedCustomer)
+		public async Task<ResponseRedirect> UpdateAsync(int userId, CustomerEditDto editedCustomer)
 		{
 			var existsCustomer = await ValidateExistsEntityAsync(editedCustomer.Id);
 
 			MapCustomer(existsCustomer, editedCustomer);
 
 			var entityId = await _repoCustomer.UpdateAsync(existsCustomer);
+			await _userActivity.CreateActivityLog(userId, EDocumentsTypes.Customer, EActivitiesType.Update, entityId);
+
 			return new ResponseRedirect
 			{
 				RedirectUrl = "/Customers"
@@ -81,6 +91,8 @@ namespace InvoiceDesigner.Application.Services
 
 			if (!queryDeleteEntity.MarkAsDeleted)
 			{
+				await _userActivity.CreateActivityLog(queryDeleteEntity.UserId, EDocumentsTypes.Customer, EActivitiesType.Delete, existsEntity.Id);
+
 				return new ResponseBoolean
 				{
 					Result = await _repoCustomer.DeleteAsync(existsEntity)
@@ -90,6 +102,7 @@ namespace InvoiceDesigner.Application.Services
 			{
 				existsEntity.IsDeleted = true;
 				await _repoCustomer.UpdateAsync(existsEntity);
+				await _userActivity.CreateActivityLog(queryDeleteEntity.UserId, EDocumentsTypes.Customer, EActivitiesType.MarkedAsDeleted, existsEntity.Id);
 
 				return new ResponseBoolean
 				{

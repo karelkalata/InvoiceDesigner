@@ -205,6 +205,37 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserActivityLogs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    DateTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserId1 = table.Column<int>(type: "INTEGER", nullable: false),
+                    DocumentTypes = table.Column<int>(type: "INTEGER", nullable: false),
+                    EntityId = table.Column<int>(type: "INTEGER", nullable: true),
+                    EntityNumber = table.Column<string>(type: "TEXT", nullable: true),
+                    ActivitiesType = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserActivityLogs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserActivityLogs_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserActivityLogs_Users_UserId1",
+                        column: x => x.UserId1,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Banks",
                 columns: table => new
                 {
@@ -238,12 +269,12 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                 name: "UserCompany",
                 columns: table => new
                 {
-                    CompanyId = table.Column<int>(type: "INTEGER", nullable: false),
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
+                    ActivityUserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CompanyId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserCompany", x => new { x.CompanyId, x.UserId });
+                    table.PrimaryKey("PK_UserCompany", x => new { x.ActivityUserId, x.CompanyId });
                     table.ForeignKey(
                         name: "FK_UserCompany_Companies_CompanyId",
                         column: x => x.CompanyId,
@@ -251,8 +282,8 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserCompany_Users_UserId",
-                        column: x => x.UserId,
+                        name: "FK_UserCompany_Users_ActivityUserId",
+                        column: x => x.ActivityUserId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -627,9 +658,19 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserCompany_UserId",
-                table: "UserCompany",
+                name: "IX_UserActivityLogs_UserId",
+                table: "UserActivityLogs",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserActivityLogs_UserId1",
+                table: "UserActivityLogs",
+                column: "UserId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserCompany_CompanyId",
+                table: "UserCompany",
+                column: "CompanyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Login",
@@ -655,6 +696,9 @@ namespace InvoiceDesigner.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "ProductPrice");
+
+            migrationBuilder.DropTable(
+                name: "UserActivityLogs");
 
             migrationBuilder.DropTable(
                 name: "UserCompany");

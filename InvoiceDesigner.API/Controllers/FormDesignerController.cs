@@ -32,7 +32,8 @@ namespace InvoiceDesigner.API.Controllers
 
 			try
 			{
-				var result = await _service.CreateFormDesignerAsync(editDto);
+				var (userId, isAdmin) = GetValidatedFilters();
+				var result = await _service.CreateAsync(userId, editDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -49,7 +50,7 @@ namespace InvoiceDesigner.API.Controllers
 		{
 			try
 			{
-				var result = await _service.GetFormDesignerEditDtoByIdAsync(id);
+				var result = await _service.GetEditDtoByIdAsync(id);
 
 				return Ok(result);
 			}
@@ -70,7 +71,8 @@ namespace InvoiceDesigner.API.Controllers
 
 			try
 			{
-				var result = await _service.UpdateFormDesignerAsync(formDesignerEditDto);
+				var (userId, isAdmin) = GetValidatedFilters();
+				var result = await _service.UpdateAsync(userId, formDesignerEditDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -87,7 +89,8 @@ namespace InvoiceDesigner.API.Controllers
 		{
 			try
 			{
-				var result = await _service.DeleteFormDesignerAsync(id);
+				var (userId, isAdmin) = GetValidatedFilters();
+				var result = await _service.DeleteAsync(userId, id);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -97,13 +100,13 @@ namespace InvoiceDesigner.API.Controllers
 		}
 
 
-		[HttpGet("GetAllFormDesignersAutocompleteDto")]
+		[HttpGet("GetAllAutocompleteDto")]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IReadOnlyCollection<FormDesignersAutocompleteDto>))]
-		public async Task<IActionResult> GetAllDesignersAutocompleteDto()
+		public async Task<IActionResult> GetAllAutocompleteDto()
 		{
 			try
 			{
-				var result = await _service.GetAllFormDesignersAutocompleteDto();
+				var result = await _service.GetAllAutocompleteDto();
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -128,5 +131,15 @@ namespace InvoiceDesigner.API.Controllers
 			}
 		}
 
+		private (int, bool) GetValidatedFilters()
+		{
+			var userIdString = User.FindFirst("userId")?.Value;
+			int.TryParse(userIdString, out int userId);
+
+			var isAdminString = User.FindFirst("isAdmin")?.Value;
+			bool.TryParse(isAdminString, out bool isAdmin);
+
+			return (userId, isAdmin);
+		}
 	}
 }

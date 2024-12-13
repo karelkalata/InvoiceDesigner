@@ -2,12 +2,13 @@
 using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Application.Interfaces.InterfacesUser;
 using InvoiceDesigner.Domain.Shared.DTOs.Company;
+using InvoiceDesigner.Domain.Shared.Enums;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
 
-namespace InvoiceDesigner.Application.Services
+namespace InvoiceDesigner.Application.Services.AdminService
 {
 	public class CompanyService : ICompanyService
 	{
@@ -16,18 +17,21 @@ namespace InvoiceDesigner.Application.Services
 		private readonly ICurrencyService _currencyService;
 		private readonly IInvoiceServiceHelper _invoiceServiceHelper;
 		private readonly IUserAuthorizedDataService _userAuthorizedData;
+		private readonly IUserActivityLogService _userActivity;
 
 		public CompanyService(ICompanyRepository repoCompany,
 								IMapper mapper,
 								ICurrencyService currencyService,
 								IInvoiceServiceHelper invoiceServiceHelper,
-								IUserAuthorizedDataService userAuthorizedData)
+								IUserAuthorizedDataService userAuthorizedData,
+								IUserActivityLogService userActivity)
 		{
 			_repoCompany = repoCompany;
 			_mapper = mapper;
 			_currencyService = currencyService;
 			_invoiceServiceHelper = invoiceServiceHelper;
 			_userAuthorizedData = userAuthorizedData;
+			_userActivity = userActivity;
 		}
 
 		public async Task<ResponsePaged<CompanyViewDto>> GetPagedEntitiesAsync(QueryPaged queryPaged)
@@ -47,7 +51,7 @@ namespace InvoiceDesigner.Application.Services
 			};
 		}
 
-		public async Task<ResponseRedirect> CreateAsync(CompanyEditDto companyEditDto)
+		public async Task<ResponseRedirect> CreateAsync(int userId, CompanyEditDto companyEditDto)
 		{
 			var currency = await ValidateInputAsync(companyEditDto);
 
@@ -55,6 +59,7 @@ namespace InvoiceDesigner.Application.Services
 			await MapCompany(company, companyEditDto, currency);
 
 			var entityId = await _repoCompany.CreateAsync(company);
+			await _userActivity.CreateActivityLog(userId, EDocumentsTypes.Company, EActivitiesType.Create, entityId);
 
 			return new ResponseRedirect
 			{
@@ -70,7 +75,7 @@ namespace InvoiceDesigner.Application.Services
 			return _mapper.Map<CompanyEditDto>(company);
 		}
 
-		public async Task<ResponseRedirect> UpdateAsync(CompanyEditDto companyEditDto)
+		public async Task<ResponseRedirect> UpdateAsync(int userId, CompanyEditDto companyEditDto)
 		{
 			var existingCompanyTask = ValidateExistsEntityAsync(companyEditDto.Id);
 			var currencyTask = ValidateInputAsync(companyEditDto);
@@ -83,6 +88,7 @@ namespace InvoiceDesigner.Application.Services
 			await MapCompany(existingCompany, companyEditDto, currency);
 
 			var entityId = await _repoCompany.UpdateAsync(existingCompany);
+			await _userActivity.CreateActivityLog(userId, EDocumentsTypes.Company, EActivitiesType.Update, entityId);
 
 			return new ResponseRedirect
 			{
@@ -99,6 +105,8 @@ namespace InvoiceDesigner.Application.Services
 				if (await _invoiceServiceHelper.IsCompanyUsedInInvoices(queryDeleteEntity.EntityId))
 					throw new InvalidOperationException($"{existsEntity.Name} is in use in Invoices and cannot be deleted.");
 
+				await _userActivity.CreateActivityLog(queryDeleteEntity.UserId, EDocumentsTypes.Company, EActivitiesType.Delete, existsEntity.Id);
+
 				return new ResponseBoolean
 				{
 					Result = await _repoCompany.DeleteAsync(existsEntity)
@@ -108,6 +116,7 @@ namespace InvoiceDesigner.Application.Services
 			{
 				existsEntity.IsDeleted = true;
 				await _repoCompany.UpdateAsync(existsEntity);
+				await _userActivity.CreateActivityLog(queryDeleteEntity.UserId, EDocumentsTypes.Company, EActivitiesType.MarkedAsDeleted, existsEntity.Id);
 
 				return new ResponseBoolean
 				{

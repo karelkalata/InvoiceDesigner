@@ -7,15 +7,15 @@ namespace InvoiceDesigner.Application.Interfaces
 {
 	public interface IProductService
 	{
-		Task<ResponsePaged<ProductsViewDto>> GetPagedProductsAsync(QueryPaged queryPaged);
+		Task<ResponsePaged<ProductsViewDto>> GetPagedAsync(QueryPaged queryPaged);
 
-		Task<ResponseRedirect> CreateAsync(ProductEditDto productEditDto);
+		Task<ResponseRedirect> CreateAsync(int userId, ProductEditDto productEditDto);
 
 		Task<Product> GetByIdAsync(int id);
 
 		Task<ProductEditDto> GetEditDtoByIdAsync(int id);
 
-		Task<ResponseRedirect> UpdateAsync(ProductEditDto productEditDto);
+		Task<ResponseRedirect> UpdateAsync(int userId, ProductEditDto productEditDto);
 
 		Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(QueryDeleteEntity queryDeleteEntity);
 

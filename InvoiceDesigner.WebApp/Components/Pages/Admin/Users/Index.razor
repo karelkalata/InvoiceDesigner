@@ -2,10 +2,13 @@
 @using System.Net.Http.Json
 @using InvoiceDesigner.Domain.Shared.DTOs.Bank
 @using InvoiceDesigner.Domain.Shared.DTOs.User
+@using InvoiceDesigner.Domain.Shared.Enums
 @using InvoiceDesigner.Domain.Shared.Extensions
 @using InvoiceDesigner.Domain.Shared.Helpers
 @using InvoiceDesigner.Domain.Shared.QueryParameters
 @using InvoiceDesigner.Domain.Shared.Responses
+@using InvoiceDesigner.WebApp.Components.Pages.Dialogs
+@using InvoiceDesigner.WebApp.Components.Pages.Helpers
 @using InvoiceDesigner.WebApp.Helpers;
 @inject IHttpClientFactory HttpClientFactory
 @inject ILocalStorageService LocalStorageService
@@ -33,6 +36,9 @@
 				<MudMenuItem>
 					<MudCheckBox Dense @bind-Value="_showDeleted" Label="Show Deleted" onclick="@(()=>OnCheckedChanged())"></MudCheckBox>
 				</MudMenuItem>
+				<MudMenuItem>
+
+				</MudMenuItem>
 			</MudMenu>
 		</ToolBarContent>
 
@@ -48,6 +54,7 @@
 					Name
 				</MudTableSortLabel>
 			</MudTh>
+			<MudTh ></MudTh>
 			<MudTh></MudTh>
 			<MudTh></MudTh>
 		</HeaderContent>
@@ -55,13 +62,19 @@
 			<MudTd DataLabel="Id">@context.Id</MudTd>
 			<MudTd DataLabel="Name">@context.Login</MudTd>
 			<MudTd DataLabel="Name">@context.Name</MudTd>
-			<MudTd Class="text-right" Style="width:25px">
+			<MudTd Style="width:25px" Class="pa-0">
 				<MudIconButton Href="@($"/Admin/Users/{context.Id}")"
 							   Icon="@Icons.Material.Filled.Edit"
 							   Size="Size.Small"
 							   Color="Color.Default" />
 			</MudTd>
-			<MudTd Class="text-right" Style="width:25px">
+			<MudTd Style="width:25px" Class="pa-0">
+				<ActivityLogsHelper DialogService=DialogService
+									HttpHelper=_httpHelper
+									DocumentType=EDocumentsTypes.User
+									EntityId="@context.Id" />
+			</MudTd>
+			<MudTd Style="width:25px" Class="pa-0">
 				@if (!context.IsAdmin)
 				{
 					<MudIconButton Icon="@(context.IsDeleted ? Icons.Material.Filled.DeleteForever : Icons.Material.Filled.Delete)"

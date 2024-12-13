@@ -3,6 +3,7 @@ using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Application.Interfaces.InterfacesUser;
 using InvoiceDesigner.Domain.Shared.DTOs;
 using InvoiceDesigner.Domain.Shared.DTOs.Invoice;
+using InvoiceDesigner.Domain.Shared.Enums;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
@@ -20,6 +21,7 @@ namespace InvoiceDesigner.Application.Services
 		private readonly IBankService _bankService;
 		private readonly ICustomerService _customerService;
 		private readonly IUserAuthorizedDataService _userAuthorizedDataService;
+		private readonly IUserActivityLogService _userActivity;
 
 		public InvoiceService(IInvoiceRepository repository,
 								IMapper mapper,
@@ -28,7 +30,8 @@ namespace InvoiceDesigner.Application.Services
 								IProductService productService,
 								IBankService bankService,
 								ICustomerService customerService,
-								IUserAuthorizedDataService userAuthorizedDataService)
+								IUserAuthorizedDataService userAuthorizedDataService,
+								IUserActivityLogService userActivity)
 		{
 			_repository = repository;
 			_mapper = mapper;
@@ -38,6 +41,7 @@ namespace InvoiceDesigner.Application.Services
 			_bankService = bankService;
 			_customerService = customerService;
 			_userAuthorizedDataService = userAuthorizedDataService;
+			_userActivity = userActivity;
 		}
 
 		public async Task<InfoForNewInvoiceDto> GetInfoForNewInvoice(int userId, bool isAdmin, int invoiceId)
@@ -91,6 +95,7 @@ namespace InvoiceDesigner.Application.Services
 			await MapInvoice(existsInvoice, invoiceDto, company, currency, bank, customer);
 
 			var entityId = await _repository.CreateInvoiceAsync(existsInvoice);
+			await _userActivity.CreateActivityLog(userId, EDocumentsTypes.Invoice, EActivitiesType.Create, entityId, existsInvoice.InvoiceNumber.ToString());
 
 			return new ResponseRedirect
 			{
@@ -119,6 +124,7 @@ namespace InvoiceDesigner.Application.Services
 			await MapInvoice(existsInvoice, invoiceDto, company, currency, bank, customer);
 
 			var entityId = await _repository.UpdateInvoiceAsync(existsInvoice);
+			await _userActivity.CreateActivityLog(userId, EDocumentsTypes.Invoice, EActivitiesType.Update, entityId, existsInvoice.InvoiceNumber.ToString());
 
 			return new ResponseRedirect
 			{
@@ -138,15 +144,23 @@ namespace InvoiceDesigner.Application.Services
 
 		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(int userId, bool isAdmin, int id, int modeDelete)
 		{
+			var existsEntity = await ValidateExistsEntityAsync(userId, isAdmin, id);
+			
 			if (modeDelete == 0)
 			{
-				var existsEntity = await ValidateExistsEntityAsync(userId, isAdmin, id);
 				existsEntity.IsDeleted = true;
 
+				await _userActivity.CreateActivityLog(userId, EDocumentsTypes.Invoice, EActivitiesType.MarkedAsDeleted, existsEntity.Id, existsEntity.InvoiceNumber.ToString());
 				await _repository.UpdateInvoiceAsync(existsEntity);
 
-				return new ResponseBoolean { Result = true };
+				return new ResponseBoolean
+				{
+					Result = true
+				};
 			}
+
+			await _userActivity.CreateActivityLog(userId, EDocumentsTypes.Invoice, EActivitiesType.Delete, existsEntity.Id, existsEntity.InvoiceNumber.ToString());
+
 			return await DeleteInvoiceAsync(userId, isAdmin, id);
 		}
 
@@ -156,6 +170,11 @@ namespace InvoiceDesigner.Application.Services
 			existsEntity.IsArchived = queryArchive.Archive;
 
 			var entityId = await _repository.UpdateInvoiceAsync(existsEntity);
+			await _userActivity.CreateActivityLog(queryArchive.UserId,
+													EDocumentsTypes.Invoice,
+													queryArchive.Archive ? EActivitiesType.Archived : EActivitiesType.UnArchived,
+													existsEntity.Id,
+													existsEntity.InvoiceNumber.ToString());
 
 			return new ResponseBoolean
 			{
@@ -170,6 +189,7 @@ namespace InvoiceDesigner.Application.Services
 			existsEntity.Status = queryStatus.Status;
 
 			var entityId = await _repository.UpdateInvoiceAsync(existsEntity);
+			await _userActivity.CreateActivityLog(queryStatus.UserId, EDocumentsTypes.Invoice, EActivitiesType.ChangeStatus, entityId, existsEntity.InvoiceNumber.ToString());
 
 			return new ResponseBoolean
 			{

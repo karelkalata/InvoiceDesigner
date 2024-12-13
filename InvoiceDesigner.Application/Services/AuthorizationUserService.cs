@@ -1,6 +1,7 @@
 ﻿using InvoiceDesigner.Application.Authorization;
 using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Domain.Shared.DTOs.User;
+using InvoiceDesigner.Domain.Shared.Enums;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Responses;
 using Microsoft.Extensions.Configuration;
@@ -11,15 +12,17 @@ using System.Text;
 
 namespace InvoiceDesigner.Application.Services
 {
-	public class LoginService : ILoginService
+	public class AuthorizationUserService : IAuthorizationUserService
 	{
 		private readonly IUserRepository _repository;
 		private readonly IConfiguration _configuration;
+		private readonly IUserActivityLogService _serviceUserActivityLog;
 
-		public LoginService(IUserRepository repository, IConfiguration configuration)
+		public AuthorizationUserService(IUserRepository repository, IConfiguration configuration, IUserActivityLogService userActivity)
 		{
 			_repository = repository;
 			_configuration = configuration;
+			_serviceUserActivityLog = userActivity;
 		}
 
 		public async Task<ResponseJwtToken> LoginAsync(UserLoginDto dto)
@@ -34,11 +37,16 @@ namespace InvoiceDesigner.Application.Services
 				return result;
 
 			if (!UserPaswordHasher.VerifyPassword(dto.Password, existUser.PasswordHash, existUser.PasswordSalt))
+			{
+				await _serviceUserActivityLog.UserLogin(existUser, EActivitiesType.LoginFailure);
 				return result;
+			}
 
 			var secretKey = _configuration["JWTOption:SecretKey"];
 			if (secretKey == null)
 				throw new InvalidOperationException("JWTOption:SecretKey is null");
+
+			await _serviceUserActivityLog.UserLogin(existUser, EActivitiesType.LoginSuccess);
 
 			var signingCredentials = new SigningCredentials(
 										new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
@@ -63,6 +71,15 @@ namespace InvoiceDesigner.Application.Services
 			return result;
 
 
+		}
+
+		public async Task LogoutUser(int userId)
+		{
+			var existUser = await _repository.GetUserByIdAsync(userId);
+			if (existUser != null)
+			{
+				await _serviceUserActivityLog.UserLogout(existUser);
+			}
 		}
 	}
 }

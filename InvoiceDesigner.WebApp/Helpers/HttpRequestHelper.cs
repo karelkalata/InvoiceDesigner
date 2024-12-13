@@ -181,6 +181,8 @@ namespace InvoiceDesigner.WebApp.Helpers
 					case System.Net.HttpStatusCode.Unauthorized:
 						_navigationManager?.NavigateTo("/Login", true);
 						break;
+					case System.Net.HttpStatusCode.NoContent:
+						return new T();
 					default:
 						await ShowError(response);
 						break;

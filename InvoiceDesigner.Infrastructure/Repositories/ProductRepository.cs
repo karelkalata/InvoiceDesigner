@@ -15,13 +15,13 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 			_context = context;
 		}
 
-		public async Task<IReadOnlyCollection<Product>> GetEntitiesAsync(QueryPaged queryPaged,	Func<IQueryable<Product>, IOrderedQueryable<Product>> orderBy)
+		public async Task<IReadOnlyCollection<Product>> GetEntitiesAsync(QueryPaged queryPaged, Func<IQueryable<Product>, IOrderedQueryable<Product>> orderBy)
 		{
 			int skip = (queryPaged.Page - 1) * queryPaged.PageSize;
 
 			IQueryable<Product> query = _context.Products.AsNoTracking();
 
-			if(!queryPaged.ShowDeleted)
+			if (!queryPaged.ShowDeleted)
 			{
 				query = query.Where(e => e.IsDeleted == false);
 			}

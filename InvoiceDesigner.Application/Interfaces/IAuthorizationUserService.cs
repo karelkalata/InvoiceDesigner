@@ -3,10 +3,9 @@ using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Interfaces
 {
-	public interface ILoginService
+	public interface IAuthorizationUserService
 	{
-
 		Task<ResponseJwtToken> LoginAsync(UserLoginDto dto);
-
+		Task LogoutUser(int userId);
 	}
 }

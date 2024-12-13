@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
 using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Domain.Shared.DTOs.Currency;
+using InvoiceDesigner.Domain.Shared.Enums;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
 
-namespace InvoiceDesigner.Application.Services
+namespace InvoiceDesigner.Application.Services.AdminService
 {
 	public class CurrencyService : ICurrencyService
 	{
@@ -16,13 +17,15 @@ namespace InvoiceDesigner.Application.Services
 		private readonly IInvoiceServiceHelper _invoiceServiceHelper;
 		private readonly ICompanyServiceHelper _companyServiceHelper;
 		private readonly IProductServiceHelper _productServiceHelper;
+		private readonly IUserActivityLogService _userActivity;
 
 		public CurrencyService(ICurrencyRepository repoCurrency,
 								IMapper mapper,
 								IBankServiceHelper bankServiceHelper,
 								IInvoiceServiceHelper invoiceServiceHelper,
 								ICompanyServiceHelper companyServiceHelper,
-								IProductServiceHelper productServiceHelper)
+								IProductServiceHelper productServiceHelper,
+								IUserActivityLogService userActivity)
 		{
 			_repoCurrency = repoCurrency;
 			_mapper = mapper;
@@ -30,6 +33,7 @@ namespace InvoiceDesigner.Application.Services
 			_invoiceServiceHelper = invoiceServiceHelper;
 			_companyServiceHelper = companyServiceHelper;
 			_productServiceHelper = productServiceHelper;
+			_userActivity = userActivity;
 		}
 
 		public async Task<ResponsePaged<CurrencyViewDto>> GetPagedEntitiesAsync(QueryPaged queryPaged)
@@ -52,12 +56,13 @@ namespace InvoiceDesigner.Application.Services
 		}
 
 
-		public async Task<ResponseRedirect> CreateAsync(CurrencyEditDto newCurrency)
+		public async Task<ResponseRedirect> CreateAsync(int userId, CurrencyEditDto newCurrency)
 		{
 			var existingCurrency = new Currency();
 			MapCurrency(existingCurrency, newCurrency);
 
 			var entityId = await _repoCurrency.CreateAsync(existingCurrency);
+			await _userActivity.CreateActivityLog(userId, EDocumentsTypes.Currency, EActivitiesType.Create, entityId);
 
 			return new ResponseRedirect
 			{
@@ -74,12 +79,13 @@ namespace InvoiceDesigner.Application.Services
 		public async Task<Currency> GetByIdAsync(int id) => await ValidateExistsEntityAsync(id);
 
 
-		public async Task<ResponseRedirect> UpdateAsync(CurrencyEditDto editedCurrency)
+		public async Task<ResponseRedirect> UpdateAsync(int userId, CurrencyEditDto editedCurrency)
 		{
 			var existingCurrency = await ValidateExistsEntityAsync(editedCurrency.Id);
 			MapCurrency(existingCurrency, editedCurrency);
 
 			var entityId = await _repoCurrency.UpdateAsync(existingCurrency);
+			await _userActivity.CreateActivityLog(userId, EDocumentsTypes.Currency, EActivitiesType.Update, entityId);
 
 			return new ResponseRedirect
 			{
@@ -105,6 +111,8 @@ namespace InvoiceDesigner.Application.Services
 				if (await _productServiceHelper.IsCurrencyUsedInProduct(queryDeleteEntity.EntityId))
 					throw new InvalidOperationException($"{existsEntity.Name} is in use in Products and cannot be deleted.");
 
+				await _userActivity.CreateActivityLog(queryDeleteEntity.UserId, EDocumentsTypes.Currency, EActivitiesType.Delete, existsEntity.Id);
+
 				return new ResponseBoolean
 				{
 					Result = await _repoCurrency.DeleteAsync(existsEntity)
@@ -114,6 +122,7 @@ namespace InvoiceDesigner.Application.Services
 			{
 				existsEntity.IsDeleted = true;
 				await _repoCurrency.UpdateAsync(existsEntity);
+				await _userActivity.CreateActivityLog(queryDeleteEntity.UserId, EDocumentsTypes.Currency, EActivitiesType.MarkedAsDeleted, existsEntity.Id);
 
 				return new ResponseBoolean
 				{

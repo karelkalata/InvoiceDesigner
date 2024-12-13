@@ -1,8 +1,10 @@
 ﻿@page "/Products"
 @using InvoiceDesigner.Domain.Shared.DTOs.Product
+@using InvoiceDesigner.Domain.Shared.Enums
 @using InvoiceDesigner.Domain.Shared.Extensions
 @using InvoiceDesigner.Domain.Shared.QueryParameters
 @using InvoiceDesigner.Domain.Shared.Responses
+@using InvoiceDesigner.WebApp.Components.Pages.Helpers
 @using InvoiceDesigner.WebApp.Helpers
 @inject IHttpClientFactory HttpClientFactory
 @inject ILocalStorageService LocalStorageService
@@ -44,17 +46,24 @@
 			</MudTh>
 			<MudTh></MudTh>
 			<MudTh></MudTh>
+			<MudTh></MudTh>
 		</HeaderContent>
 		<RowTemplate>
 			<MudTd DataLabel="Id">@context.Id</MudTd>
 			<MudTd DataLabel="Name">@context.Name</MudTd>
-			<MudTd Class="pa-0" Style="width:30px">
+			<MudTd Style="width:30px" Class="pa-0">
 				<MudIconButton Href="@($"/Products/{context.Id}")"
 							   Icon="@Icons.Material.Filled.Edit"
 							   Size="Size.Small"
 							   Color="Color.Default" />
 			</MudTd>
-			<MudTd Class="pa-0" Style="width:30px">
+			<MudTd Style="width:25px" Class="pa-0">
+				<ActivityLogsHelper DialogService=DialogService
+									HttpHelper=_httpHelper
+									DocumentType=EDocumentsTypes.Product
+									EntityId="@context.Id" />
+			</MudTd>
+			<MudTd Style="width:30px" Class="pa-0">
 				<MudIconButton Icon="@(context.IsDeleted ? Icons.Material.Filled.DeleteForever : Icons.Material.Filled.Delete)"
 							   Size="Size.Small"
 							   Color="Color.Default"

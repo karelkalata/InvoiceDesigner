@@ -2,11 +2,20 @@
 With InvoiceDesigner, customizing your invoice print form is super easy. You can add, move around, and tweak elements in the layout, all without touching any code. Want to include extra info or some custom fields? No problem! 
 
 ## Technical Features
- - No JavaScript/TypeScript/React/Angular/Vuejs and other frontend framework
- - No npm dependencies
- - C#
- - [MudBlazor](https://github.com/MudBlazor/MudBlazor)
+- No JavaScript/TypeScript/React/Angular/Vuejs and other frontend framework
+- Completely free of npm dependencies
+- Built with the power and simplicity of C#
+- Enhanced UI/UX powered by [MudBlazor](https://github.com/MudBlazor/MudBlazor)
  
+## Features
+- Fully customizable PDF invoices
+- Comprehensive Invoice Management
+- Client and Product Management
+- Multi-currency pricing support for products
+- Multi-company support with unlimited banks, each supporting different currencies per company
+- Advanced user access control for managing permissions across companies
+- Detailed User Activity Logging (creation, editing, archiving, etc.)
+
 ## Screenshots
 <p align="center">
   <img src="screenshot1.png"  />
@@ -17,15 +26,10 @@ With InvoiceDesigner, customizing your invoice print form is super easy. You can
 <p align="center">
   <img src="screenshot3.png"  />
 </p>
+<p align="center">
+  <img src="screenshot5.png"  />
+</p>
 
-## Features
-- works locally/lan
-- Customizable PDF invoice
-- Manage your Clients
-- Invoice Management
-- Customer Management
-- User access control for companies
-- Built-in authorization system
 
 ## Development Environment
 - [Microsoft Visual Studio 2022 Community Edition](https://visualstudio.microsoft.com/vs/community/)

@@ -1,6 +1,11 @@
 ﻿@page "/Logout"
+@using InvoiceDesigner.Domain.Shared.Responses
+@using InvoiceDesigner.WebApp.Helpers
 @inject NavigationManager nav
+@inject IHttpClientFactory HttpClientFactory
 @inject ILocalStorageService LocalStorageService
+@inject NavigationManager nav
+@inject ISnackbar Snackbar
 
 <MudContainer>
 	<MudPaper Class="d-flex justify-center align-content-center flex-grow-1 gap-4" Elevation="0">
@@ -9,8 +14,15 @@
 </MudContainer>
 
 @code {
+
+	private static string _controller = "Logout";
+	private HttpRequestHelper _httpHelper = null!;
+
 	protected override async Task OnInitializedAsync()
 	{
+		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav);
+		await _httpHelper.GetAsync<ResponseBoolean>(1);
+
 		await LocalStorageService.ClearAsync();
 		nav.NavigateTo("/Login", true);
 	}

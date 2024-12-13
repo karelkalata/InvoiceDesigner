@@ -6,17 +6,17 @@ namespace InvoiceDesigner.Application.Interfaces.InterfacesFormDesigner
 {
 	public interface IFormDesignersService
 	{
-		Task<IReadOnlyCollection<FormDesignersAutocompleteDto>> GetAllFormDesignersAutocompleteDto();
+		Task<IReadOnlyCollection<FormDesignersAutocompleteDto>> GetAllAutocompleteDto();
 
-		Task<ResponseRedirect> CreateFormDesignerAsync(FormDesignerEditDto formDesignerEditDto);
+		Task<ResponseRedirect> CreateAsync(int userId, FormDesignerEditDto formDesignerEditDto);
 
-		Task<FormDesigner> GetFormDesignerByIdAsync(int id);
+		Task<FormDesigner> GetByIdAsync(int id);
 
-		Task<FormDesignerEditDto> GetFormDesignerEditDtoByIdAsync(int id);
+		Task<FormDesignerEditDto> GetEditDtoByIdAsync(int id);
 
-		Task<ResponseRedirect> UpdateFormDesignerAsync(FormDesignerEditDto formDesignerEditDto);
+		Task<ResponseRedirect> UpdateAsync(int userId, FormDesignerEditDto formDesignerEditDto);
 
-		Task<ResponseBoolean> DeleteFormDesignerAsync(int id);
+		Task<ResponseBoolean> DeleteAsync(int userId, int id);
 
 		DropItemEditDto AddEmptyBox();
 	}

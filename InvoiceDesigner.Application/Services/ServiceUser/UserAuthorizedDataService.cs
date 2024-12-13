@@ -9,11 +9,11 @@ namespace InvoiceDesigner.Application.Services.ServiceUser
 		private readonly IUserRepository _repository;
 
 		public UserAuthorizedDataService(IUserRepository repository)
-        {
+		{
 			_repository = repository;
 		}
 
-        public async Task<IReadOnlyCollection<Company>> GetAuthorizedCompaniesAsync(int userId)
+		public async Task<IReadOnlyCollection<Company>> GetAuthorizedCompaniesAsync(int userId)
 		{
 			var user = await _repository.GetUserByIdAsync(userId);
 			if (user == null)
