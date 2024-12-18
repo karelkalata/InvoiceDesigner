@@ -5,31 +5,24 @@
 @using InvoiceDesigner.Domain.Shared.QueryParameters
 @using InvoiceDesigner.Domain.Shared.Responses
 @using InvoiceDesigner.WebApp.Components.Pages.Helpers
-@using InvoiceDesigner.WebApp.Helpers
-@inject IHttpClientFactory HttpClientFactory
-@inject ILocalStorageService LocalStorageService
-@inject NavigationManager nav
-@inject ISnackbar Snackbar
-@inject IDialogService DialogService
 
 
 <MudContainer>
 	<MudTable ServerData="ServerReload" @ref="_table" Dense="true" Hover="true" RowsPerPage="20">
 		<ToolBarContent>
-			<MudText Typo="Typo.h6">@_controller</MudText>
+			<MudText Typo="Typo.h6">@localizer[@_controller]</MudText>
 			<MudSpacer />
-			<MudTextField T="string"
+			<MudTextField T="string" Class="mt-0"
 						  ValueChanged="@(s=>OnSearch(s))"
-						  Placeholder="Search"
+						  Placeholder="@localizer["Search"]"
 						  Adornment="Adornment.Start"
 						  AdornmentIcon="@Icons.Material.Filled.Search"
-						  IconSize="Size.Medium"
-						  Class="mt-0" />
+						  IconSize="Size.Medium" />
 			<MudSpacer />
 			<MudIconButton Icon="@Icons.Material.Filled.PlaylistAdd" Size="Size.Medium" Href="/Customers/0" />
 			<MudMenu Icon="@Icons.Material.Filled.Settings" Size="Size.Medium" Style="margin-left: auto;" Dense>
 				<MudMenuItem>
-					<MudCheckBox Dense @bind-Value="_showDeleted" Label="Show Deleted" onclick="@(()=>OnCheckedChanged())"></MudCheckBox>
+					<MudCheckBox Dense @bind-Value="_showDeleted" Label="@localizer["ShowDeleted"]" onclick="@(()=>OnCheckedChanged())"></MudCheckBox>
 				</MudMenuItem>
 			</MudMenu>
 		</ToolBarContent>
@@ -41,32 +34,29 @@
 			</MudTh>
 			<MudTh>
 				<MudTableSortLabel T="CustomerViewDto" SortLabel="Name">
-					Name
+					@localizer["Name"]
 				</MudTableSortLabel>
 			</MudTh>
-			<MudTh>TaxId</MudTh>
+			<MudTh>@localizer["TaxId"]</MudTh>
 			<MudTh></MudTh>
 			<MudTh></MudTh>
 			<MudTh></MudTh>
 		</HeaderContent>
 		<RowTemplate>
-
 			<MudTd DataLabel="Id">@context.Id</MudTd>
 			<MudTd DataLabel="Name">@context.Name</MudTd>
 			<MudTd DataLabel="TaxId">@context.TaxId</MudTd>
-			<MudTd Class="text-right" Style="width:25px">
+			<MudTd Style="width:25px" Class="pa-0">
 				<MudIconButton Href="@($"/Customers/{context.Id}")"
 							   Icon="@Icons.Material.Filled.Edit"
 							   Size="Size.Small"
 							   Color="Color.Default" />
 			</MudTd>
 			<MudTd Style="width:25px" Class="pa-0">
-				<ActivityLogsHelper DialogService=DialogService
-									HttpHelper=_httpHelper
-									DocumentType=EDocumentsTypes.Customer
+				<ActivityLogsHelper DocumentType=EDocumentsTypes.Customer
 									EntityId="@context.Id" />
 			</MudTd>
-			<MudTd Class="text-right" Style="width:25px">
+			<MudTd Style="width:25px" Class="pa-0">
 				<MudIconButton Icon="@(context.IsDeleted ? Icons.Material.Filled.DeleteForever : Icons.Material.Filled.Delete)"
 							   Color="Color.Default"
 							   Size="Size.Small"
@@ -76,10 +66,10 @@
 		</RowTemplate>
 
 		<NoRecordsContent>
-			<MudText>No matching records found</MudText>
+			<MudText>@localizer["NoMatchingRecordsFound"]</MudText>
 		</NoRecordsContent>
 		<LoadingContent>
-			<MudText>Loading...</MudText>
+			<MudText>@localizer["Loading"]</MudText>
 		</LoadingContent>
 		<PagerContent>
 			<MudTablePager PageSizeOptions="new int[] {10, 20, 30, 40, 50}" />
@@ -89,18 +79,12 @@
 
 @code {
 	private static string _controller = "Customers";
-	private HttpRequestHelper _httpHelper = null!;
+
 
 	private MudTable<CustomerViewDto> _table = new();
 	private ResponsePaged<CustomerViewDto>? _pagedResult;
 	private string _searchString = "";
 	private bool _showDeleted = false;
-
-	protected override async Task OnInitializedAsync()
-	{
-		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav, DialogService);
-		await Task.Delay(1);
-	}
 
 	private async Task<TableData<CustomerViewDto>> ServerReload(TableState state, CancellationToken token)
 	{
@@ -135,7 +119,7 @@
 
 	private async void RedirectToDeleteRow(int id)
 	{
-		if (await _httpHelper.DeleteOrMarkAsDeletedAsync(id))
+		if (await _httpHelper.DeleteOrMarkAsDeletedAsync($"Customers/{id}"))
 			await _table.ReloadServerData();
 	}
 

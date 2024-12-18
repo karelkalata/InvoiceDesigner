@@ -3,17 +3,12 @@
 @using InvoiceDesigner.Domain.Shared.DTOs.Product
 @using InvoiceDesigner.Domain.Shared.Helpers
 @using InvoiceDesigner.Domain.Shared.Models
-@using InvoiceDesigner.WebApp.Helpers
-@inject IHttpClientFactory HttpClientFactory
-@inject ILocalStorageService LocalStorageService
-@inject NavigationManager nav
-@inject ISnackbar Snackbar
 
 
 <MudContainer>
 	@if (_productEditDto == null)
 	{
-		<MudText Align="Align.Center">Loading...</MudText>
+		<MudText Align="Align.Center">@localizer["Loading"]</MudText>
 	}
 	else
 	{
@@ -23,7 +18,7 @@
 				<MudCardContent>
 					<MudTextField Class="pa-2"
 								  @bind-Value="_productEditDto.Name"
-								  Label="Name"
+								  Label="@localizer["Name"]"
 								  For="(() => _productEditDto.Name)" />
 					<MudDataGrid Class="pa-2"
 								 T="ProductPriceEditDto"
@@ -43,30 +38,27 @@
 						</ColGroup>
 						<Columns>
 							<SelectColumn />
-							<PropertyColumn Property="x => x.Currency">
+							<PropertyColumn Property="x => x.Currency" Title="@localizer["Currency"]">
 								<EditTemplate>
-									<MudAutocomplete T="CurrencyAutocompleteDto"
+									<MudAutocomplete T="CurrencyAutocompleteDto" Required Dense Clearable
 													 Value="context.Item.Currency"
 													 ValueChanged="@(currency => OnCurrencySelected(currency, context.Item))"
-													 Placeholder="Select Currency"
-													 Clearable="true"
-													 Required
-													 Dense="true"
+													 Placeholder="@localizer["Currency"]"
 													 SearchFunc="@((value, token) => FilteringDataWithApi<CurrencyAutocompleteDto>(value, "UserCurrencies", token))"
 													 ToStringFunc="@(c => c?.Name ?? "")"
 													 For="(() => context.Item.Currency)" />
 								</EditTemplate>
 							</PropertyColumn>
 
-							<PropertyColumn Property="x => x.Price">
+							<PropertyColumn Property="x => x.Price" Title="@localizer["Price"]">
 								<EditTemplate>
-									<MudNumericField @bind-Value="context.Item.Price" Format="N0" />
+									<MudNumericField @bind-Value="context.Item.Price"/>
 								</EditTemplate>
 							</PropertyColumn>
 
 						</Columns>
 						<NoRecordsContent>
-							<MudText>No records available.</MudText>
+							<MudText>@localizer["NoMatchingRecordsFound"]</MudText>
 						</NoRecordsContent>
 					</MudDataGrid>
 				</MudCardContent>
@@ -74,20 +66,23 @@
 					<MudButton Size="Size.Small"
 							   StartIcon="@Icons.Material.Filled.AddCircle"
 							   OnClick="AddInvoiceItems">
-						<MudText>Add Price</MudText>
+						<MudText>
+							@localizer["AddPrice"]
+						</MudText>
 					</MudButton>
 					<MudButton Size="Size.Small"
 							   StartIcon="@Icons.Material.Filled.DeleteForever"
 							   Disabled="@(selectedItems.Count == 0)"
 							   OnClick="DeleteSelectedItems">
-						<MudText>Delete Price</MudText>
+						<MudText>
+							@localizer["DeletePrice"]
+						</MudText>
 					</MudButton>
-					<MudButton Size="Size.Small"
+					<MudButton Size="Size.Small" Class="ml-auto"
 							   Variant="Variant.Filled"
 							   Color="Color.Primary"
-							   ButtonType="ButtonType.Submit"
-							   Class="ml-auto">
-						Save
+							   ButtonType="ButtonType.Submit">
+						@localizer["Save"]
 					</MudButton>
 				</MudCardActions>
 			</MudCard>
@@ -98,20 +93,16 @@
 	[Parameter]
 	public int? id { get; set; }
 
-	private static string _controller = "Products";
-	private HttpRequestHelper _httpHelper = null!;
-
 	private MudDataGrid<ProductPriceEditDto> dataGrid = new();
 	private List<CurrencyAutocompleteDto> _selectedCurrencies = new();
 	private HashSet<ProductPriceEditDto> selectedItems = new();
 
-	private ProductEditDto? _productEditDto;
+	private ProductEditDto? _productEditDto = new ProductEditDto();
 
 	protected override async Task OnInitializedAsync()
 	{
-		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav);
-
-		_productEditDto = await _httpHelper.GetAsync<ProductEditDto>(id);
+		if (id.HasValue && id > 0)
+			_productEditDto = await _httpHelper.GetAsync<ProductEditDto>($"Products/{id}");
 
 		if (_productEditDto != null)
 		{
@@ -152,7 +143,7 @@
 
 	private async Task OnValidSubmit()
 	{
-		await _httpHelper.SendRequest(_productEditDto, id.HasValue && id > 0);
+		await _httpHelper.SendRequest("Products", _productEditDto, id.HasValue && id > 0);
 	}
 
 

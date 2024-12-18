@@ -4,6 +4,7 @@
 	{
 		public string JwtToken { get; set; } = string.Empty;
 
+		public string Locale { get; set; } = "en-US";
 	}
 
 }

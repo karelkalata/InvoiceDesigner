@@ -11,17 +11,12 @@
 @using InvoiceDesigner.WebApp.Components.Pages.Dialogs
 @using InvoiceDesigner.WebApp.Components.Pages.Helpers
 @using InvoiceDesigner.WebApp.Helpers;
-@inject IHttpClientFactory HttpClientFactory
-@inject ILocalStorageService LocalStorageService
-@inject NavigationManager nav
-@inject ISnackbar Snackbar
-@inject IDialogService DialogService
+
 
 
 <MudContainer>
 	<MudTable ServerData="ServerReload" @ref="_table" Dense="true" Hover="true" RowsPerPage="20">
 		<ToolBarContent>
-
 			<MudText Typo="Typo.h6">@_controller</MudText>
 			<MudSpacer />
 
@@ -57,20 +52,12 @@
 
 @code {
 	private static string _controller = "Admin/ActivityLogs";
-	private HttpRequestHelper _httpHelper = null!;
 
 	private MudTable<UserActivityLogViewDto> _table = new();
 	private ResponsePaged<UserActivityLogViewDto>? _pagedResult;
 
-	protected override async Task OnInitializedAsync()
-	{
-		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav, DialogService);
-		await Task.Delay(1);
-	}
-
 	private async Task<TableData<UserActivityLogViewDto>> ServerReload(TableState state, CancellationToken token)
 	{
-
 		var queryParameters = new QueryPagedActivityLogs
 			{
 				PageSize = state.PageSize,

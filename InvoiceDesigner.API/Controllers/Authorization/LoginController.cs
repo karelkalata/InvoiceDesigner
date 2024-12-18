@@ -1,7 +1,9 @@
 ﻿using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Domain.Shared.DTOs.User;
 using InvoiceDesigner.Domain.Shared.Responses;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.RegularExpressions;
 
 namespace InvoiceDesigner.API.Controllers.Unauthorized
 {

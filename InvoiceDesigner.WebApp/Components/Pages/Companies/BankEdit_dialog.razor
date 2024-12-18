@@ -7,37 +7,32 @@
 	<DialogContent>
 		<MudGrid Spacing="2">
 			<MudItem xs="4">
-				<MudAutocomplete T="CurrencyAutocompleteDto" Class="d-flex pa-2"
+				<MudAutocomplete T="CurrencyAutocompleteDto" Class="d-flex pa-2" Required Dense Clearable="true"
 								 @bind-Value="@_editedBankEditDto.Currency"
-								 Label="Currency"
-								 Clearable="true"
-								 Required
-								 Dense
+								 Label="@localizer["Currency"]"
 								 SearchFunc="@((value, token) => SearchElements<CurrencyAutocompleteDto>(value, currenciesAutocomplete, token))"
 								 ToStringFunc="@(c => c?.Name ?? "")"
 								 For="(() => _editedBankEditDto.Currency)" />
 			</MudItem>
 			<MudItem xs="8">
-				<MudTextField @bind-Value="_editedBankEditDto.Name" Class="d-flex pa-2"
-							  Label="Name"
-							  Required
+				<MudTextField @bind-Value="_editedBankEditDto.Name" Class="d-flex pa-2" Required
+							  Label="@localizer["Name"]"
 							  For="(() => _editedBankEditDto.Name)" />
 			</MudItem>
 		</MudGrid>
 		<MudTextField @bind-Value="_editedBankEditDto.BIC" Class="d-flex pa-2"
 					  Label="BIC"
 					  For="(() => _editedBankEditDto.BIC)" />
-		<MudTextField @bind-Value="_editedBankEditDto.Account" Class="d-flex pa-2"
-					  Label="Account"
-					  Required
+		<MudTextField @bind-Value="_editedBankEditDto.Account" Class="d-flex pa-2" Required
+					  Label="@localizer["Account"]"
 					  For="(() => _editedBankEditDto.Account)" />
 		<MudTextField @bind-Value="_editedBankEditDto.Address" Class="d-flex pa-2"
-					  Label="Address"
+					  Label="@localizer["Address"]"
 					  For="(() => _editedBankEditDto.Address)" />
 	</DialogContent>
 	<DialogActions>
-		<MudButton OnClick="Cancel">Cancel</MudButton>
-		<MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+		<MudButton OnClick="Cancel">@localizer["Cancel"]</MudButton>
+		<MudButton Color="Color.Primary" OnClick="Submit">@localizer["Save"]</MudButton>
 	</DialogActions>
 </MudDialog>
 

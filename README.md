@@ -16,6 +16,7 @@ With InvoiceDesigner, customizing your invoice print form is super easy. You can
 - Multi-company support with unlimited banks, each supporting different currencies per company
 - Advanced user access control for managing permissions across companies
 - Detailed User Activity Logging (creation, editing, archiving, etc.)
+- Localization: English, Čeština, Deutsch, España, Français, Italiano, Polski, Português, Русский
 
 ## Screenshots
 <p align="center">

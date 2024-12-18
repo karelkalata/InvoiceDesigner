@@ -1,36 +1,28 @@
 ﻿@page "/Currencies"
-@using System.Net.Http.Json
 @using InvoiceDesigner.Domain.Shared.DTOs.Currency
 @using InvoiceDesigner.Domain.Shared.Enums
 @using InvoiceDesigner.Domain.Shared.Extensions
 @using InvoiceDesigner.Domain.Shared.QueryParameters
 @using InvoiceDesigner.Domain.Shared.Responses
 @using InvoiceDesigner.WebApp.Components.Pages.Helpers
-@using InvoiceDesigner.WebApp.Helpers
-@inject IHttpClientFactory HttpClientFactory
-@inject ILocalStorageService LocalStorageService
-@inject NavigationManager nav
-@inject ISnackbar Snackbar
-@inject IDialogService DialogService
 
 
 <MudContainer>
 	<MudTable ServerData="ServerReload" @ref="_table" Dense Hover RowsPerPage="20">
 		<ToolBarContent>
-			<MudText Typo="Typo.h6">@_controller</MudText>
+			<MudText Typo="Typo.h6">@localizer[@_controller]</MudText>
 			<MudSpacer />
-			<MudTextField T="string"
+			<MudTextField T="string" Class="mt-0"
 						  ValueChanged="@(s=>OnSearch(s))"
-						  Placeholder="Search"
+						  Placeholder="@localizer["Search"]"
 						  Adornment="Adornment.Start"
 						  AdornmentIcon="@Icons.Material.Filled.Search"
-						  IconSize="Size.Medium"
-						  Class="mt-0" />
+						  IconSize="Size.Medium" />
 			<MudSpacer />
 			<MudIconButton Icon="@Icons.Material.Filled.PlaylistAdd" Size="Size.Medium" Href="/Currencies/0" />
 			<MudMenu Icon="@Icons.Material.Filled.Settings" Size="Size.Medium" Style="margin-left: auto;" Dense>
 				<MudMenuItem>
-					<MudCheckBox Dense @bind-Value="_showDeleted" Label="Show Deleted" onclick="@(()=>OnCheckedChanged())"></MudCheckBox>
+					<MudCheckBox Dense @bind-Value="_showDeleted" Label="@localizer["ShowDeleted"]" onclick="@(()=>OnCheckedChanged())"></MudCheckBox>
 				</MudMenuItem>
 			</MudMenu>
 		</ToolBarContent>
@@ -42,10 +34,10 @@
 			</MudTh>
 			<MudTh>
 				<MudTableSortLabel T="CurrencyViewDto" SortLabel="Code">
-					Code
+					@localizer["Code"]
 				</MudTableSortLabel>
 			</MudTh>
-			<MudTh>Description</MudTh>
+			<MudTh>@localizer["Description"]</MudTh>
 			<MudTh></MudTh>
 			<MudTh></MudTh>
 			<MudTh></MudTh>
@@ -61,9 +53,7 @@
 							   Color="Color.Default" />
 			</MudTd>
 			<MudTd Style="width:25px" Class="pa-0">
-				<ActivityLogsHelper DialogService=DialogService
-									HttpHelper=_httpHelper
-									DocumentType=EDocumentsTypes.Currency
+				<ActivityLogsHelper DocumentType=EDocumentsTypes.Currency
 									EntityId="@context.Id" />
 			</MudTd>
 			<MudTd Style="width:25px" Class="pa-0">
@@ -74,10 +64,10 @@
 			</MudTd>
 		</RowTemplate>
 		<NoRecordsContent>
-			<MudText>No matching records found</MudText>
+			<MudText>@localizer["NoMatchingRecordsFound"]</MudText>
 		</NoRecordsContent>
 		<LoadingContent>
-			<MudText>Loading...</MudText>
+			<MudText>@localizer["Loading"]</MudText>
 		</LoadingContent>
 		<PagerContent>
 			<MudTablePager PageSizeOptions="new int[] {10, 20, 30, 40, 50}" />
@@ -88,18 +78,13 @@
 @code {
 
 	private static string _controller = "Currencies";
-	private HttpRequestHelper _httpHelper = null!;
 
 	private MudTable<CurrencyViewDto> _table = new();
 	private ResponsePaged<CurrencyViewDto>? _pagedResult;
 	private string _searchString = "";
 	private bool _showDeleted = false;
 
-	protected override async Task OnInitializedAsync()
-	{
-		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav, DialogService);
-		await Task.Delay(1);
-	}
+
 
 	private async Task<TableData<CurrencyViewDto>> ServerReload(TableState state, CancellationToken token)
 	{
@@ -135,7 +120,7 @@
 
 	private async void RedirectToDeleteRow(int id)
 	{
-		if (await _httpHelper.DeleteOrMarkAsDeletedAsync(id))
+		if (await _httpHelper.DeleteOrMarkAsDeletedAsync($"Currencies/{id}"))
 			await _table.ReloadServerData();
 	}
 

@@ -1,14 +1,9 @@
 ﻿@using InvoiceDesigner.Domain.Shared.Enums
 @using InvoiceDesigner.WebApp.Components.Pages.Dialogs
 @using InvoiceDesigner.WebApp.Helpers
+
 <MudIconButton Icon="@Icons.Material.Filled.History" OnClick="OpenActivityLogHistory" Size="Size.Small" Disabled="@Disabled" />
 @code {
-	[Parameter]
-	public IDialogService DialogService { get; set; } = null!;
-
-	[Parameter]
-	public HttpRequestHelper HttpHelper { get; set; } = null!;
-
 	[Parameter]
 	public EDocumentsTypes DocumentType { get; set; }
 
@@ -23,7 +18,7 @@
 	{
 		var parameters = new DialogParameters<ActivityLogs_dialog>
 		{
-			{ x => x.HttpHelper, HttpHelper },
+			{ x => x.HttpHelper, _httpHelper },
 			{ x => x.DocumentType, DocumentType },
 			{ x => x.EntityId, EntityId }
 		};

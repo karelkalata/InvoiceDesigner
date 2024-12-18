@@ -1,15 +1,9 @@
 ﻿@page "/Currencies/{id:int}"
 @using InvoiceDesigner.Domain.Shared.DTOs.Currency
-@using InvoiceDesigner.WebApp.Helpers
-@inject IHttpClientFactory HttpClientFactory
-@inject ILocalStorageService LocalStorageService
-@inject NavigationManager nav
-@inject ISnackbar Snackbar
-
 
 @if (_currencyEditDto == null)
 {
-	<MudText Align="Align.Center">Loading...</MudText>
+	<MudText Align="Align.Center">@localizer["Loading"]</MudText>
 }
 else
 {
@@ -19,14 +13,14 @@ else
 			<MudCard>
 				<MudCardContent>
 					<MudTextField @bind-Value="_currencyEditDto.Name"
-								  Label="Currency Code"
+								  Label="@localizer["CurrencyCode"]"
 								  For="(() => _currencyEditDto.Name)" />
 					<MudTextField @bind-Value="_currencyEditDto.Description"
-								  Label="Description"
+								  Label="@localizer["Description"]"
 								  For="(() => _currencyEditDto.Description)" />
 				</MudCardContent>
 				<MudCardActions>
-					<MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit" Class="ml-auto">Save</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit" Class="ml-auto">@localizer["Save"]</MudButton>
 				</MudCardActions>
 			</MudCard>
 		</EditForm>
@@ -37,21 +31,17 @@ else
 	[Parameter]
 	public int? id { get; set; }
 
-	private static string _controller = "Currencies";
-	private HttpRequestHelper _httpHelper = null!;
-
-	private CurrencyEditDto? _currencyEditDto;
+	private CurrencyEditDto? _currencyEditDto = new CurrencyEditDto();
 
 	protected override async Task OnInitializedAsync()
 	{
-		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav);
-
-		_currencyEditDto = await _httpHelper.GetAsync<CurrencyEditDto>(id);
+		if (id.HasValue && id > 0)
+			_currencyEditDto = await _httpHelper.GetAsync<CurrencyEditDto>($"Currencies/{id}");
 	}
 
 	private async Task OnValidSubmit()
 	{
-		await _httpHelper.SendRequest(_currencyEditDto, id.HasValue && id > 0);
+		await _httpHelper.SendRequest("Currencies", _currencyEditDto, id.HasValue && id > 0);
 	}
 
 

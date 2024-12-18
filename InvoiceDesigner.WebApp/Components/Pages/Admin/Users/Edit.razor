@@ -4,12 +4,8 @@
 @using InvoiceDesigner.Domain.Shared.DTOs.Currency
 @using InvoiceDesigner.Domain.Shared.DTOs.User
 @using InvoiceDesigner.Domain.Shared.Helpers
-@using InvoiceDesigner.WebApp.Helpers;
+@using InvoiceDesigner.Localization
 @using InvoiceDesigner.Domain.Shared.Responses;
-@inject IHttpClientFactory HttpClientFactory
-@inject ILocalStorageService LocalStorageService
-@inject NavigationManager nav
-@inject ISnackbar Snackbar
 
 
 <MudContainer>
@@ -58,6 +54,16 @@
 
 							</MudSelect>
 						}
+						<MudSelect T="string"
+								   Class="d-flex pa-2"
+								   Label="Language"
+								   @bind-Value="_adminUserEditDto.Locale">
+							@foreach (var culture in Locale.SupportedCultures)
+							{
+								<MudSelectItem Value="@culture.ToString()">@culture.NativeName</MudSelectItem>
+							}
+
+						</MudSelect>
 					</MudPaper>
 				</MudCardContent>
 				<MudCardActions>
@@ -71,13 +77,10 @@
 	[Parameter]
 	public int? id { get; set; }
 
-	private static string _controller = "Admin/Users";
-	private HttpRequestHelper _httpHelper = null!;
-
 	private bool _isPasswordFieldEmpty;
 	private bool _isLoginUsed;
 
-	private AdminUserEditDto? _adminUserEditDto = null;
+	private AdminUserEditDto? _adminUserEditDto = new AdminUserEditDto();
 	private string _companies { get; set; } = "Nothing selected";
 
 	private List<CompanyAutocompleteDto> _companyAutocompleteDto = new List<CompanyAutocompleteDto>();
@@ -88,12 +91,11 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav);
-
 		_companyAutocompleteDto = await _httpHelper.GetDataFromAPI<List<CompanyAutocompleteDto>>("api/Companies/GetAllAutocompleteDto");
 		listCompany = _companyAutocompleteDto.Select(c => c.Name).ToArray();
 
-		_adminUserEditDto = await _httpHelper.GetAsync<AdminUserEditDto>(id);
+		if (id.HasValue && id > 0)
+			_adminUserEditDto = await _httpHelper.GetAsync<AdminUserEditDto>($"Admin/Users/{id}");
 
 		if (_adminUserEditDto != null)
 			_selectedCompany = _adminUserEditDto.Companies.Select(c => c.Name).ToArray();
@@ -108,7 +110,7 @@
 		if (_adminUserEditDto == null)
 			return;
 
-		if(id == 0)
+		if (id == 0)
 		{
 			if (string.IsNullOrEmpty(_adminUserEditDto.Password))
 			{
@@ -130,7 +132,7 @@
 			if (company != null)
 				_adminUserEditDto.Companies.Add(company);
 		}
-		await _httpHelper.SendRequest(_adminUserEditDto, id.HasValue && id > 0);
+		await _httpHelper.SendRequest("Admin/Users", _adminUserEditDto, id.HasValue && id > 0);
 	}
 
 	private void changePassword()

@@ -57,7 +57,10 @@ namespace InvoiceDesigner.API.Controllers.Admin
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 
@@ -74,7 +77,10 @@ namespace InvoiceDesigner.API.Controllers.Admin
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 

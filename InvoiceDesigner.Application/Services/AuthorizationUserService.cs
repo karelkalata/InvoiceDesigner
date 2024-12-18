@@ -42,6 +42,8 @@ namespace InvoiceDesigner.Application.Services
 				return result;
 			}
 
+			result.Locale = existUser.Locale;
+
 			var secretKey = _configuration["JWTOption:SecretKey"];
 			if (secretKey == null)
 				throw new InvalidOperationException("JWTOption:SecretKey is null");

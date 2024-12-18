@@ -3,18 +3,12 @@
 @using InvoiceDesigner.Domain.Shared.DTOs.Company
 @using InvoiceDesigner.Domain.Shared.DTOs.Currency
 @using InvoiceDesigner.Domain.Shared.Helpers
-@using InvoiceDesigner.WebApp.Helpers
-@inject IHttpClientFactory HttpClientFactory
-@inject ILocalStorageService LocalStorageService
-@inject NavigationManager nav
-@inject ISnackbar Snackbar
-@inject IDialogService DialogService
 
 
 <MudContainer>
 	@if (_companyEditDto == null)
 	{
-		<MudText Align="Align.Center">Loading...</MudText>
+		<MudText Align="Align.Center">@localizer["Loading"]</MudText>
 	}
 	else
 	{
@@ -25,87 +19,80 @@
 					<MudGrid Spacing="2">
 						<MudItem xs="4">
 							<MudTextField @bind-Value="_companyEditDto.Name" Class="d-flex pa-2"
-										  Label="My Company Name"
-										  Required
-										  For="(() => _companyEditDto.Name)" />
+							Label="@localizer["Name"]"
+							Required
+							For="(() => _companyEditDto.Name)" />
 						</MudItem>
 						<MudItem xs="8">
 							<MudTextField @bind-Value="_companyEditDto.Address" Class="d-flex pa-2"
-										  Label="Address"
-										  For="(() => _companyEditDto.Address)" />
+							Label="@localizer["Address"]"
+							For="(() => _companyEditDto.Address)" />
 						</MudItem>
 					</MudGrid>
 
 					<MudGrid Spacing="2">
 						<MudItem xs="2">
 							<MudTextField @bind-Value="_companyEditDto.TaxId" Class="d-flex pa-2"
-										  Label="Tax Id"
-										  Required
-										  For="(() => _companyEditDto.TaxId)" />
+							Label="@localizer["TaxId"]"
+							Required
+							For="(() => _companyEditDto.TaxId)" />
 						</MudItem>
 						<MudItem xs="2">
 							<MudTextField @bind-Value="_companyEditDto.VatId" Class="d-flex pa-2"
-										  Label="Vat Id"
-										  For="(() => _companyEditDto.VatId)" />
+							Label="@localizer["VatId"]"
+							For="(() => _companyEditDto.VatId)" />
 						</MudItem>
 						<MudItem xs="2">
 							<MudNumericField @bind-Value="_companyEditDto.DefaultVat" Class="d-flex pa-2"
-											 Label="Default Vat"
-											 For="(() => _companyEditDto.DefaultVat)" />
+							Label="@localizer["DefaultVat"]"
+							For="(() => _companyEditDto.DefaultVat)" />
 						</MudItem>
 						<MudItem xs="2">
-							<MudNumericField @bind-Value="_companyEditDto.PaymentTerms" Class="d-flex pa-2"
-											 Label="Payment Terms"
-											 Required
-											 For="(() => _companyEditDto.PaymentTerms)" />
+							<MudNumericField @bind-Value="_companyEditDto.PaymentTerms" Class="d-flex pa-2" Required
+							Label="@localizer["PaymentTerms"]"
+							For="(() => _companyEditDto.PaymentTerms)" />
 						</MudItem>
 						<MudItem xs="4">
-							<MudAutocomplete T="CurrencyAutocompleteDto" Class="d-flex pa-2"
-											 @bind-Value="_companyEditDto.Currency"
-											 Label="Default Currency"
-											 Required
-											 Dense="true"
-											 SearchFunc="@((value, token) => FilteringDataWithApi<CurrencyAutocompleteDto>(value, "Currencies", token))"
-											 ToStringFunc="@(c => c?.Name ?? "")"
-											 For="(() => _companyEditDto.Currency)" />
+							<MudAutocomplete T="CurrencyAutocompleteDto" Class="d-flex pa-2" Required Dense Clearable
+							@bind-Value="_companyEditDto.Currency"
+							Label="@localizer["Currency"]"
+							SearchFunc="@((value, token) => FilteringDataWithApi<CurrencyAutocompleteDto>(value, "Currencies", token))"
+							ToStringFunc="@(c => c?.Name ?? "")"
+							For="(() => _companyEditDto.Currency)" />
 						</MudItem>
 					</MudGrid>
 
 					<MudGrid Spacing="2">
 						<MudItem xs="4">
 							<MudTextField @bind-Value="_companyEditDto.WWW" Class="d-flex pa-2"
-										  Label="www"
-										  For="(() => _companyEditDto.WWW)" />
+							Label="www"
+							For="(() => _companyEditDto.WWW)" />
 						</MudItem>
 						<MudItem xs="4">
 							<MudTextField @bind-Value="_companyEditDto.Email" Class="d-flex pa-2"
-										  Label="email"
-										  For="(() => _companyEditDto.Email)" />
+							Label="email"
+							For="(() => _companyEditDto.Email)" />
 						</MudItem>
 						<MudItem xs="4">
 							<MudTextField @bind-Value="_companyEditDto.Phone" Class="d-flex pa-2"
-										  Label="phone"
-										  For="(() => _companyEditDto.Phone)" />
+							Label="phone"
+							For="(() => _companyEditDto.Phone)" />
 						</MudItem>
 					</MudGrid>
 
 					<MudGrid Spacing="2">
 						<MudTextField @bind-Value="_companyEditDto.Info" Class="d-flex pa-2"
-									  Label="Additional Info"
-									  For="(() => _companyEditDto.Info)" />
+						Label="@localizer["AdditionalInfo"]"
+						For="(() => _companyEditDto.Info)" />
 					</MudGrid>
 
-					<MudDataGrid Class="pa-2"
-								 T="BankEditDto"
-								 Items="_companyEditDto.Banks"
-								 Context="context"
-								 SortMode="SortMode.None"
-								 ReadOnly="false"
-								 Striped="true"
-								 Hover="true"
-								 Dense="true"
-								 EditMode="DataGridEditMode.Form"
-								 EditTrigger="DataGridEditTrigger.Manual">
+					<MudDataGrid T="BankEditDto" Class="pa-2" Dense Hover Striped
+					Items="_companyEditDto.Banks"
+					Context="context"
+					SortMode="SortMode.None"
+					ReadOnly="false"
+					EditMode="DataGridEditMode.Form"
+					EditTrigger="DataGridEditTrigger.Manual">
 						<ColGroup>
 							<col style="width: auto;" />
 							<col style="width: auto;" />
@@ -114,19 +101,19 @@
 							<col style="width: 25px;" />
 						</ColGroup>
 						<Columns>
-							<PropertyColumn Property="x => x.Currency.Name">
+							<PropertyColumn Property="x => x.Currency.Name" Title="@localizer["Currency"]">
 								<EditTemplate>
 									<MudTextField @bind-Value="context.Item.Currency" Immediate="true" />
 								</EditTemplate>
 							</PropertyColumn>
 
-							<PropertyColumn Property="x => x.Name">
+							<PropertyColumn Property="x => x.Name" Title="@localizer["Name"]">
 								<EditTemplate>
 									<MudTextField @bind-Value="context.Item.Name" />
 								</EditTemplate>
 							</PropertyColumn>
 
-							<PropertyColumn Property="x => x.Account">
+							<PropertyColumn Property="x => x.Account" Title="@localizer["Account"]">
 								<EditTemplate>
 									<MudTextField @bind-Value="context.Item.Account" />
 								</EditTemplate>
@@ -135,35 +122,36 @@
 							<TemplateColumn>
 								<CellTemplate>
 									<MudIconButton OnClick="() => AddInvoiceItems(context.Item)"
-												   Icon="@Icons.Material.Filled.Edit"
-												   Size="Size.Small"
-												   Color="Color.Default" />
+									Icon="@Icons.Material.Filled.Edit"
+									Size="Size.Small"
+									Color="Color.Default" />
 								</CellTemplate>
 							</TemplateColumn>
 
 							<TemplateColumn>
 								<CellTemplate>
 									<MudIconButton OnClick="() => DeleteBank(context.Item)"
-												   Icon="@Icons.Material.Filled.DeleteForever"
-												   Size="Size.Small"
-												   Color="Color.Default">
+									Icon="@Icons.Material.Filled.DeleteForever"
+									Size="Size.Small"
+									Color="Color.Default">
 									</MudIconButton>
 								</CellTemplate>
 							</TemplateColumn>
 						</Columns>
 						<NoRecordsContent>
-							<MudText>No banks available.</MudText>
+							<MudText>@localizer["NoBanksAvailable"]</MudText>
 						</NoRecordsContent>
 					</MudDataGrid>
 				</MudCardContent>
 				<MudCardActions>
-
 					<MudButton Size="Size.Small"
-							   StartIcon="@Icons.Material.Filled.AddCircle"
-							   OnClick="() => AddInvoiceItems(null)">
-						<MudText>Add Bank Account</MudText>
+					StartIcon="@Icons.Material.Filled.AddCircle"
+					OnClick="() => AddInvoiceItems(null)">
+						<MudText>@localizer["AddBankAccount"]</MudText>
 					</MudButton>
-					<MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit" Class="ml-auto">Save</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit" Class="ml-auto">
+						@localizer["Save"]
+					</MudButton>
 				</MudCardActions>
 
 			</MudCard>
@@ -174,19 +162,15 @@
 	[Parameter]
 	public int? id { get; set; }
 
-	private static string _controller = "Companies";
-	private HttpRequestHelper _httpHelper = null!;
-
-	private CompanyEditDto? _companyEditDto;
+	private CompanyEditDto? _companyEditDto = new CompanyEditDto();
 	private List<CurrencyAutocompleteDto> _currenciesAutocomplete = new();
 
 	protected override async Task OnInitializedAsync()
 	{
-		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav);
-
 		_currenciesAutocomplete = await _httpHelper.GetDataFromAPI<List<CurrencyAutocompleteDto>>("api/Currencies/GetAutocompleteDto");
 
-		_companyEditDto = await _httpHelper.GetAsync<CompanyEditDto>(id);
+		if (id.HasValue && id > 0)
+			_companyEditDto = await _httpHelper.GetAsync<CompanyEditDto>($"Companies/{id}");
 	}
 
 	private async Task AddInvoiceItems(BankEditDto? bankEditDto)
@@ -236,7 +220,7 @@
 
 	private async Task OnValidSubmit()
 	{
-		await _httpHelper.SendRequest(_companyEditDto, id.HasValue && id > 0);
+		await _httpHelper.SendRequest("Companies", _companyEditDto, id.HasValue && id > 0);
 	}
 
 	private async Task<IEnumerable<T>> FilteringDataWithApi<T>(string value, string apiUrl, CancellationToken token) where T : IHasIdAndName

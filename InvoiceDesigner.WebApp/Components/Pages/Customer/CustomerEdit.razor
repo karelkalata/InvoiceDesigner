@@ -1,16 +1,11 @@
 ﻿@page "/Customers/{id:int}"
 @using InvoiceDesigner.Domain.Shared.DTOs.Customer
-@using InvoiceDesigner.WebApp.Helpers
-@inject IHttpClientFactory HttpClientFactory
-@inject ILocalStorageService LocalStorageService
-@inject NavigationManager nav
-@inject ISnackbar Snackbar
 
 
 <MudContainer>
 	@if (_customerEditDto == null)
 	{
-		<MudText Align="Align.Center">Loading...</MudText>
+		<MudText Align="Align.Center">@localizer["Loading"]</MudText>
 	}
 	else
 	{
@@ -19,17 +14,19 @@
 			<MudCard>
 				<MudCardContent>
 					<MudTextField @bind-Value="_customerEditDto.Name"
-								  Label="Name"
+								  Label="@localizer["Name"]"
 								  For="(() => _customerEditDto.Name)" />
 					<MudTextField @bind-Value="_customerEditDto.TaxId"
-								  Label="Tax Id"
+								  Label="@localizer["TaxId"]"
 								  For="(() => _customerEditDto.TaxId)" />
 					<MudTextField @bind-Value="_customerEditDto.VatId"
-								  Label="Vat Id"
+								  Label="@localizer["VatId"]"
 								  For="(() => _customerEditDto.VatId)" />
 				</MudCardContent>
 				<MudCardActions>
-					<MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit" Class="ml-auto">Save</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit" Class="ml-auto">
+						@localizer["Save"]
+					</MudButton>
 				</MudCardActions>
 			</MudCard>
 		</EditForm>
@@ -39,20 +36,16 @@
 	[Parameter]
 	public int? id { get; set; }
 
-	private static string _controller = "Customers";
-	private HttpRequestHelper _httpHelper = null!;
-
-	private CustomerEditDto? _customerEditDto = null;
+	private CustomerEditDto? _customerEditDto = new CustomerEditDto();
 
 	protected override async Task OnInitializedAsync()
 	{
-		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav);
-
-		_customerEditDto = await _httpHelper.GetAsync<CustomerEditDto>(id);
+		if (id.HasValue && id > 0)
+		_customerEditDto = await _httpHelper.GetAsync<CustomerEditDto>($"Customers/{id}");
 	}
 
 	private async Task OnValidSubmit()
 	{
-		await _httpHelper.SendRequest(_customerEditDto, id.HasValue && id > 0);
+		await _httpHelper.SendRequest("Customers", _customerEditDto, id.HasValue && id > 0);
 	}
 }

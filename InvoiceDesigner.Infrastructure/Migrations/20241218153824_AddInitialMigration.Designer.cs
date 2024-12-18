@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InvoiceDesigner.Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20241213075215_AddInitialMigration")]
+    [Migration("20241218153824_AddInitialMigration")]
     partial class AddInitialMigration
     {
         /// <inheritdoc />
@@ -1526,6 +1526,10 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Locale")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Login")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -1557,6 +1561,7 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                             Id = 1,
                             IsAdmin = true,
                             IsDeleted = false,
+                            Locale = "en-US",
                             Login = "admin",
                             Name = "Super Admin",
                             PasswordHash = "1708D30988E562DD2958B50B77F0D61C47C59FD7555F3B91AB02D486F361504F7E0C569157D104D99E5076BFF20AF9EE38482A63BA10993B28C38F9936668010",

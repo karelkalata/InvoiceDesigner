@@ -1,11 +1,11 @@
 ﻿<MudDialog>
     <DialogContent>
-        <MudText>Do you really want to delete?</MudText>
+        <MudText>@localizer["DoYouReallyWantToDelete"]</MudText>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick=Cancel>Cancel</MudButton>
-        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick=@(() => Submit(1))>Delete</MudButton>
-        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick=@(() => Submit(0))>Mark As Deleted</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick=@(() => Submit(1))>@localizer["Delete"]</MudButton>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick=@(() => Submit(0))>@localizer["MarkAsDeleted"]</MudButton>
     </DialogActions>
 </MudDialog>
 

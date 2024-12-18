@@ -93,6 +93,7 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Login = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Locale = table.Column<string>(type: "TEXT", nullable: false),
                     IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsAdmin = table.Column<bool>(type: "INTEGER", nullable: false),
                     PasswordHash = table.Column<string>(type: "TEXT", nullable: false),
@@ -405,8 +406,8 @@ namespace InvoiceDesigner.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "IsAdmin", "IsDeleted", "Login", "Name", "PasswordHash", "PasswordSalt" },
-                values: new object[] { 1, true, false, "admin", "Super Admin", "1708D30988E562DD2958B50B77F0D61C47C59FD7555F3B91AB02D486F361504F7E0C569157D104D99E5076BFF20AF9EE38482A63BA10993B28C38F9936668010", "7A6604F49A4E8EFCBB8B6CA86305FB0E4E14F817AE6D8726DE7A56463581A1D21D68699970298BBFE2182AE02366BCBB56C14DF47B9D000AF0C5D74DCED88953" });
+                columns: new[] { "Id", "IsAdmin", "IsDeleted", "Locale", "Login", "Name", "PasswordHash", "PasswordSalt" },
+                values: new object[] { 1, true, false, "en-US", "admin", "Super Admin", "1708D30988E562DD2958B50B77F0D61C47C59FD7555F3B91AB02D486F361504F7E0C569157D104D99E5076BFF20AF9EE38482A63BA10993B28C38F9936668010", "7A6604F49A4E8EFCBB8B6CA86305FB0E4E14F817AE6D8726DE7A56463581A1D21D68699970298BBFE2182AE02366BCBB56C14DF47B9D000AF0C5D74DCED88953" });
 
             migrationBuilder.InsertData(
                 table: "DropItems",

@@ -2,10 +2,7 @@
 @using InvoiceDesigner.Domain.Shared.DTOs.User
 @using InvoiceDesigner.WebApp.Helpers;
 @using InvoiceDesigner.Domain.Shared.Responses;
-@inject IHttpClientFactory HttpClientFactory
-@inject ILocalStorageService localStorage
-@inject NavigationManager nav
-@inject ISnackbar Snackbar
+@using Microsoft.AspNetCore.Localization
 
 
 <MudContainer>
@@ -17,13 +14,13 @@
 					<MudCard>
 						<MudCardContent>
 							<MudTextField Label="Login"
-										  @bind-Value="_userLogin.Login"
-										  For="@(() => _userLogin.Login)" />
+							@bind-Value="_userLogin.Login"
+							For="@(() => _userLogin.Login)" />
 							<MudTextField Label="Password"
-										  InputType="InputType.Password"
-										  Class="mt-3"
-										  @bind-Value="_userLogin.Password"
-										  For="@(() => _userLogin.Password)" />
+							InputType="InputType.Password"
+							Class="mt-3"
+							@bind-Value="_userLogin.Password"
+							For="@(() => _userLogin.Password)" />
 						</MudCardContent>
 						<MudCardActions>
 							<MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Login</MudButton>
@@ -34,6 +31,7 @@
 		</EditForm>
 	</MudPaper>
 </MudContainer>
+
 @code {
 	private UserLoginDto _userLogin = new UserLoginDto();
 
@@ -47,13 +45,14 @@
 			var result = await response.Content.ReadFromJsonAsync<ResponseJwtToken>();
 			if (result != null && !string.IsNullOrEmpty(result.JwtToken))
 			{
-				await localStorage.SetItemAsync<string>("jwtToken", result.JwtToken);
-				nav.NavigateTo("/", true);
+				await LocalStorageService.SetItemAsync<string>("jwtToken", result.JwtToken);
+				var redirectUri = Uri.UnescapeDataString(Nav.BaseUri);
+				Nav.NavigateTo($"{httpClient.BaseAddress}api/Culture/Set?culture={result.Locale}&redirectUri={redirectUri}",forceLoad: true);
 			}
 			else
 			{
 				_userLogin.Password = "";
-				Snackbar.Add($"Invalid Credentials", Severity.Success);
+				Snackbar.Add(@localizer["InvalidCredentials"], Severity.Success);
 			}
 
 		}

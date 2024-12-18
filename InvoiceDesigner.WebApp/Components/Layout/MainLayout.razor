@@ -1,4 +1,9 @@
 ﻿@using System.Security.Claims
+@using InvoiceDesigner.Localization.Resources
+@using Microsoft.Extensions.Localization
+@using System.Globalization
+@inject IStringLocalizer<Resource> localizer
+
 @inherits LayoutComponentBase
 
 <MudThemeProvider />
@@ -7,69 +12,69 @@
 <MudDialogProvider />
 
 <MudLayout>
-	<MudAppBar Dense>
-		<MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(()=> DrawlerToggle())" />
-		<MudSpacer />
-		<AuthorizeView>
-			<Authorized>
-				<MudMenu Class="menu-width" Dense>
-					<ActivatorContent>
-						<MudChip T="string" Icon="@Icons.Material.Filled.Person" Color="Color.Info" title="@UserName(context.User.Claims.ToList())">Account</MudChip>
-					</ActivatorContent>
-					<ChildContent>
-						<MudMenuItem Class="pa-0 ma-0">
-							<MudNavLink Href="/User/Account" Match="NavLinkMatch.Prefix">
-								<MudIcon Icon="@Icons.Material.Filled.ManageAccounts" Size="Size.Small" /> Account
-							</MudNavLink>
-						</MudMenuItem>
-						<MudMenuItem Class="pa-0 ma-0">
-							<MudNavLink Href="/Logout" Match="NavLinkMatch.Prefix">
-								<MudIcon Icon="@Icons.Material.Filled.Logout" Size="Size.Small" /> Sign Out
-							</MudNavLink>
-						</MudMenuItem>
-					</ChildContent>
-				</MudMenu>
-			</Authorized>
-		</AuthorizeView>
-		<MudIconButton Href="https://github.com/karelkalata/InvoiceDesigner" Target="_blank" Icon="@Icons.Material.Filled.ContactSupport" Color="Color.Inherit" Edge="Edge.End" />
-	</MudAppBar>
-	<MudDrawer @bind-Open="@_drawlerOpen" Elevation="5" >
-		<AuthorizeView>
-			<Authorized>
-				<MudNavMenu Bordered="true">
-					<MudText Typo="Typo.h6" Class="px-4 pt-2">Invoice Designer</MudText>
-					<MudNavLink Icon="@Icons.Material.Filled.House" Href="/" Match="NavLinkMatch.All">Home</MudNavLink>
-					<MudNavLink Icon="@Icons.Material.Filled.Group" Href="/Customers" Match="NavLinkMatch.Prefix">Customers</MudNavLink>
-					<MudNavLink Icon="@Icons.Material.Filled.ListAlt" Href="/Products" Match="NavLinkMatch.Prefix">Products</MudNavLink>
-					<MudNavLink Icon="@Icons.Material.Filled.DesignServices" Href="/FormDesigner" Match="NavLinkMatch.Prefix">Form Designer</MudNavLink>
-					@if (IsAdmin(context.User.Claims.ToList()))
-					{
-						<MudSpacer/>
-						<MudNavLink Icon="@Icons.Material.Filled.CurrencyExchange" Href="/Currencies" Match="NavLinkMatch.Prefix">Currencies</MudNavLink>
-						<MudNavLink Icon="@Icons.Material.Filled.MiscellaneousServices" Href="/Companies" Match="NavLinkMatch.Prefix">Companies</MudNavLink>
-						<MudNavLink Icon="@Icons.Material.Filled.SupervisedUserCircle" Href="/Admin/Users" Match="NavLinkMatch.Prefix">Users</MudNavLink>
-						<MudNavLink Icon="@Icons.Material.Filled.History" Href="/Admin/ActivityLogs" Match="NavLinkMatch.Prefix">Activity Logs</MudNavLink>
-					}
-				</MudNavMenu>
-			</Authorized>
-			<NotAuthorized>
-				<MudNavMenu Bordered="true">
-					<MudText Typo="Typo.h6" Class="px-4 pt-2">Invoice Designer</MudText>
-					<MudNavLink Icon="@Icons.Material.Filled.Login" Href="/Login" Match="NavLinkMatch.Prefix">Login</MudNavLink>
-				</MudNavMenu>
-			</NotAuthorized>
-		</AuthorizeView>
-	</MudDrawer>
-	<MudMainContent>
-		@Body
-	</MudMainContent>
+    <MudAppBar Dense>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(()=> DrawlerToggle())" />
+        <MudSpacer />
+        <AuthorizeView>
+            <Authorized>
+                <MudMenu Class="menu-width" Dense>
+                    <ActivatorContent>
+                        <MudChip T="string" Icon="@Icons.Material.Filled.Person" Color="Color.Info" >@UserName(context.User.Claims.ToList())</MudChip>
+                    </ActivatorContent>
+                    <ChildContent>
+                        <MudMenuItem Class="pa-0 ma-0">
+                            <MudNavLink Href="/User/Account" Match="NavLinkMatch.Prefix">
+                                <MudIcon Icon="@Icons.Material.Filled.ManageAccounts" Size="Size.Small" /> @localizer["Account"]
+                            </MudNavLink>
+                        </MudMenuItem>
+                        <MudMenuItem Class="pa-0 ma-0">
+                            <MudNavLink Href="/Logout" Match="NavLinkMatch.Prefix">
+                                <MudIcon Icon="@Icons.Material.Filled.Logout" Size="Size.Small" /> @localizer["SignOut"]
+                            </MudNavLink>
+                        </MudMenuItem>
+                    </ChildContent>
+                </MudMenu>
+            </Authorized>
+        </AuthorizeView>
+        <MudIconButton Href="https://github.com/karelkalata/InvoiceDesigner" Target="_blank" Icon="@Icons.Material.Filled.ContactSupport" Color="Color.Inherit" Edge="Edge.End" />
+    </MudAppBar>
+    <MudDrawer @bind-Open="@_drawlerOpen" Elevation="5" >
+        <AuthorizeView>
+            <Authorized>
+                <MudNavMenu Bordered="true">
+                    <MudText Typo="Typo.h6" Class="px-4 pt-2">Invoice Designer</MudText>
+                    <MudNavLink Icon="@Icons.Material.Filled.House" Href="/" Match="NavLinkMatch.All">Home</MudNavLink>
+                    <MudNavLink Icon="@Icons.Material.Filled.Group" Href="/Customers" Match="NavLinkMatch.Prefix">@localizer["Customers"]</MudNavLink>
+                    <MudNavLink Icon="@Icons.Material.Filled.ListAlt" Href="/Products" Match="NavLinkMatch.Prefix">@localizer["Products"]</MudNavLink>
+                    <MudNavLink Icon="@Icons.Material.Filled.DesignServices" Href="/FormDesigner" Match="NavLinkMatch.Prefix">Form Designer</MudNavLink>
+                    @if (IsAdmin(context.User.Claims.ToList()))
+                    {
+                        <MudSpacer/>
+                        <MudNavLink Icon="@Icons.Material.Filled.CurrencyExchange" Href="/Currencies" Match="NavLinkMatch.Prefix">@localizer["Currencies"]</MudNavLink>
+                        <MudNavLink Icon="@Icons.Material.Filled.Groups2" Href="/Companies" Match="NavLinkMatch.Prefix">@localizer["Companies"]</MudNavLink>
+                        <MudNavLink Icon="@Icons.Material.Filled.SupervisedUserCircle" Href="/Admin/Users" Match="NavLinkMatch.Prefix">Users</MudNavLink>
+                        <MudNavLink Icon="@Icons.Material.Filled.History" Href="/Admin/ActivityLogs" Match="NavLinkMatch.Prefix">Activity Logs</MudNavLink>
+                    }
+                </MudNavMenu>
+            </Authorized>
+            <NotAuthorized>
+                <MudNavMenu Bordered="true">
+                    <MudText Typo="Typo.h6" Class="px-4 pt-2">Invoice Designer</MudText>
+                    <MudNavLink Icon="@Icons.Material.Filled.Login" Href="/Login" Match="NavLinkMatch.Prefix">Login</MudNavLink>
+                </MudNavMenu>
+            </NotAuthorized>
+        </AuthorizeView>
+    </MudDrawer>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
 </MudLayout>
 
 @code
 {
-	private bool _drawlerOpen = true;
+    private bool _drawlerOpen = true;
 
-	private void DrawlerToggle()
+    private void DrawlerToggle()
 	{
 		_drawlerOpen = !_drawlerOpen;
 	}

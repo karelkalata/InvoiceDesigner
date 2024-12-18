@@ -1,8 +1,10 @@
 ﻿using Blazored.LocalStorage;
 using InvoiceDesigner.Domain.Shared.Responses;
+using InvoiceDesigner.Localization.Resources;
 using InvoiceDesigner.WebApp.Components.Pages;
 using InvoiceDesigner.WebApp.Components.Pages.Dialogs;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Localization;
 using MudBlazor;
 using System.Net.Http.Headers;
 
@@ -11,26 +13,21 @@ namespace InvoiceDesigner.WebApp.Helpers
 {
 	public class HttpRequestHelper
 	{
-		private readonly string _controller;
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly ISnackbar _snackbar;
 		private readonly ILocalStorageService _localStorageService;
 		private readonly NavigationManager? _navigationManager;
 		private readonly IDialogService? _dialogService;
+		private readonly IStringLocalizer<Resource> _localizer;
 
-		public HttpRequestHelper(string controller,
-									IHttpClientFactory HttpClientFactory,
-									ISnackbar snackbar,
-									ILocalStorageService localStorageService,
-									NavigationManager? navigationManager = null,
-									IDialogService? dialogService = null)
+		public HttpRequestHelper(QueryHttpRequestHelper query)
 		{
-			_controller = controller;
-			_httpClientFactory = HttpClientFactory;
-			_snackbar = snackbar;
-			_localStorageService = localStorageService;
-			_navigationManager = navigationManager;
-			_dialogService = dialogService;
+			_httpClientFactory = query.HttpClientFactory;
+			_snackbar = query.Snackbar;
+			_localStorageService = query.LocalStorageService;
+			_navigationManager = query.Nav;
+			_dialogService = query.DialogService;
+			_localizer = query.localizer;
 		}
 
 		public async Task<byte[]?> DownloadPdf(string url)
@@ -61,7 +58,7 @@ namespace InvoiceDesigner.WebApp.Helpers
 			return null;
 		}
 
-		public async Task<bool> DeleteOrMarkAsDeletedAsync(int id)
+		public async Task<bool> DeleteOrMarkAsDeletedAsync(string url)
 		{
 			try
 			{
@@ -84,7 +81,7 @@ namespace InvoiceDesigner.WebApp.Helpers
 					modeDelete = 0;
 
 				var httpClient = await CreateHttpClient();
-				var response = await httpClient.DeleteAsync($"api/{_controller}/{id}/{modeDelete}");
+				var response = await httpClient.DeleteAsync($"api/{url}/{modeDelete}");
 
 				switch (response.StatusCode)
 				{
@@ -114,7 +111,7 @@ namespace InvoiceDesigner.WebApp.Helpers
 			return false;
 		}
 
-		public async Task<bool> DeleteWithConfirmationAsync(int id)
+		public async Task<bool> DeleteWithConfirmationAsync(string url)
 		{
 			try
 			{
@@ -134,7 +131,7 @@ namespace InvoiceDesigner.WebApp.Helpers
 					return false;
 				}
 				var httpClient = await CreateHttpClient();
-				var response = await httpClient.DeleteAsync($"api/{_controller}/{id}");
+				var response = await httpClient.DeleteAsync($"api/{url}");
 
 				switch (response.StatusCode)
 				{
@@ -164,41 +161,39 @@ namespace InvoiceDesigner.WebApp.Helpers
 			return false;
 		}
 
-		public async Task<T?> GetAsync<T>(int? id) where T : new()
+		public async Task<T?> GetAsync<T>(string url) where T : new()
 		{
-			if (id.HasValue && id > 0)
-			{
-				var httpClient = await CreateHttpClient();
-				var response = await httpClient.GetAsync($"api/{_controller}/{id}");
+			var httpClient = await CreateHttpClient();
+			var response = await httpClient.GetAsync($"api/{url}");
 
-				switch (response.StatusCode)
-				{
-					case System.Net.HttpStatusCode.OK:
-						return await response.Content.ReadFromJsonAsync<T>();
-					case System.Net.HttpStatusCode.Forbidden:
-						_snackbar.Add("Access Denied", Severity.Warning);
-						break;
-					case System.Net.HttpStatusCode.Unauthorized:
-						_navigationManager?.NavigateTo("/Login", true);
-						break;
-					case System.Net.HttpStatusCode.NoContent:
-						return new T();
-					default:
-						await ShowError(response);
-						break;
-				}
+			switch (response.StatusCode)
+			{
+				case System.Net.HttpStatusCode.OK:
+					return await response.Content.ReadFromJsonAsync<T>();
+				case System.Net.HttpStatusCode.Forbidden:
+					_snackbar.Add("Access Denied", Severity.Warning);
+					break;
+				case System.Net.HttpStatusCode.Unauthorized:
+					_navigationManager?.NavigateTo("/Login", true);
+					break;
+				case System.Net.HttpStatusCode.NoContent:
+					break;
+				default:
+					await ShowError(response);
+					break;
 			}
 			return new T();
+
 		}
 
-		public async Task<int?> SendRequest<T>(T model, bool isUpdate, string? navUrl = null)
+		public async Task<int?> SendRequest<T>(string url, T model, bool isUpdate, string? navUrl = null)
 		{
 			try
 			{
 				var httpClient = await CreateHttpClient();
 				HttpResponseMessage response = isUpdate
-												? await httpClient.PutAsJsonAsync($"api/{_controller}", model)
-												: await httpClient.PostAsJsonAsync($"api/{_controller}", model);
+												? await httpClient.PutAsJsonAsync($"api/{url}", model)
+												: await httpClient.PostAsJsonAsync($"api/{url}", model);
 
 				switch (response.StatusCode)
 				{
@@ -206,7 +201,7 @@ namespace InvoiceDesigner.WebApp.Helpers
 						var result = await response.Content.ReadFromJsonAsync<ResponseRedirect>();
 						if (!string.IsNullOrEmpty(result?.RedirectUrl))
 						{
-							_navigationManager?.NavigateTo($"{result.RedirectUrl}", true);
+							_navigationManager?.NavigateTo($"{result.RedirectUrl}", forceLoad: true);
 						}
 						else
 						{
@@ -223,7 +218,9 @@ namespace InvoiceDesigner.WebApp.Helpers
 					default:
 						await ShowError(response);
 						break;
+
 				}
+
 			}
 			catch (Exception ex)
 			{
@@ -263,9 +260,18 @@ namespace InvoiceDesigner.WebApp.Helpers
 
 		private async Task<string> ShowError(HttpResponseMessage response)
 		{
-			var errorContent = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-			var message = errorContent?.Message ?? await response.Content.ReadAsStringAsync();
-			_snackbar.Add($"{message}", Severity.Error);
+			var message = "new error";
+			try
+			{
+				var errorContent = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+				message = errorContent?.Message ?? await response.Content.ReadAsStringAsync();
+				_snackbar.Add($"{message}", Severity.Error);
+			}
+			catch (Exception ex)
+			{
+				_snackbar.Add($"{ex.Message}", Severity.Error);
+			}
+
 			return message;
 		}
 
@@ -290,5 +296,15 @@ namespace InvoiceDesigner.WebApp.Helpers
 
 			return httpClient;
 		}
+	}
+
+	public class QueryHttpRequestHelper
+	{
+		public IHttpClientFactory HttpClientFactory { get; set; } = null!;
+		public ISnackbar Snackbar { get; set; } = null!;
+		public ILocalStorageService LocalStorageService { get; set; } = null!;
+		public NavigationManager Nav { get; set; } = null!;
+		public IDialogService DialogService = null!;
+		public IStringLocalizer<Resource> localizer { get; set; } = null!;
 	}
 }

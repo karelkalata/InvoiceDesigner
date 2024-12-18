@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InvoiceDesigner.Infrastruct
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InvoiceDesigner.WebApp", "InvoiceDesigner.WebApp\InvoiceDesigner.WebApp.csproj", "{4999837D-F337-463A-86E0-269AE443B8BB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvoiceDesigner.Localization", "InvoiceDesigner.Localization\InvoiceDesigner.Localization.csproj", "{59D5C4C3-5387-4CEA-8AF6-EE9E9052D3EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{4999837D-F337-463A-86E0-269AE443B8BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4999837D-F337-463A-86E0-269AE443B8BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4999837D-F337-463A-86E0-269AE443B8BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59D5C4C3-5387-4CEA-8AF6-EE9E9052D3EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59D5C4C3-5387-4CEA-8AF6-EE9E9052D3EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59D5C4C3-5387-4CEA-8AF6-EE9E9052D3EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59D5C4C3-5387-4CEA-8AF6-EE9E9052D3EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

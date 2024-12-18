@@ -18,10 +18,10 @@ namespace InvoiceDesigner.API.Controllers.User
 			_service = service;
 		}
 
-		[HttpGet("{id:int}")]
+		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserEditDto))]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public async Task<IActionResult> GetByIdAsync(int id = 0)
+		public async Task<IActionResult> Account()
 		{
 			try
 			{

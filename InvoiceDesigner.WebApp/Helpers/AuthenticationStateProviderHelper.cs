@@ -27,9 +27,8 @@ namespace InvoiceDesigner.WebApp.Helpers
 			if (string.IsNullOrEmpty(jwtToken))
 				return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
 
+
 			return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(jwtToken), "JwtAuth")));
-
-
 		}
 
 		private static IEnumerable<Claim> ParseClaimsFromJwt(string jwt)

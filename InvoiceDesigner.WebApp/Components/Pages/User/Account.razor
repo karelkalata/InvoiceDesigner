@@ -1,16 +1,11 @@
 ﻿@page "/User/Account"
 @using InvoiceDesigner.Domain.Shared.DTOs.User
-@using InvoiceDesigner.WebApp.Helpers;
-@inject IHttpClientFactory HttpClientFactory
-@inject ILocalStorageService LocalStorageService
-@inject NavigationManager nav
-@inject ISnackbar Snackbar
-
+@using InvoiceDesigner.Localization
 
 <MudContainer>
 	@if (_userEditDto == null)
 	{
-		<MudText Align="Align.Center">Loading...</MudText>
+		<MudText Align="Align.Center">@localizer["Loading"]</MudText>
 	}
 	else
 	{
@@ -19,35 +14,41 @@
 			<MudCard>
 				<MudCardContent>
 					<MudPaper Class="pa-4">
-						<MudTextField @bind-Value="_userEditDto.Name"
-									  Label="Name"
-									  Required
+						<MudTextField @bind-Value="_userEditDto.Name" Required
+									  Label="@localizer["FullName"]"
 									  Class="d-flex pa-2"
 									  For="(() => _userEditDto.Name)" />
 						<MudTextField @bind-Value="_userEditDto.Password"
-									  Label="Password"
+									  Label="@localizer["Password"]"
 									  Class="d-flex pa-2"
-									  For="(() => _userEditDto.Password)"/>
+									  For="(() => _userEditDto.Password)" />
+						<MudSelect T="string"
+								   Class="d-flex pa-2"
+								   Label="@localizer["Language"]"
+								   @bind-Value="_userEditDto.Locale">
+							@foreach (var culture in Locale.SupportedCultures)
+							{
+								<MudSelectItem Value="@culture.ToString()">@culture.NativeName</MudSelectItem>
+							}
+
+						</MudSelect>
 					</MudPaper>
 				</MudCardContent>
 				<MudCardActions>
-					<MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit" Class="ml-auto">Save</MudButton>
+					<MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit" Class="ml-auto">
+						@localizer["Save"]
+					</MudButton>
 				</MudCardActions>
 			</MudCard>
 		</EditForm>
 	}
 </MudContainer>
 @code {
-
-	private static string _controller = "User/Account";
-	private HttpRequestHelper _httpHelper = null!;
-
 	private UserEditDto? _userEditDto = null;
 
 	protected override async Task OnInitializedAsync()
 	{
-		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav);
-		_userEditDto = await _httpHelper.GetAsync<UserEditDto>(1);
+		_userEditDto = await _httpHelper.GetAsync<UserEditDto>($"User/Account");
 	}
 
 	private async Task OnValidSubmit()
@@ -55,7 +56,7 @@
 		if (_userEditDto == null)
 			return;
 
-		await _httpHelper.SendRequest(_userEditDto, true);
+		await _httpHelper.SendRequest("User/Account", _userEditDto, true);
 	}
 
 }

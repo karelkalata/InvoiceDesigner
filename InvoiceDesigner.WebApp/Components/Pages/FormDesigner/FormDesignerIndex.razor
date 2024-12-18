@@ -1,20 +1,14 @@
 ﻿@page "/FormDesigner"
-
-@inject IHttpClientFactory HttpClientFactory
-@inject ILocalStorageService LocalStorageService
-@inject NavigationManager nav
-@inject ISnackbar Snackbar
-@inject IDialogService DialogService
-@inject IJSRuntime JS
-
 @using InvoiceDesigner.Domain.Shared.DTOs.DtoFormDesigners
 @using InvoiceDesigner.Domain.Shared.Enums
 @using InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner
 @using InvoiceDesigner.Domain.Shared.Responses
-@using InvoiceDesigner.WebApp.Components.Pages.Dialogs
-@using InvoiceDesigner.WebApp.Components.Pages.Helpers
-@using InvoiceDesigner.WebApp.Helpers
 @using System.Diagnostics
+@using InvoiceDesigner.WebApp.Components.Pages.Dialogs
+
+@inject IJSRuntime JS
+
+
 
 
 <style>
@@ -269,11 +263,7 @@ else
 
 
 @code {
-
 	private int _id;
-
-	private static string _controller = "FormDesigner";
-	private HttpRequestHelper _httpHelper = null!;
 
 	private List<DropItemEditDto> _dropItemsEditDto = new();
 	private MudDropContainer<DropItemEditDto> _mudDropContainerRef { get; set; } = new();
@@ -285,7 +275,6 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
-		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav, DialogService);
 		_formDesignersAutocompleteDto = await _httpHelper.GetDataFromAPI<List<FormDesignersAutocompleteDto>>($"api/FormDesigner/GetAllAutocompleteDto");
 		_loaded = true;
 	}
@@ -439,7 +428,7 @@ else
 
 	private async void RedirectToDeleteRow()
 	{
-		if (await _httpHelper.DeleteWithConfirmationAsync(_id))
+		if (await _httpHelper.DeleteWithConfirmationAsync($"FormDesigner/{_id}"))
 		{
 			_formDesignersAutocompleteDto = await _httpHelper.GetDataFromAPI<List<FormDesignersAutocompleteDto>>($"api/FormDesigner/GetAllAutocompleteDto");
 			_selectedDesignersAutocompleteDto = null!;
@@ -452,7 +441,7 @@ else
 
 	private async Task OnValidSubmit()
 	{
-		_id = await _httpHelper.SendRequest(_formDesigner, _id > 0) ?? 0;
+		_id = await _httpHelper.SendRequest("FormDesigner", _formDesigner, _id > 0) ?? 0;
 	}
 
 	private class ErrorResponse

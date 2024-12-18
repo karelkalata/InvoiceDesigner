@@ -55,7 +55,6 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			};
 		}
 
-
 		public async Task<ResponseRedirect> CreateAsync(int userId, CurrencyEditDto newCurrency)
 		{
 			var existingCurrency = new Currency();
@@ -160,7 +159,7 @@ namespace InvoiceDesigner.Application.Services.AdminService
 		{
 			var existsEntity = await _repoCurrency.GetByIdAsync(id);
 			if (existsEntity == null)
-				throw new InvalidOperationException("ValidateExistsEntityAsync: Not Found");
+				throw new InvalidOperationException("Currency not found");
 
 			return existsEntity;
 		}

@@ -5,21 +5,15 @@
 @using InvoiceDesigner.Domain.Shared.QueryParameters
 @using InvoiceDesigner.Domain.Shared.Responses
 @using InvoiceDesigner.WebApp.Components.Pages.Helpers
-@using InvoiceDesigner.WebApp.Helpers
-@inject IHttpClientFactory HttpClientFactory
-@inject ILocalStorageService LocalStorageService
-@inject NavigationManager nav
-@inject ISnackbar Snackbar
-@inject IDialogService DialogService
 
 <MudContainer>
-	<MudTable ServerData="ServerReload" @ref="_table" Dense Hover RowsPerPage="10">
+	<MudTable ServerData="ServerReload" @ref="_table" Dense Hover RowsPerPage="20">
 		<ToolBarContent>
-			<MudText Typo="Typo.h6">@_controller</MudText>
+			<MudText Typo="Typo.h6">@localizer[@_controller]</MudText>
 			<MudSpacer />
 			<MudTextField T="string"
 						  ValueChanged="@(s=>OnSearch(s))"
-						  Placeholder="Search"
+						  Placeholder="@localizer["Search"]"
 						  Adornment="Adornment.Start"
 						  AdornmentIcon="@Icons.Material.Filled.Search"
 						  IconSize="Size.Medium"
@@ -28,21 +22,21 @@
 			<MudIconButton Icon="@Icons.Material.Filled.PlaylistAdd" Size="Size.Medium" Href="/Invoices/0" />
 			<MudMenu Icon="@Icons.Material.Filled.Settings" Size="Size.Medium" Style="margin-left: auto;" Dense>
 				<MudMenuItem>
-					<MudCheckBox Dense @bind-Value="_showDeleted" Label="Show Deleted" onclick="@(()=>OnCheckedShowDeletedChanged())"></MudCheckBox>
+					<MudCheckBox Dense @bind-Value="_showDeleted" Label="@localizer["ShowDeleted"]" onclick="@(()=>OnCheckedShowDeletedChanged())"></MudCheckBox>
 				</MudMenuItem>
 				<MudMenuItem>
-					<MudCheckBox Dense @bind-Value="_showArchived" Label="Show Archived" onclick="@(()=>OnCheckedShowArchivedChanged())"></MudCheckBox>
+					<MudCheckBox Dense @bind-Value="_showArchived" Label="@localizer["ShowArchived"]" onclick="@(()=>OnCheckedShowArchivedChanged())"></MudCheckBox>
 				</MudMenuItem>
 			</MudMenu>
 		</ToolBarContent>
 		<HeaderContent>
 			<MudTh>Id</MudTh>
 			<MudTh>Date</MudTh>
-			<MudTh>Company</MudTh>
-			<MudTh>Customer</MudTh>
-			<MudTh>Amount</MudTh>
-			<MudTh>Currency</MudTh>
-			<MudTh>Status</MudTh>
+			<MudTh>@localizer["Company"]</MudTh>
+			<MudTh>@localizer["Customer"]</MudTh>
+			<MudTh>@localizer["Amount"]</MudTh>
+			<MudTh>@localizer["Currency"]</MudTh>
+			<MudTh>@localizer["Status"]</MudTh>
 			<MudTh></MudTh>
 			<MudTh></MudTh>
 			<MudTh></MudTh>
@@ -87,9 +81,7 @@
 							   Color="Color.Default" />
 			</MudTd>
 			<MudTd Style="width:25px" Class="pa-0">
-				<ActivityLogsHelper DialogService=DialogService
-									HttpHelper=_httpHelper
-									DocumentType=EDocumentsTypes.Invoice
+				<ActivityLogsHelper DocumentType=EDocumentsTypes.Invoice
 									EntityId="@context.Id" />
 			</MudTd>
 			<MudTd Style="width:25px" Class="pa-0">
@@ -106,10 +98,10 @@
 			</MudTd>
 		</RowTemplate>
 		<NoRecordsContent>
-			<MudText>No matching records found</MudText>
+			<MudText>@localizer["NoMatchingRecordsFound"]</MudText>
 		</NoRecordsContent>
 		<LoadingContent>
-			<MudText>Loading...</MudText>
+			<MudText>@localizer["Loading"]</MudText>
 		</LoadingContent>
 		<PagerContent>
 			<MudTablePager PageSizeOptions="new int[] {10, 20, 30, 40, 50}" />
@@ -120,7 +112,6 @@
 
 @code {
 	private static string _controller = "Invoices";
-	private HttpRequestHelper _httpHelper = null!;
 
 	private MudTable<InvoicesViewDto> _table = new();
 	private ResponsePaged<InvoicesViewDto>? _pagedResult;
@@ -128,11 +119,7 @@
 	private bool _showDeleted = false;
 	private bool _showArchived = false;
 
-	protected override async Task OnInitializedAsync()
-	{
-		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav, DialogService);
-		await Task.Delay(1);
-	}
+
 
 	private async Task<TableData<InvoicesViewDto>> ServerReload(TableState state, CancellationToken token)
 	{
@@ -168,7 +155,7 @@
 
 	private async void RedirectToDeleteRow(int id)
 	{
-		if (await _httpHelper.DeleteOrMarkAsDeletedAsync(id))
+		if (await _httpHelper.DeleteOrMarkAsDeletedAsync($"Invoices/{id}"))
 			await _table.ReloadServerData();
 	}
 

@@ -8,6 +8,8 @@
 
 		public string Name { get; set; } = string.Empty;
 
+		public string Locale { get; set; } = "en-US";
+
 		public bool IsDeleted { get; set; }
 
 		public bool IsAdmin { get; set; } = false;

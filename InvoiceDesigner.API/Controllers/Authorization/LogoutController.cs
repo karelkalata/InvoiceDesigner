@@ -16,10 +16,10 @@ namespace InvoiceDesigner.API.Controllers.Authorization
 			_service = service;
 		}
 
-		[HttpGet("{id:int}")]
+		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> Index(int id)
+		public async Task<IActionResult> Logout()
 		{
 			try
 			{
@@ -29,7 +29,10 @@ namespace InvoiceDesigner.API.Controllers.Authorization
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 

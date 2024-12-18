@@ -9,6 +9,7 @@ using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
+using InvoiceDesigner.Localization;
 
 namespace InvoiceDesigner.Application.Services.AdminService
 {
@@ -146,6 +147,12 @@ namespace InvoiceDesigner.Application.Services.AdminService
 		{
 			existUser.Name = dto.Name.Trim();
 			existUser.Login = dto.Login.Trim();
+
+			var existsLocalization = Locale.SupportedCultures.FirstOrDefault(c => c.Name.Equals(dto.Locale.Trim(), StringComparison.OrdinalIgnoreCase));
+			if (existsLocalization != null)
+				existUser.Locale = existsLocalization.Name;
+			else
+				existUser.Locale = Locale.SupportedCultures[0].ToString();
 
 			if (!string.IsNullOrEmpty(dto.Password))
 			{

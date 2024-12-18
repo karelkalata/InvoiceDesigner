@@ -7,6 +7,7 @@ using InvoiceDesigner.Domain.Shared.Enums;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models;
 using InvoiceDesigner.Domain.Shared.Responses;
+using InvoiceDesigner.Localization;
 
 namespace InvoiceDesigner.Application.Services.ServiceUser
 {
@@ -42,7 +43,7 @@ namespace InvoiceDesigner.Application.Services.ServiceUser
 
 			return new ResponseRedirect
 			{
-				RedirectUrl = string.Empty
+				RedirectUrl = "/Logout"
 			};
 		}
 
@@ -62,6 +63,12 @@ namespace InvoiceDesigner.Application.Services.ServiceUser
 		private void MapUser(User existUser, UserEditDto dto)
 		{
 			existUser.Name = dto.Name.Trim();
+			var existsLocalization = Locale.SupportedCultures.FirstOrDefault(c => c.Name.Equals(dto.Locale.Trim(), StringComparison.OrdinalIgnoreCase));
+			if (existsLocalization != null)
+				existUser.Locale = existsLocalization.Name;
+			else
+				existUser.Locale = Locale.SupportedCultures[0].ToString();
+
 
 			if (!string.IsNullOrEmpty(dto.Password))
 			{

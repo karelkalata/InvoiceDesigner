@@ -8,10 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.0" />
     <PackageReference Include="MudBlazor" Version="7.15.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\InvoiceDesigner.Localization\InvoiceDesigner.Localization.csproj" />
     <ProjectReference Include="..\InvoiceDesigner.Models\InvoiceDesigner.Domain.Shared.csproj" />
   </ItemGroup>
 

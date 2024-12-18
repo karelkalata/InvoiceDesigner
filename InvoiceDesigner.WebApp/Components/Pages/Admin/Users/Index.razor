@@ -9,32 +9,25 @@
 @using InvoiceDesigner.Domain.Shared.Responses
 @using InvoiceDesigner.WebApp.Components.Pages.Dialogs
 @using InvoiceDesigner.WebApp.Components.Pages.Helpers
-@using InvoiceDesigner.WebApp.Helpers;
-@inject IHttpClientFactory HttpClientFactory
-@inject ILocalStorageService LocalStorageService
-@inject NavigationManager nav
-@inject ISnackbar Snackbar
-@inject IDialogService DialogService
 
 
 <MudContainer>
 	<MudTable ServerData="ServerReload" @ref="_table" Dense="true" Hover="true" RowsPerPage="10">
 		<ToolBarContent>
 
-			<MudText Typo="Typo.h6">@_controller</MudText>
+			<MudText Typo="Typo.h6">@localizer[_controller]</MudText>
 			<MudSpacer />
-			<MudTextField T="string"
+			<MudTextField T="string" Class="mt-0"
 						  ValueChanged="@(s=>OnSearch(s))"
-						  Placeholder="Search"
+						  Placeholder="@localizer["Search"]"
 						  Adornment="Adornment.Start"
 						  AdornmentIcon="@Icons.Material.Filled.Search"
-						  IconSize="Size.Medium"
-						  Class="mt-0" />
+						  IconSize="Size.Medium" />
 			<MudSpacer />
 			<MudIconButton Icon="@Icons.Material.Filled.PlaylistAdd" Size="Size.Medium" Href="/Admin/Users/0" />
 			<MudMenu Icon="@Icons.Material.Filled.Settings" Size="Size.Medium" Style="margin-left: auto;" Dense>
 				<MudMenuItem>
-					<MudCheckBox Dense @bind-Value="_showDeleted" Label="Show Deleted" onclick="@(()=>OnCheckedChanged())"></MudCheckBox>
+					<MudCheckBox Dense @bind-Value="_showDeleted" Label="@localizer["ShowDeleted"]" onclick="@(()=>OnCheckedChanged())"></MudCheckBox>
 				</MudMenuItem>
 				<MudMenuItem>
 
@@ -54,7 +47,7 @@
 					Name
 				</MudTableSortLabel>
 			</MudTh>
-			<MudTh ></MudTh>
+			<MudTh></MudTh>
 			<MudTh></MudTh>
 			<MudTh></MudTh>
 		</HeaderContent>
@@ -69,9 +62,7 @@
 							   Color="Color.Default" />
 			</MudTd>
 			<MudTd Style="width:25px" Class="pa-0">
-				<ActivityLogsHelper DialogService=DialogService
-									HttpHelper=_httpHelper
-									DocumentType=EDocumentsTypes.User
+				<ActivityLogsHelper DocumentType=EDocumentsTypes.User
 									EntityId="@context.Id" />
 			</MudTd>
 			<MudTd Style="width:25px" Class="pa-0">
@@ -85,10 +76,10 @@
 			</MudTd>
 		</RowTemplate>
 		<NoRecordsContent>
-			<MudText>No matching records found</MudText>
+			<MudText>@localizer["NoMatchingRecordsFound"]</MudText>
 		</NoRecordsContent>
 		<LoadingContent>
-			<MudText>Loading...</MudText>
+			<MudText>@localizer["Loading"]</MudText>
 		</LoadingContent>
 		<PagerContent>
 			<MudTablePager PageSizeOptions="new int[] {10, 20, 30, 40, 50}" />
@@ -98,18 +89,12 @@
 
 @code {
 	private static string _controller = "Admin/Users";
-	private HttpRequestHelper _httpHelper = null!;
+
 
 	private MudTable<UserViewDto> _table = new();
 	private ResponsePaged<UserViewDto>? _pagedResult;
 	private string _searchString = "";
 	private bool _showDeleted = false;
-
-	protected override async Task OnInitializedAsync()
-	{
-		_httpHelper = new HttpRequestHelper(_controller, HttpClientFactory, Snackbar, LocalStorageService, nav, DialogService);
-		await Task.Delay(1);
-	}
 
 	private async Task<TableData<UserViewDto>> ServerReload(TableState state, CancellationToken token)
 	{
@@ -145,7 +130,7 @@
 
 	private async void RedirectToDeleteRow(int id)
 	{
-		if (await _httpHelper.DeleteOrMarkAsDeletedAsync(id))
+		if (await _httpHelper.DeleteOrMarkAsDeletedAsync($"Admin/Users/{id}"))
 			await _table.ReloadServerData();
 	}
 
