@@ -1,4 +1,5 @@
 ﻿using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.Models.Accounting;
 using InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
@@ -27,9 +28,15 @@ namespace InvoiceDesigner.Infrastructure.Data
 
 		public DbSet<UserActivityLog> UserActivityLogs { get; set; } = null!;
 
+		#region Real Accounting
+		public DbSet<AccountingChartOfAccounts> AccountingChartOfAccounts { get; set; } = null!;
+		public DbSet<AccountingDoubleEntry> AccountingDoubleEntries { get; set; } = null!;
+		#endregion
+
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
+			var dataDirectory = Path.Combine(AppContext.BaseDirectory, "Data");
 
 			modelBuilder.Entity<Currency>(currency =>
 			{
@@ -259,13 +266,13 @@ namespace InvoiceDesigner.Infrastructure.Data
 
 			});
 
-
 			modelBuilder.Entity<PrintInvoice>(PrintInvoice =>
 			{
 				PrintInvoice.HasKey(e => e.Giud);
 
 			});
 
+			#region FormDesigner
 			modelBuilder.Entity<FormDesigner>(formDesigner =>
 			{
 				formDesigner.HasKey(e => e.Id);
@@ -288,9 +295,7 @@ namespace InvoiceDesigner.Infrastructure.Data
 			{
 				formDesignerScheme.HasKey(e => e.Id);
 
-
 			});
-
 
 			modelBuilder.Entity<DropItem>(dropItem =>
 			{
@@ -327,8 +332,6 @@ namespace InvoiceDesigner.Infrastructure.Data
 					.OnDelete(DeleteBehavior.Cascade);
 			});
 
-			var dataDirectory = Path.Combine(AppContext.BaseDirectory, "Data");
-
 			var FormDesignerEntities = ReadJsonFile<FormDesigner>(Path.Combine(dataDirectory, "FormDesigners.json"));
 			modelBuilder.Entity<FormDesigner>().HasData(FormDesignerEntities);
 
@@ -340,6 +343,51 @@ namespace InvoiceDesigner.Infrastructure.Data
 
 			var DropItemStylesEntities = ReadJsonFile<CssStyle>(Path.Combine(dataDirectory, "DropItemStyles.json"));
 			modelBuilder.Entity<CssStyle>().HasData(DropItemStylesEntities);
+
+			#endregion
+
+			#region Real Accounting
+			modelBuilder.Entity<AccountingDoubleEntry>(chartOfAccounts =>
+			{
+				chartOfAccounts.HasKey(e => e.Id);
+			});
+
+			modelBuilder.Entity<AccountingDoubleEntry>(doubleEntry =>
+			{
+				doubleEntry.HasKey(e => e.Id);
+
+				doubleEntry.HasOne(e => e.User)
+					.WithMany()
+					.HasForeignKey(e => e.UserId)
+					.OnDelete(DeleteBehavior.Restrict)
+					.IsRequired();
+
+				doubleEntry.HasOne(e => e.CreditAccount)
+					.WithMany()
+					.HasForeignKey(e => e.Credit)
+					.OnDelete(DeleteBehavior.Restrict)
+					.IsRequired();
+
+				doubleEntry.HasOne(e => e.DebitAccount)
+					.WithMany()
+					.HasForeignKey(e => e.Debit)
+					.OnDelete(DeleteBehavior.Restrict)
+					.IsRequired();
+
+				doubleEntry.HasOne(e => e.Currency)
+					.WithMany()
+					.HasForeignKey(e => e.CurrencyId)
+					.OnDelete(DeleteBehavior.Restrict)
+					.IsRequired();
+
+				doubleEntry.Property(e => e.Amount).IsRequired();
+			});
+
+			var AccountingChartOfAccounts = ReadJsonFile<AccountingChartOfAccounts>(Path.Combine(dataDirectory, "AccountingChartOfAccounts.json"));
+			modelBuilder.Entity<AccountingChartOfAccounts>().HasData(AccountingChartOfAccounts);
+
+			#endregion
+
 		}
 
 

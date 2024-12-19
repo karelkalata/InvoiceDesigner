@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using InvoiceDesigner.API.Controllers.Abstract;
 using InvoiceDesigner.Application.Interfaces.InterfacesFormDesigner;
 using InvoiceDesigner.Domain.Shared.DTOs.DtoFormDesigners;
 using InvoiceDesigner.Domain.Shared.Responses;
@@ -7,18 +8,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace InvoiceDesigner.API.Controllers
 {
-	[Authorize]
-	[Route("api/[controller]")]
-	[ApiController]
-	public class FormDesignerController : Controller
+	public class FormDesignerController : RESTController
 	{
 		private readonly IFormDesignersService _service;
-		private readonly IMapper _mapper;
 
-		public FormDesignerController(IFormDesignersService service, IMapper mapper)
+		public FormDesignerController(IFormDesignersService service)
 		{
 			_service = service;
-			_mapper = mapper;
 		}
 
 
@@ -32,13 +28,15 @@ namespace InvoiceDesigner.API.Controllers
 
 			try
 			{
-				var (userId, isAdmin) = GetValidatedFilters();
-				var result = await _service.CreateAsync(userId, editDto);
+				var result = await _service.CreateAsync(UserId, editDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 
@@ -56,7 +54,10 @@ namespace InvoiceDesigner.API.Controllers
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 
@@ -71,13 +72,15 @@ namespace InvoiceDesigner.API.Controllers
 
 			try
 			{
-				var (userId, isAdmin) = GetValidatedFilters();
-				var result = await _service.UpdateAsync(userId, formDesignerEditDto);
+				var result = await _service.UpdateAsync(UserId, formDesignerEditDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 
@@ -89,13 +92,15 @@ namespace InvoiceDesigner.API.Controllers
 		{
 			try
 			{
-				var (userId, isAdmin) = GetValidatedFilters();
-				var result = await _service.DeleteAsync(userId, id);
+				var result = await _service.DeleteAsync(UserId, id);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 
@@ -111,7 +116,10 @@ namespace InvoiceDesigner.API.Controllers
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 
@@ -127,19 +135,12 @@ namespace InvoiceDesigner.API.Controllers
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 
-		private (int, bool) GetValidatedFilters()
-		{
-			var userIdString = User.FindFirst("userId")?.Value;
-			int.TryParse(userIdString, out int userId);
-
-			var isAdminString = User.FindFirst("isAdmin")?.Value;
-			bool.TryParse(isAdminString, out bool isAdmin);
-
-			return (userId, isAdmin);
-		}
 	}
 }

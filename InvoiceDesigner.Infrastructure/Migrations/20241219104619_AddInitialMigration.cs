@@ -14,6 +14,22 @@ namespace InvoiceDesigner.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "AccountingChartOfAccounts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Asset1 = table.Column<int>(type: "INTEGER", nullable: false),
+                    Asset2 = table.Column<int>(type: "INTEGER", nullable: false),
+                    Asset3 = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AccountingChartOfAccounts", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Currencies",
                 columns: table => new
                 {
@@ -206,6 +222,57 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AccountingDoubleEntries",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    DocumentType = table.Column<int>(type: "INTEGER", nullable: false),
+                    DocumentId = table.Column<int>(type: "INTEGER", nullable: false),
+                    DateTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Credit = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreditAsset1 = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreditAsset2 = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreditAsset3 = table.Column<int>(type: "INTEGER", nullable: false),
+                    Debit = table.Column<int>(type: "INTEGER", nullable: false),
+                    DebitAsset1 = table.Column<int>(type: "INTEGER", nullable: false),
+                    DebitAsset2 = table.Column<int>(type: "INTEGER", nullable: false),
+                    DebitAsset3 = table.Column<int>(type: "INTEGER", nullable: false),
+                    Count = table.Column<decimal>(type: "TEXT", nullable: false),
+                    CurrencyId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Amount = table.Column<decimal>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AccountingDoubleEntries", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AccountingDoubleEntries_AccountingChartOfAccounts_Credit",
+                        column: x => x.Credit,
+                        principalTable: "AccountingChartOfAccounts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_AccountingDoubleEntries_AccountingChartOfAccounts_Debit",
+                        column: x => x.Debit,
+                        principalTable: "AccountingChartOfAccounts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_AccountingDoubleEntries_Currencies_CurrencyId",
+                        column: x => x.CurrencyId,
+                        principalTable: "Currencies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_AccountingDoubleEntries_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserActivityLogs",
                 columns: table => new
                 {
@@ -388,6 +455,11 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "AccountingChartOfAccounts",
+                columns: new[] { "Id", "Asset1", "Asset2", "Asset3", "Name" },
+                values: new object[] { 1030, 3, 4, 0, "Bank: Operating" });
 
             migrationBuilder.InsertData(
                 table: "Currencies",
@@ -577,6 +649,26 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_AccountingDoubleEntries_Credit",
+                table: "AccountingDoubleEntries",
+                column: "Credit");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AccountingDoubleEntries_CurrencyId",
+                table: "AccountingDoubleEntries",
+                column: "CurrencyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AccountingDoubleEntries_Debit",
+                table: "AccountingDoubleEntries",
+                column: "Debit");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AccountingDoubleEntries_UserId",
+                table: "AccountingDoubleEntries",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Banks_CompanyId",
                 table: "Banks",
                 column: "CompanyId");
@@ -684,6 +776,9 @@ namespace InvoiceDesigner.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "AccountingDoubleEntries");
+
+            migrationBuilder.DropTable(
                 name: "DropItemStyles");
 
             migrationBuilder.DropTable(
@@ -703,6 +798,9 @@ namespace InvoiceDesigner.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserCompany");
+
+            migrationBuilder.DropTable(
+                name: "AccountingChartOfAccounts");
 
             migrationBuilder.DropTable(
                 name: "DropItems");

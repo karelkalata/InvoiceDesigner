@@ -1,5 +1,5 @@
-# InvoiceDesigner
-With InvoiceDesigner, customizing your invoice print form is super easy. You can add, move around, and tweak elements in the layout, all without touching any code. Want to include extra info or some custom fields? No problem! 
+# Invoice Designer
+With Invoice Designer, customizing your invoice print form is super easy. You can add, move around, and tweak elements in the layout, all without touching any code. Want to include extra info or some custom fields? No problem! 
 
 ## Technical Features
 - No JavaScript/TypeScript/React/Angular/Vuejs and other frontend framework

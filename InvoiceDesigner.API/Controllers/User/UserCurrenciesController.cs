@@ -1,14 +1,11 @@
-﻿using InvoiceDesigner.Application.Interfaces;
+﻿using InvoiceDesigner.API.Controllers.Abstract;
+using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Domain.Shared.DTOs.Currency;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InvoiceDesigner.API.Controllers.User
 {
-	[Authorize]
-	[Route("api/[controller]")]
-	[ApiController]
-	public class UserCurrenciesController : ControllerBase
+	public class UserCurrenciesController : RESTController
 	{
 		private readonly ICurrencyService _serviceCurrency;
 

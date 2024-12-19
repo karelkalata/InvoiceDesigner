@@ -21,8 +21,8 @@ namespace InvoiceDesigner.Application.Services.AdminService
 		private readonly ICompanyService _companyService;
 		private readonly IUserActivityLogService _userActivity;
 
-		public AdminUserService(IUserRepository repoUser, 
-								IMapper mapper, 
+		public AdminUserService(IUserRepository repoUser,
+								IMapper mapper,
 								ICompanyService companyService,
 								IUserActivityLogService userActivity)
 		{

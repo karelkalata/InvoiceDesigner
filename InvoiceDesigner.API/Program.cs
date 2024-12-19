@@ -11,14 +11,13 @@ using InvoiceDesigner.Application.Services.ServiceUser;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Infrastructure.Data;
 using InvoiceDesigner.Infrastructure.Repositories;
-using InvoiceDesigner.Localization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddLocalization();
+
 builder.Services.AddControllers();
 
 var jwtOption = builder.Configuration.GetSection("JWTOption");
@@ -107,16 +106,6 @@ builder.Logging.AddDebug();
 builder.Logging.SetMinimumLevel(LogLevel.Information);
 
 var app = builder.Build();
-
-#region Localization
-var supportedCultures = Locale.SupportedCultures.Select(c => c.Name).ToArray();
-var localizationOptions = new RequestLocalizationOptions()
-	.SetDefaultCulture(supportedCultures[0])
-	.AddSupportedCultures(supportedCultures)
-	.AddSupportedUICultures(supportedCultures);
-
-app.UseRequestLocalization(localizationOptions);
-#endregion
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

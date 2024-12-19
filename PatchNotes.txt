@@ -1,5 +1,5 @@
 1.1.1
-	Added Localization: en, cz, de, es, fr, it, pl, pt, ru
+	Add Localization: en, cz, de, es, fr, it, pl, pt, ru
 1.1.0
 	User Activity Logging: 
 		Added functionality to track user actions, including document creation, editing, archiving, and other actions, with timestamps for all changes.

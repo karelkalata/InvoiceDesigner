@@ -1,4 +1,5 @@
-﻿using InvoiceDesigner.Application.Interfaces;
+﻿using InvoiceDesigner.API.Controllers.Abstract;
+using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Domain.Shared.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,10 +7,7 @@ using QuestPDF.Infrastructure;
 
 namespace InvoiceDesigner.API.Controllers
 {
-	[Authorize]
-	[Route("api/[controller]")]
-	[ApiController]
-	public class PrintInvoiceController : ControllerBase
+	public class PrintInvoiceController : RESTController
 	{
 		private readonly IPrintInvoiceService _service;
 
@@ -29,7 +27,10 @@ namespace InvoiceDesigner.API.Controllers
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 
@@ -46,7 +47,10 @@ namespace InvoiceDesigner.API.Controllers
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 
 		}

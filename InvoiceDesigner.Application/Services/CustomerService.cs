@@ -16,8 +16,8 @@ namespace InvoiceDesigner.Application.Services
 		private readonly IInvoiceServiceHelper _invoiceServiceHelper;
 		private readonly IUserActivityLogService _userActivity;
 
-		public CustomerService(ICustomerRepository repoCustomer, 
-								IMapper mapper, 
+		public CustomerService(ICustomerRepository repoCustomer,
+								IMapper mapper,
 								IInvoiceServiceHelper invoiceServiceHelper,
 								IUserActivityLogService userActivity)
 		{

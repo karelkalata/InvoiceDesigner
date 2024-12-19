@@ -172,7 +172,7 @@ namespace InvoiceDesigner.WebApp.Helpers
 					return await response.Content.ReadFromJsonAsync<T>();
 				case System.Net.HttpStatusCode.Forbidden:
 					_snackbar.Add("Access Denied", Severity.Warning);
-					break;
+					return new T();
 				case System.Net.HttpStatusCode.Unauthorized:
 					_navigationManager?.NavigateTo("/Login", true);
 					break;

@@ -1,4 +1,5 @@
-﻿using InvoiceDesigner.Application.Interfaces;
+﻿using InvoiceDesigner.API.Controllers.Abstract;
+using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Domain.Shared.DTOs;
 using InvoiceDesigner.Domain.Shared.DTOs.Invoice;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
@@ -8,10 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace InvoiceDesigner.API.Controllers
 {
-	[Authorize]
-	[Route("api/[controller]")]
-	[ApiController]
-	public class InvoicesController : ControllerBase
+	public class InvoicesController : RESTController
 	{
 		private readonly IInvoiceService _service;
 
@@ -29,9 +27,8 @@ namespace InvoiceDesigner.API.Controllers
 
 			try
 			{
-				var (userId, isAdmin) = GetValidatedFilters();
-				queryPaged.UserId = userId;
-				queryPaged.IsAdmin = isAdmin;
+				queryPaged.UserId = UserId;
+				queryPaged.IsAdmin = IsAdmin;
 				var result = await _service.GetPagedInvoicesAsync(queryPaged);
 				return Ok(result);
 			}
@@ -55,13 +52,15 @@ namespace InvoiceDesigner.API.Controllers
 
 			try
 			{
-				var (userId, isAdmin) = GetValidatedFilters();
-				var result = await _service.CreateInvoiceAsync(userId, isAdmin, invoiceDto);
+				var result = await _service.CreateInvoiceAsync(UserId, IsAdmin, invoiceDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 
@@ -72,13 +71,15 @@ namespace InvoiceDesigner.API.Controllers
 		{
 			try
 			{
-				var (userId, isAdmin) = GetValidatedFilters();
-				var result = await _service.GetInvoiceDtoByIdAsync(userId, isAdmin, id);
+				var result = await _service.GetInvoiceDtoByIdAsync(UserId, IsAdmin, id);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 
@@ -89,18 +90,18 @@ namespace InvoiceDesigner.API.Controllers
 		{
 			try
 			{
-				var (userId, isAdmin) = GetValidatedFilters();
-
-				queryArchive.UserId = userId;
-				queryArchive.IsAdmin = isAdmin;
+				queryArchive.UserId = UserId;
+				queryArchive.IsAdmin = IsAdmin;
 
 				var result = await _service.ArchiveUnarchiveEntity(queryArchive);
-
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 
@@ -111,18 +112,19 @@ namespace InvoiceDesigner.API.Controllers
 		{
 			try
 			{
-				var (userId, isAdmin) = GetValidatedFilters();
 
-				queryStatus.UserId = userId;
-				queryStatus.IsAdmin = isAdmin;
+				queryStatus.UserId = UserId;
+				queryStatus.IsAdmin = IsAdmin;
 
 				var result = await _service.ChangeInvoiceStatus(queryStatus);
-
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 
@@ -136,13 +138,15 @@ namespace InvoiceDesigner.API.Controllers
 
 			try
 			{
-				var (userId, isAdmin) = GetValidatedFilters();
-				var result = await _service.UpdateInvoiceAsync(userId, isAdmin, InvoiceDto);
+				var result = await _service.UpdateInvoiceAsync(UserId, IsAdmin, InvoiceDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = $"InvalidOperationException {ex.Message}" });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 
@@ -153,13 +157,15 @@ namespace InvoiceDesigner.API.Controllers
 		{
 			try
 			{
-				var (userId, isAdmin) = GetValidatedFilters();
-				var result = await _service.DeleteInvoiceAsync(userId, isAdmin, id);
+				var result = await _service.DeleteInvoiceAsync(UserId, IsAdmin, id);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 
@@ -170,13 +176,15 @@ namespace InvoiceDesigner.API.Controllers
 		{
 			try
 			{
-				var (userId, isAdmin) = GetValidatedFilters();
-				var result = await _service.DeleteOrMarkAsDeletedAsync(userId, isAdmin, id, modeDelete);
+				var result = await _service.DeleteOrMarkAsDeletedAsync(UserId, IsAdmin, id, modeDelete);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 
@@ -186,25 +194,16 @@ namespace InvoiceDesigner.API.Controllers
 		{
 			try
 			{
-				var (userId, isAdmin) = GetValidatedFilters();
-				var result = await _service.GetInfoForNewInvoice(userId, isAdmin, invoiceId);
+				var result = await _service.GetInfoForNewInvoice(UserId, IsAdmin, invoiceId);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
-		}
-
-		private (int, bool) GetValidatedFilters()
-		{
-			var userIdString = User.FindFirst("userId")?.Value;
-			int.TryParse(userIdString, out int userId);
-
-			var isAdminString = User.FindFirst("isAdmin")?.Value;
-			bool.TryParse(isAdminString, out bool isAdmin);
-
-			return (userId, isAdmin);
 		}
 	}
 }

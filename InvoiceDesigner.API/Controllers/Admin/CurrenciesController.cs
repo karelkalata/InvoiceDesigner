@@ -1,4 +1,5 @@
-﻿using InvoiceDesigner.Application.Authorization;
+﻿using InvoiceDesigner.API.Controllers.Abstract;
+using InvoiceDesigner.Application.Authorization;
 using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Domain.Shared.DTOs.Currency;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
@@ -9,9 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace InvoiceDesigner.API.Controllers.Admin
 {
 	[Authorize(Policy = UserPolicy.IsAdmin)]
-	[Route("api/[controller]")]
-	[ApiController]
-	public class CurrenciesController : ControllerBase
+	public class CurrenciesController : RESTController
 	{
 		private readonly ICurrencyService _serviceAdminCurrency;
 
@@ -51,8 +50,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 
 			try
 			{
-				var (userId, isAdmin) = GetValidatedFilters();
-				var result = await _serviceAdminCurrency.CreateAsync(userId, currencyEditDto);
+				var result = await _serviceAdminCurrency.CreateAsync(UserId, currencyEditDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -72,7 +70,6 @@ namespace InvoiceDesigner.API.Controllers.Admin
 			try
 			{
 				var result = await _serviceAdminCurrency.GetEditDtoByIdAsync(id);
-
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -94,8 +91,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 
 			try
 			{
-				var (userId, isAdmin) = GetValidatedFilters();
-				var result = await _serviceAdminCurrency.UpdateAsync(userId, currencyEditDto);
+				var result = await _serviceAdminCurrency.UpdateAsync(UserId, currencyEditDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -111,11 +107,10 @@ namespace InvoiceDesigner.API.Controllers.Admin
 		{
 			try
 			{
-				var (userId, isAdmin) = GetValidatedFilters();
 				var queryDeleteEntity = new QueryDeleteEntity
 				{
-					UserId = userId,
-					IsAdmin = isAdmin,
+					UserId = UserId,
+					IsAdmin = IsAdmin,
 					EntityId = id,
 					MarkAsDeleted = modeDelete == 0
 				};
@@ -125,7 +120,10 @@ namespace InvoiceDesigner.API.Controllers.Admin
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 
@@ -140,7 +138,10 @@ namespace InvoiceDesigner.API.Controllers.Admin
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 
@@ -152,16 +153,6 @@ namespace InvoiceDesigner.API.Controllers.Admin
 			return Ok(result);
 		}
 
-		private (int, bool) GetValidatedFilters()
-		{
-			var userIdString = User.FindFirst("userId")?.Value;
-			int.TryParse(userIdString, out int userId);
-
-			var isAdminString = User.FindFirst("isAdmin")?.Value;
-			bool.TryParse(isAdminString, out bool isAdmin);
-
-			return (userId, isAdmin);
-		}
 	}
 }
 

@@ -1,16 +1,13 @@
-﻿using InvoiceDesigner.Application.Interfaces;
+﻿using InvoiceDesigner.API.Controllers.Abstract;
+using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Domain.Shared.DTOs.DtoActivityLog;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InvoiceDesigner.API.Controllers
 {
-	[Authorize]
-	[Route("api/[controller]")]
-	[ApiController]
-	public class UserActivityLogController : Controller
+	public class UserActivityLogController : RESTController
 	{
 		private readonly IUserActivityLogService _serviceUserActivityLog;
 

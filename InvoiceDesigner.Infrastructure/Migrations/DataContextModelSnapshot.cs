@@ -17,6 +17,104 @@ namespace InvoiceDesigner.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.10");
 
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Accounting.AccountingChartOfAccounts", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Asset1")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Asset2")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Asset3")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AccountingChartOfAccounts");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1030,
+                            Asset1 = 3,
+                            Asset2 = 4,
+                            Asset3 = 0,
+                            Name = "Bank: Operating"
+                        });
+                });
+
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Accounting.AccountingDoubleEntry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Count")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Credit")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CreditAsset1")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CreditAsset2")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CreditAsset3")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CurrencyId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Debit")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DebitAsset1")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DebitAsset2")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DebitAsset3")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DocumentId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DocumentType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Credit");
+
+                    b.HasIndex("CurrencyId");
+
+                    b.HasIndex("Debit");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AccountingDoubleEntries");
+                });
+
             modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Bank", b =>
                 {
                     b.Property<int>("Id")
@@ -1615,6 +1713,41 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.HasIndex("CompanyId");
 
                     b.ToTable("UserCompany");
+                });
+
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Accounting.AccountingDoubleEntry", b =>
+                {
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Accounting.AccountingChartOfAccounts", "CreditAccount")
+                        .WithMany()
+                        .HasForeignKey("Credit")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Currency", "Currency")
+                        .WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Accounting.AccountingChartOfAccounts", "DebitAccount")
+                        .WithMany()
+                        .HasForeignKey("Debit")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CreditAccount");
+
+                    b.Navigation("Currency");
+
+                    b.Navigation("DebitAccount");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Bank", b =>

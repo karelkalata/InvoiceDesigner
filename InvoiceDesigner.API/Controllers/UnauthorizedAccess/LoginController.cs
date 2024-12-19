@@ -1,13 +1,10 @@
 ﻿using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Domain.Shared.DTOs.User;
 using InvoiceDesigner.Domain.Shared.Responses;
-using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.RegularExpressions;
 
 namespace InvoiceDesigner.API.Controllers.Unauthorized
 {
-
 	[Route("api/[controller]")]
 	[ApiController]
 	public class LoginController : ControllerBase
@@ -34,7 +31,10 @@ namespace InvoiceDesigner.API.Controllers.Unauthorized
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 	}

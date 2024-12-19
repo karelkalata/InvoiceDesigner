@@ -1,4 +1,5 @@
-﻿using InvoiceDesigner.Application.Authorization;
+﻿using InvoiceDesigner.API.Controllers.Abstract;
+using InvoiceDesigner.Application.Authorization;
 using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Domain.Shared.DTOs.Company;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
@@ -9,9 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace InvoiceDesigner.API.Controllers.Admin
 {
 	[Authorize(Policy = UserPolicy.IsAdmin)]
-	[Route("api/[controller]")]
-	[ApiController]
-	public class CompaniesController : ControllerBase
+	public class CompaniesController : RESTController
 	{
 		private readonly ICompanyService _service;
 
@@ -51,13 +50,15 @@ namespace InvoiceDesigner.API.Controllers.Admin
 
 			try
 			{
-				var (userId, isAdmin) = GetValidatedFilters();
-				var result = await _service.CreateAsync(userId, companyCreateDto);
+				var result = await _service.CreateAsync(UserId, companyCreateDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 
@@ -69,12 +70,14 @@ namespace InvoiceDesigner.API.Controllers.Admin
 			try
 			{
 				var result = await _service.GetEditDtoByIdAsync(id);
-
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 
@@ -88,13 +91,15 @@ namespace InvoiceDesigner.API.Controllers.Admin
 
 			try
 			{
-				var (userId, isAdmin) = GetValidatedFilters();
-				var result = await _service.UpdateAsync(userId, companyCreateDto);
+				var result = await _service.UpdateAsync(UserId, companyCreateDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 
@@ -105,11 +110,10 @@ namespace InvoiceDesigner.API.Controllers.Admin
 		{
 			try
 			{
-				var (userId, isAdmin) = GetValidatedFilters();
 				var queryDeleteEntity = new QueryDeleteEntity
 				{
-					UserId = userId,
-					IsAdmin = isAdmin,
+					UserId = UserId,
+					IsAdmin = IsAdmin,
 					EntityId = id,
 					MarkAsDeleted = modeDelete == 0
 				};
@@ -119,7 +123,10 @@ namespace InvoiceDesigner.API.Controllers.Admin
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 
@@ -134,7 +141,10 @@ namespace InvoiceDesigner.API.Controllers.Admin
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 
@@ -144,30 +154,17 @@ namespace InvoiceDesigner.API.Controllers.Admin
 		{
 			try
 			{
-				var userIdString = User.FindFirst("userId")?.Value;
-				int.TryParse(userIdString, out int userId);
-
-				var isAdminString = User.FindFirst("isAdmin")?.Value;
-				bool.TryParse(isAdminString, out bool isAdmin);
-
-				var result = await _service.GetAllAutocompleteDto(userId, isAdmin);
+				var result = await _service.GetAllAutocompleteDto(UserId, IsAdmin);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
 			{
-				return BadRequest(new { message = ex.Message });
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
 			}
 		}
 
-		private (int, bool) GetValidatedFilters()
-		{
-			var userIdString = User.FindFirst("userId")?.Value;
-			int.TryParse(userIdString, out int userId);
-
-			var isAdminString = User.FindFirst("isAdmin")?.Value;
-			bool.TryParse(isAdminString, out bool isAdmin);
-
-			return (userId, isAdmin);
-		}
 	}
 }

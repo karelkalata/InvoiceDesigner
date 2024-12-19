@@ -145,7 +145,7 @@ namespace InvoiceDesigner.Application.Services
 		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(int userId, bool isAdmin, int id, int modeDelete)
 		{
 			var existsEntity = await ValidateExistsEntityAsync(userId, isAdmin, id);
-			
+
 			if (modeDelete == 0)
 			{
 				existsEntity.IsDeleted = true;
