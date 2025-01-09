@@ -1,15 +1,15 @@
 ﻿@page "/FormDesigner"
 @using InvoiceDesigner.Domain.Shared.DTOs.DtoFormDesigners
 @using InvoiceDesigner.Domain.Shared.Enums
+@using InvoiceDesigner.Domain.Shared.Extensions
+@using InvoiceDesigner.Domain.Shared.Helpers
 @using InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner
+@using InvoiceDesigner.Domain.Shared.QueryParameters
 @using InvoiceDesigner.Domain.Shared.Responses
 @using System.Diagnostics
 @using InvoiceDesigner.WebApp.Components.Pages.Dialogs
 
 @inject IJSRuntime JS
-
-
-
 
 <style>
 	.border-my-05 {
@@ -45,8 +45,8 @@
 else
 {
 	<MudContainer Class="ma-3 pa-3">
-		<MudDropContainer T="DropItemEditDto"
-						  ItemDropped="ItemUpdated" Class="d-flex flex-wrap flex-grow-1"
+		<MudDropContainer T="DropItemEditDto" Class="d-flex flex-wrap flex-grow-1"
+						  ItemDropped="ItemUpdated"
 						  @ref="_mudDropContainerRef"
 						  Items="_formDesigner.DropItems"
 						  ItemDisabled="@(item => item.StartSelector == "_Hidden")"
@@ -56,56 +56,58 @@ else
 				<MudGrid>
 					<MudItem xs="3">
 						<MudCard>
-
 							<MudCardHeader>
-
 								<MudGrid>
-									<MudItem xs="4" Class="justify-content-start">
-										<MudButton Variant="Variant.Filled"
-												   OnClick="OpenInputName"
-												   Size="Size.Small"
-												   StartIcon="@Icons.Material.Filled.Add"
-												   Color="Color.Default">
-											Add
-										</MudButton>
-									</MudItem>
-
-									<MudItem xs="4" Class="justify-content-between">
-										<MudButton Variant="Variant.Filled"
+									<MudItem xs="12" Class="d-flex align-items-center">
+										<MudIconButton Variant="Variant.Filled" Class="ma-1"
+													   OnClick="OpenInputName"
+													   Size="Size.Small"
+													   Icon="@Icons.Material.Filled.Add"
+													   Color="Color.Default">
+										</MudIconButton>
+										<MudButton Variant="Variant.Filled" Class="ma-1"
 												   OnClick="GetFilePDF"
 												   Disabled="@(_id==0)"
 												   Size="Size.Small"
 												   StartIcon="@Icons.Material.Filled.Download"
 												   Color="Color.Primary">
-											Test
+											@localizer["Test"]
 										</MudButton>
-									</MudItem>
-
-									<MudItem xs="4" Class="justify-content-end">
-										<MudButton Variant="Variant.Filled"
+										<MudButton Variant="Variant.Filled" Class="ma-1"
 												   Disabled="@(_id==0)"
 												   OnClick="OnValidSubmit"
 												   Size="Size.Small"
 												   StartIcon="@Icons.Material.Filled.Save"
 												   Color="Color.Primary">
-											Save
+											@localizer["Save"]
 										</MudButton>
 									</MudItem>
 
 									<MudItem xs="12">
-										<MudSelect T="FormDesignersAutocompleteDto"
+										<MudSelect T="EAccountingDocument" Dense
 												   Typo="Typo.inherit"
-												   Label="Select Form"
-												   Value="_selectedDesignersAutocompleteDto"
-												   ValueChanged="OnFormDesignersAutocompleteDtoChanged"
-												   ToStringFunc="@(c => c?.Name ?? "")"
-												   Variant="Variant.Outlined"
-												   Dense="true">
-											@foreach (var item in _formDesignersAutocompleteDto)
+												   Label="Document"
+												   Value="_accountingDocument"
+												   ValueChanged="OnAccountingDocumentChanged"
+												   Variant="Variant.Outlined">
+											<MudSelectItem value="@EAccountingDocument.Invoice">@EAccountingDocument.Invoice</MudSelectItem>
+											@*
+											@foreach (var value in Enum.GetValues(typeof(EAccountingDocument)).Cast<EAccountingDocument>())
 											{
-												<MudSelectItem Value="@item">@item.Name</MudSelectItem>
+												<MudSelectItem value="@value">@value</MudSelectItem>
 											}
+											*@
 										</MudSelect>
+
+									</MudItem>
+									<MudItem xs="12">
+										<MudAutocomplete T="FormDesignersAutocompleteDto" Required Dense Clearable
+														 Value="_selectedDesignersAutocompleteDto"
+														 ValueChanged="OnFormDesignersAutocompleteDtoChanged"
+														 Label="@localizer["SelectPDFForm"]"
+														 Typo="Typo.inherit"
+														 SearchFunc="@((value, token) => FilteringDataWithApi<FormDesignersAutocompleteDto>(value, "FormDesigner", token))"
+														 ToStringFunc="@(c => c?.Name ?? "")" />
 									</MudItem>
 								</MudGrid>
 
@@ -114,54 +116,41 @@ else
 
 							<MudCardContent>
 								<MudExpansionPanels>
-									<MudExpansionPanel Text="Invoice" Expanded="true">
+									<MudExpansionPanel Text="@localizer["General"]" Expanded="true">
 										<MudDropZone T="DropItemEditDto" Identifier="_Invoice" Class="rounded mud-background-gray pa-1 ma-0 flex-grow-1" />
 									</MudExpansionPanel>
-									<MudExpansionPanel Text="Company">
+									<MudExpansionPanel Text="@localizer["Company"]">
 										<MudDropZone T="DropItemEditDto" Identifier="_Company" Class="rounded mud-background-gray pa-1 ma-0 flex-grow-1" />
 									</MudExpansionPanel>
-									<MudExpansionPanel Text="Currency">
+									<MudExpansionPanel Text="@localizer["Currency"]">
 										<MudDropZone T="DropItemEditDto" Identifier="_Currency" Class="rounded mud-background-gray pa-1 ma-0 flex-grow-1" />
 									</MudExpansionPanel>
-									<MudExpansionPanel Text="Bank">
+									<MudExpansionPanel Text="@localizer["Bank"]">
 										<MudDropZone T="DropItemEditDto" Identifier="_Bank" Class="rounded mud-background-gray pa-1 ma-0 flex-grow-1" />
 									</MudExpansionPanel>
-									<MudExpansionPanel Text="Customer">
+									<MudExpansionPanel Text="@localizer["Customer"]">
 										<MudDropZone T="DropItemEditDto" Identifier="_Customer" Class="rounded mud-background-gray pa-1 ma-0 flex-grow-1" />
 									</MudExpansionPanel>
 									<MudExpansionPanel Text="Other">
-										<MudButton Variant="Variant.Filled"
-												   FullWidth="true"
+										<MudButton Variant="Variant.Filled" FullWidth
 												   Disabled="_formDesigner.DropItems.Count == 0"
 												   OnClick="AddEmptyBox"
 												   Size="Size.Small"
 												   StartIcon="@Icons.Material.Outlined.AddBox"
 												   Color="Color.Secondary">
-											Add Empty Box
+											@localizer["AddEmptyBox"]
 										</MudButton>
 
 										<MudDropZone T="DropItemEditDto" Identifier="_Other" Class="rounded mud-background-gray pa-1 ma-0 flex-grow-1" />
 									</MudExpansionPanel>
 									<MudExpansionPanel Text="Action">
-										<MudButton Variant="Variant.Filled"
-												   Class="pa-1 ma-1"
-										
+										<MudButton Variant="Variant.Filled" Class="ma-1"
 												   Disabled="_id==0"
 												   OnClick="RedirectToDeleteRow"
 												   Size="Size.Small"
 												   StartIcon="@Icons.Material.Filled.DeleteForever"
 												   Color="Color.Error">
-											Delete
-										</MudButton>
-										<MudButton Variant="Variant.Filled"
-												   Class="pa-1 ma-1"
-	
-												   Disabled="_id==0"
-												   OnClick="OpenActivityLogHistory"
-												   Size="Size.Small"
-												   StartIcon="@Icons.Material.Filled.History"
-												   Color="Color.Primary">
-											Activity Logs
+											@localizer["Delete"]
 										</MudButton>
 									</MudExpansionPanel>
 								</MudExpansionPanels>
@@ -267,18 +256,46 @@ else
 
 	private List<DropItemEditDto> _dropItemsEditDto = new();
 	private MudDropContainer<DropItemEditDto> _mudDropContainerRef { get; set; } = new();
-
 	private List<FormDesignersAutocompleteDto> _formDesignersAutocompleteDto = new();
+	private List<FormDesignersAutocompleteDto> _listForms = new();
 	private FormDesignersAutocompleteDto _selectedDesignersAutocompleteDto = null!;
 	private bool _loaded;
 	private FormDesignerEditDto _formDesigner = new();
+	private EAccountingDocument _accountingDocument;
 
 	protected override async Task OnInitializedAsync()
 	{
 		_formDesignersAutocompleteDto = await _httpHelper.GetDataFromAPI<List<FormDesignersAutocompleteDto>>($"api/FormDesigner/GetAllAutocompleteDto");
+		OnAccountingDocumentChanged(EAccountingDocument.Invoice);   // Default First
 		_loaded = true;
 	}
 
+	#region Select Forms
+	private void OnAccountingDocumentChanged(EAccountingDocument accountingDocument)
+	{
+		_accountingDocument = accountingDocument;
+		_id = 0;
+		_selectedDesignersAutocompleteDto = null!;
+		_dropItemsEditDto = new();
+		_listForms = _formDesignersAutocompleteDto
+			.Where(e => e.AccountingDocument == accountingDocument)
+			.ToList();
+
+		_mudDropContainerRef.Refresh();
+		StateHasChanged();
+	}
+
+	private Task<IEnumerable<T>> SearchElements<T>(string value, IEnumerable<T> items, CancellationToken token) where T : IHasIdAndName
+	{
+
+		if (string.IsNullOrEmpty(value))
+			return Task.FromResult(items.AsEnumerable());
+
+		return Task.FromResult(items
+						.Where(c => c.Name.Contains(value, StringComparison.OrdinalIgnoreCase))
+						.AsEnumerable());
+	}
+	#endregion
 
 	private void AddColumn(int row)
 	{
@@ -338,7 +355,7 @@ else
 	{
 		var options = new DialogOptions { CloseOnEscapeKey = true };
 
-		var dialog = await DialogService.ShowAsync<InputName>(string.Empty, options);
+		var dialog = await DialogService.ShowAsync<InputName>($"new PDF for {_accountingDocument}", options);
 		var result = await dialog.Result;
 
 		if (result != null && !result.Canceled)
@@ -348,7 +365,11 @@ else
 			if (!string.IsNullOrEmpty(inputName))
 			{
 				_id = 0;
-				_formDesigner = new FormDesignerEditDto { Name = inputName };
+				_formDesigner = new FormDesignerEditDto
+					{
+						AccountingDocument = _accountingDocument,
+						Name = inputName
+					};
 
 				await OnValidSubmit();
 
@@ -393,7 +414,7 @@ else
 
 		IDialogReference dialog;
 
-		if (dropItem.Value == "{Invoice.InvoiceItems}")
+		if (dropItem.Value == "{InvoiceDTOs.InvoiceItems}")
 		{
 			dialog = await DialogService.ShowAsync<InvoiceItemsProperties_dialog>(string.Empty, parameters);
 		}
@@ -450,16 +471,16 @@ else
 		public object? errors { get; set; }
 	}
 
-	private async Task OpenActivityLogHistory()
+	private async Task<IEnumerable<T>> FilteringDataWithApi<T>(string value, string apiUrl, CancellationToken token) where T : IHasIdAndName
 	{
-		var parameters = new DialogParameters<ActivityLogs_dialog>
-		{
-			{ x => x.HttpHelper, _httpHelper },
-			{ x => x.DocumentType, EDocumentsTypes.FormDesigner },
-			{ x => x.EntityId, _id }
-		};
-		var options = new DialogOptions { CloseOnEscapeKey = true };
-		var dialog = await DialogService.ShowAsync<ActivityLogs_dialog>(string.Empty, parameters, options);
-		await dialog.Result;
+		var queryParameters = new QueryFiltering
+			{
+				AccountingDocument = _accountingDocument,
+				SearchString = value
+			};
+		string queryString = queryParameters.ToQueryString();
+
+		return await _httpHelper.GetDataFromAPI<IEnumerable<T>>($"api/{apiUrl}/FilteringData?{queryString}");
 	}
+
 }

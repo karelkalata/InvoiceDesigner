@@ -1,5 +1,7 @@
 ﻿using InvoiceDesigner.Domain.Shared.Models;
-using InvoiceDesigner.Domain.Shared.Models.Accounting;
+using InvoiceDesigner.Domain.Shared.Models.Directories;
+using InvoiceDesigner.Domain.Shared.Models.Documents;
+using InvoiceDesigner.Domain.Shared.Models.ModelsAccounting;
 using InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
@@ -16,21 +18,26 @@ namespace InvoiceDesigner.Infrastructure.Data
 		public DbSet<Customer> Customers { get; set; } = null!;
 		public DbSet<Product> Products { get; set; } = null!;
 		public DbSet<ProductPrice> ProductPrice { get; set; } = null!;
-		public DbSet<Invoice> Invoices { get; set; } = null!;
-		public DbSet<InvoiceItem> InvoiceItems { get; set; } = null!;
 		public DbSet<User> Users { get; set; } = null!;
 		public DbSet<PrintInvoice> PrintInvoices { get; set; } = null!;
 
+		#region FormDesigners
 		public DbSet<FormDesigner> FormDesigners { get; set; } = null!;
 		public DbSet<FormDesignerScheme> FormDesignerSchemes { get; set; } = null!;
 		public DbSet<DropItem> DropItems { get; set; } = null!;
 		public DbSet<CssStyle> DropItemStyles { get; set; } = null!;
+		#endregion
 
-		public DbSet<UserActivityLog> UserActivityLogs { get; set; } = null!;
+		#region Documents
+		public DbSet<BankReceipt> BankReceipts { get; set; } = null!;
+		public DbSet<Invoice> Invoices { get; set; } = null!;
+		public DbSet<InvoiceItem> InvoiceItems { get; set; } = null!;
+		#endregion
 
 		#region Real Accounting
-		public DbSet<AccountingChartOfAccounts> AccountingChartOfAccounts { get; set; } = null!;
-		public DbSet<AccountingDoubleEntry> AccountingDoubleEntries { get; set; } = null!;
+		public DbSet<ChartOfAccounts> ChartOfAccounts { get; set; } = null!;
+		public DbSet<DoubleEntrySetup> DoubleEntriesSetup { get; set; } = null!;
+		public DbSet<DoubleEntry> Accounting { get; set; } = null!;
 		#endregion
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -152,67 +159,6 @@ namespace InvoiceDesigner.Infrastructure.Data
 					.OnDelete(DeleteBehavior.Restrict);
 			});
 
-			modelBuilder.Entity<Invoice>(invoice =>
-			{
-				invoice.HasKey(e => e.Id);
-
-				invoice.HasOne(e => e.Company)
-					.WithMany()
-					.HasForeignKey(e => e.CompanyId)
-					.IsRequired();
-
-				invoice.Property(e => e.Vat)
-					.HasDefaultValue(decimal.Zero);
-
-				invoice.Property(e => e.EnabledVat)
-					.HasDefaultValue(true);
-
-				invoice.HasOne(e => e.Customer)
-					.WithMany()
-					.HasForeignKey(e => e.CustomerId)
-					.IsRequired();
-
-				invoice.HasOne(e => e.Currency)
-					.WithMany()
-					.HasForeignKey(e => e.CurrencyId)
-					.IsRequired();
-
-				invoice.HasOne(e => e.Bank)
-					.WithMany()
-					.HasForeignKey(e => e.BankId)
-					.IsRequired();
-
-				invoice.Property(e => e.TotalAmount)
-					.HasDefaultValue(decimal.Zero);
-
-				invoice.HasMany(e => e.InvoiceItems)
-					.WithOne()
-					.IsRequired();
-			});
-
-			modelBuilder.Entity<InvoiceItem>(invoiceItem =>
-			{
-				invoiceItem.HasKey(e => e.Id);
-
-				invoiceItem.HasOne(e => e.Invoice)
-					.WithMany(e => e.InvoiceItems)
-					.HasForeignKey(e => e.InvoiceId)
-					.IsRequired();
-
-				invoiceItem.HasOne(e => e.Product)
-					.WithMany()
-					.HasForeignKey(e => e.ProductId)
-					.IsRequired();
-
-				invoiceItem.Property(e => e.Price)
-					.IsRequired()
-					.HasDefaultValue(decimal.Zero);
-
-				invoiceItem.Property(e => e.Quantity)
-					.IsRequired()
-					.HasDefaultValue(decimal.Zero);
-			});
-
 			modelBuilder.Entity<User>(user =>
 			{
 				user.HasKey(e => e.Id);
@@ -255,22 +201,117 @@ namespace InvoiceDesigner.Infrastructure.Data
 					);
 			});
 
-			modelBuilder.Entity<UserActivityLog>(userActivityLog =>
-			{
-				userActivityLog.HasKey(e => e.Id);
-
-				userActivityLog.HasOne<User>()
-					.WithMany()
-					.HasForeignKey(e => e.UserId)
-					.OnDelete(DeleteBehavior.Cascade);
-
-			});
-
 			modelBuilder.Entity<PrintInvoice>(PrintInvoice =>
 			{
 				PrintInvoice.HasKey(e => e.Giud);
 
 			});
+
+			#region Documents
+			modelBuilder.Entity<BankReceipt>(bankReceipt =>
+			{
+				bankReceipt.HasKey(e => e.Id);
+
+
+				bankReceipt.HasOne(e => e.Invoice)
+					//.WithOne(invoice => invoice.BankReceipt)
+					.WithOne()
+					.HasForeignKey<BankReceipt>(e => e.InvoiceId)
+					.IsRequired();
+
+
+				bankReceipt.HasOne(e => e.Company)
+					.WithMany()
+					.HasForeignKey(e => e.CompanyId)
+					.IsRequired();
+
+				bankReceipt.HasOne(e => e.Customer)
+					.WithMany()
+					.HasForeignKey(e => e.CustomerId)
+					.IsRequired();
+
+				bankReceipt.HasOne(e => e.Currency)
+					.WithMany()
+					.HasForeignKey(e => e.CurrencyId)
+					.IsRequired();
+
+				bankReceipt.HasOne(e => e.Bank)
+					.WithMany()
+					.HasForeignKey(e => e.BankId)
+					.IsRequired();
+
+				bankReceipt.Property(e => e.Amount)
+					.HasDefaultValue(decimal.Zero);
+
+			});
+
+			modelBuilder.Entity<Invoice>(invoice =>
+			{
+				invoice.HasKey(e => e.Id);
+
+				invoice.HasOne(e => e.Company)
+					.WithMany()
+					.HasForeignKey(e => e.CompanyId)
+					.IsRequired();
+
+				invoice.Property(e => e.Vat)
+					.HasDefaultValue(decimal.Zero);
+
+				invoice.Property(e => e.EnabledVat)
+					.HasDefaultValue(true);
+
+				invoice.HasOne(e => e.Customer)
+					.WithMany()
+					.HasForeignKey(e => e.CustomerId)
+					.IsRequired();
+
+				invoice.HasOne(e => e.Currency)
+					.WithMany()
+					.HasForeignKey(e => e.CurrencyId)
+					.IsRequired();
+				/*
+				invoice.HasOne(e => e.BankReceipt)
+					.WithOne(bankReceipt => bankReceipt.InvoiceDTOs)
+					.HasForeignKey<BankReceipt>(e => e.InvoiceId)
+					.IsRequired(false);
+				*/
+
+				invoice.HasOne(e => e.Bank)
+					.WithMany()
+					.HasForeignKey(e => e.BankId)
+					.IsRequired();
+
+				invoice.Property(e => e.Amount)
+					.HasDefaultValue(decimal.Zero);
+
+				invoice.HasMany(e => e.InvoiceItems)
+					.WithOne()
+					.IsRequired();
+			});
+
+			modelBuilder.Entity<InvoiceItem>(invoiceItem =>
+			{
+				invoiceItem.HasKey(e => e.Id);
+
+				invoiceItem.HasOne(e => e.Invoice)
+					.WithMany(e => e.InvoiceItems)
+					.HasForeignKey(e => e.InvoiceId)
+					.IsRequired();
+
+				invoiceItem.HasOne(e => e.Item)
+					.WithMany()
+					.HasForeignKey(e => e.ItemId)
+					.IsRequired();
+
+				invoiceItem.Property(e => e.Price)
+					.IsRequired()
+					.HasDefaultValue(decimal.Zero);
+
+				invoiceItem.Property(e => e.Quantity)
+					.IsRequired()
+					.HasDefaultValue(decimal.Zero);
+			});
+			#endregion
 
 			#region FormDesigner
 			modelBuilder.Entity<FormDesigner>(formDesigner =>
@@ -347,20 +388,44 @@ namespace InvoiceDesigner.Infrastructure.Data
 			#endregion
 
 			#region Real Accounting
-			modelBuilder.Entity<AccountingDoubleEntry>(chartOfAccounts =>
+			modelBuilder.Entity<ChartOfAccounts>(chartOfAccounts =>
 			{
 				chartOfAccounts.HasKey(e => e.Id);
+
+				chartOfAccounts.Property(e => e.Code).IsRequired();
+				chartOfAccounts.Property(e => e.Name).IsRequired();
+
+				var ChartOfAccountsData = ReadJsonFile<ChartOfAccounts>(Path.Combine(dataDirectory, "ChartOfAccountsData.json"));
+				modelBuilder.Entity<ChartOfAccounts>().HasData(ChartOfAccountsData);
+
 			});
 
-			modelBuilder.Entity<AccountingDoubleEntry>(doubleEntry =>
+			modelBuilder.Entity<DoubleEntrySetup>(doubleEntrySetup =>
 			{
-				doubleEntry.HasKey(e => e.Id);
+				doubleEntrySetup.HasKey(e => e.Id);
 
-				doubleEntry.HasOne(e => e.User)
+				doubleEntrySetup.HasOne(e => e.CreditAccount)
 					.WithMany()
-					.HasForeignKey(e => e.UserId)
+					.HasForeignKey(e => e.Credit)
 					.OnDelete(DeleteBehavior.Restrict)
 					.IsRequired();
+
+				doubleEntrySetup.HasOne(e => e.DebitAccount)
+					.WithMany()
+					.HasForeignKey(e => e.Debit)
+					.OnDelete(DeleteBehavior.Restrict)
+					.IsRequired();
+
+				doubleEntrySetup.Property(e => e.EntryMode).IsRequired();
+				doubleEntrySetup.Property(e => e.AmountType).IsRequired();
+
+				var DoubleEntriesSetupData = ReadJsonFile<DoubleEntrySetup>(Path.Combine(dataDirectory, "DoubleEntriesSetupData.json"));
+				modelBuilder.Entity<DoubleEntrySetup>().HasData(DoubleEntriesSetupData);
+			});
+
+			modelBuilder.Entity<DoubleEntry>(doubleEntry =>
+			{
+				doubleEntry.HasKey(e => e.Id);
 
 				doubleEntry.HasOne(e => e.CreditAccount)
 					.WithMany()
@@ -374,6 +439,12 @@ namespace InvoiceDesigner.Infrastructure.Data
 					.OnDelete(DeleteBehavior.Restrict)
 					.IsRequired();
 
+				doubleEntry.HasOne(e => e.Company)
+					.WithMany()
+					.HasForeignKey(e => e.CompanyId)
+					.OnDelete(DeleteBehavior.Restrict)
+					.IsRequired();
+
 				doubleEntry.HasOne(e => e.Currency)
 					.WithMany()
 					.HasForeignKey(e => e.CurrencyId)
@@ -382,9 +453,6 @@ namespace InvoiceDesigner.Infrastructure.Data
 
 				doubleEntry.Property(e => e.Amount).IsRequired();
 			});
-
-			var AccountingChartOfAccounts = ReadJsonFile<AccountingChartOfAccounts>(Path.Combine(dataDirectory, "AccountingChartOfAccounts.json"));
-			modelBuilder.Entity<AccountingChartOfAccounts>().HasData(AccountingChartOfAccounts);
 
 			#endregion
 

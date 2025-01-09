@@ -297,4 +297,61 @@
   <data name="ShowArchived" xml:space="preserve">
     <value>Show Archived</value>
   </data>
+  <data name="Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Test" xml:space="preserve">
+    <value>Test</value>
+  </data>
+  <data name="General" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="AddEmptyBox" xml:space="preserve">
+    <value>Add Empty Box</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="ChartOfAccounts" xml:space="preserve">
+    <value>Chart Of Accounts</value>
+  </data>
+  <data name="Asset" xml:space="preserve">
+    <value>Asset</value>
+  </data>
+  <data name="Accounting" xml:space="preserve">
+    <value>Accounting</value>
+  </data>
+  <data name="Setup" xml:space="preserve">
+    <value>Setup</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Logs</value>
+  </data>
+  <data name="DoubleEntrySetup" xml:space="preserve">
+    <value>Double-Entry Setup</value>
+  </data>
+  <data name="AccountingDocument" xml:space="preserve">
+    <value>Accounting Document</value>
+  </data>
+  <data name="HelpEntryMode" xml:space="preserve">
+    <value>Choose between a cumulative single entry or splitting into multiple entries for each product item.</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="CancelAndArchiveDocument" xml:space="preserve">
+    <value>Cancel And Archive Document</value>
+  </data>
+  <data name="Approve" xml:space="preserve">
+    <value>Approve</value>
+  </data>
+  <data name="BankReceipt" xml:space="preserve">
+    <value>Bank Receipt</value>
+  </data>
+  <data name="New" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="BankReceipts" xml:space="preserve">
+    <value>Bank Receipts</value>
+  </data>
 </root>

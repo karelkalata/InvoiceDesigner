@@ -8,15 +8,23 @@ With Invoice Designer, customizing your invoice print form is super easy. You ca
 - Enhanced UI/UX powered by [MudBlazor](https://github.com/MudBlazor/MudBlazor)
  
 ## Features
-- Works Locally/Lan/Internet
-- Fully customizable PDF invoices
-- Comprehensive Invoice Management
-- Client and Product Management
-- Multi-currency pricing support for products
-- Multi-company support with unlimited banks, each supporting different currencies per company
-- Advanced user access control for managing permissions across companies
-- Detailed User Activity Logging (creation, editing, archiving, etc.)
-- Localization: English, Čeština, Deutsch, España, Français, Italiano, Polski, Português, Русский
+### Flexible Invoice Design
+- Fully customizable PDF invoice templates using a drag-and-drop system.
+### Multicomponent and Multi-Currency Support
+- Support for managing unlimited companies, each operating with different currencies.
+### Accounting Integration
+- Built on a comprehensive accounting platform following GAAP principles.
+- Editable chart of accounts for complete customization.
+- Editable templates for double-entry bookkeeping of each accounting document.
+- Double-entry bookkeeping system with configurable data export to third-party accounting systems.
+- Tax management capabilities.
+### Security and Access Management
+- Advanced user access control for managing permissions.
+### Connectivity
+- Works locally, over LAN, or via the internet.
+### Localization
+- Supported languages: English, Čeština, España, Deutsch, Français, Italiano, Português, Polski, Русский.
+
 
 ## Screenshots
 <p align="center">
@@ -31,8 +39,12 @@ With Invoice Designer, customizing your invoice print form is super easy. You ca
 <p align="center">
   <img src="screenshot5.png"  />
 </p>
-
-
+<p align="center">
+  <img src="screenshot6.png"  />
+</p>
+<p align="center">
+  <img src="screenshot7.png"  />
+</p>
 ## Development Environment
 - [Microsoft Visual Studio 2022 Community Edition](https://visualstudio.microsoft.com/vs/community/)
 - [QuestPDF](https://github.com/QuestPDF/QuestPDF)

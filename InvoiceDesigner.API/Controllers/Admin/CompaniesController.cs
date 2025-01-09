@@ -1,6 +1,6 @@
 ﻿using InvoiceDesigner.API.Controllers.Abstract;
 using InvoiceDesigner.Application.Authorization;
-using InvoiceDesigner.Application.Interfaces;
+using InvoiceDesigner.Application.Interfaces.Admin;
 using InvoiceDesigner.Domain.Shared.DTOs.Company;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;

@@ -4,7 +4,6 @@
 @using InvoiceDesigner.Domain.Shared.Extensions
 @using InvoiceDesigner.Domain.Shared.QueryParameters
 @using InvoiceDesigner.Domain.Shared.Responses
-@using InvoiceDesigner.WebApp.Components.Pages.Helpers
 
 
 <MudContainer>
@@ -40,7 +39,6 @@
 			</MudTh>
 			<MudTh></MudTh>
 			<MudTh></MudTh>
-			<MudTh></MudTh>
 		</HeaderContent>
 		<RowTemplate>
 			<MudTd DataLabel="Id">@context.Id</MudTd>
@@ -51,10 +49,7 @@
 							   Size="Size.Small"
 							   Color="Color.Default" />
 			</MudTd>
-			<MudTd Style="width:25px" Class="pa-0">
-				<ActivityLogsHelper DocumentType=EDocumentsTypes.Product
-									EntityId="@context.Id" />
-			</MudTd>
+
 			<MudTd Style="width:25px" Class="pa-0">
 				<MudIconButton Icon="@(context.IsDeleted ? Icons.Material.Filled.DeleteForever : Icons.Material.Filled.Delete)"
 							   Size="Size.Small"

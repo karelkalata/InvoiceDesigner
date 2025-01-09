@@ -1,5 +1,5 @@
 ﻿using InvoiceDesigner.Domain.Shared.Interfaces;
-using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -62,8 +62,7 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		public async Task<int> UpdateAsync(Product entity)
 		{
 			_context.Products.Update(entity);
-			await _context.SaveChangesAsync()
-				;
+			await _context.SaveChangesAsync();
 			return entity.Id;
 		}
 

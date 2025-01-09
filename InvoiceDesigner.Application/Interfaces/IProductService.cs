@@ -1,5 +1,5 @@
 ﻿using InvoiceDesigner.Domain.Shared.DTOs.Product;
-using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
 

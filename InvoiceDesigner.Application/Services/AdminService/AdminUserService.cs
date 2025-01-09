@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
 using InvoiceDesigner.Application.Authorization;
-using InvoiceDesigner.Application.Interfaces;
+using InvoiceDesigner.Application.Interfaces.Admin;
 using InvoiceDesigner.Application.Interfaces.AdminInterfaces;
 using InvoiceDesigner.Domain.Shared.DTOs.Company;
 using InvoiceDesigner.Domain.Shared.DTOs.User;
-using InvoiceDesigner.Domain.Shared.Enums;
 using InvoiceDesigner.Domain.Shared.Interfaces;
-using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
 using InvoiceDesigner.Localization;
@@ -19,17 +18,14 @@ namespace InvoiceDesigner.Application.Services.AdminService
 		private readonly IUserRepository _repoUser;
 		private readonly IMapper _mapper;
 		private readonly ICompanyService _companyService;
-		private readonly IUserActivityLogService _userActivity;
 
 		public AdminUserService(IUserRepository repoUser,
 								IMapper mapper,
-								ICompanyService companyService,
-								IUserActivityLogService userActivity)
+								ICompanyService companyService)
 		{
 			_repoUser = repoUser;
 			_mapper = mapper;
 			_companyService = companyService;
-			_userActivity = userActivity;
 		}
 
 		public async Task<ResponsePaged<UserViewDto>> GetPagedEntitiesAsync(QueryPaged queryPaged)
@@ -56,7 +52,6 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			await MapUser(existUser, dto);
 
 			var entityId = await _repoUser.CreateUserAsync(existUser);
-			await _userActivity.CreateActivityLog(userId, EDocumentsTypes.User, EActivitiesType.Create, entityId);
 
 			return new ResponseRedirect
 			{
@@ -78,7 +73,6 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			await MapUser(existEntity, dto);
 
 			var entityId = await _repoUser.UpdateUserAsync(existEntity);
-			await _userActivity.CreateActivityLog(userId, EDocumentsTypes.User, EActivitiesType.Update, entityId);
 
 			return new ResponseRedirect
 			{
@@ -92,7 +86,6 @@ namespace InvoiceDesigner.Application.Services.AdminService
 
 			if (!queryDeleteEntity.MarkAsDeleted)
 			{
-				await _userActivity.CreateActivityLog(queryDeleteEntity.UserId, EDocumentsTypes.User, EActivitiesType.Delete, existsEntity.Id);
 				return new ResponseBoolean
 				{
 					Result = await _repoUser.DeleteUserAsync(existsEntity)
@@ -102,7 +95,6 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			{
 				existsEntity.IsDeleted = true;
 				await _repoUser.UpdateUserAsync(existsEntity);
-				await _userActivity.CreateActivityLog(queryDeleteEntity.UserId, EDocumentsTypes.User, EActivitiesType.MarkedAsDeleted, existsEntity.Id);
 
 				return new ResponseBoolean
 				{

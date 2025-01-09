@@ -1,0 +1,25 @@
+[
+  {
+    "Id": 1,
+    "Code": 1200,
+    "Name": "Accounts Receivable",
+    "Asset1": 2
+  },
+  {
+    "Id": 2,
+    "Code": 1030,
+    "Name": "Bank: Operating",
+    "Asset1": 1
+  },
+  {
+    "Id": 3,
+    "Code": 2200,
+    "Name": "Sales Tax"
+  },
+  {
+    "Id": 4,
+    "Code": 4000,
+    "Name": "Sales",
+    "Asset1": 3
+  }
+]

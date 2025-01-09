@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Application.Interfaces.InterfacesFormDesigner;
 using InvoiceDesigner.Domain.Shared.DTOs.DtoFormDesigners;
 using InvoiceDesigner.Domain.Shared.Enums;
 using InvoiceDesigner.Domain.Shared.Helpers;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner;
+using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Services.ServiceFormDesigner
@@ -16,20 +16,17 @@ namespace InvoiceDesigner.Application.Services.ServiceFormDesigner
 		private readonly IFormDesignersRepository _repository;
 		private readonly IMapper _mapper;
 		private readonly IDropItemsService _dropItemsService;
-		private readonly IUserActivityLogService _userActivity;
 
 		public FormDesignersService(IFormDesignersRepository repository,
 									IMapper mapper,
-									IDropItemsService dropItemsService,
-									IUserActivityLogService userActivity)
+									IDropItemsService dropItemsService)
 		{
 			_repository = repository;
 			_mapper = mapper;
 			_dropItemsService = dropItemsService;
-			_userActivity = userActivity;
 		}
 
-		public async Task<IReadOnlyCollection<FormDesignersAutocompleteDto>> GetAllAutocompleteDto()
+		public async Task<IReadOnlyCollection<FormDesignersAutocompleteDto>> GetAllAutocompleteDto(EAccountingDocument typeDocument)
 		{
 			var formDesigners = await _repository.GetAllFormDesignersAsync();
 			return _mapper.Map<IReadOnlyCollection<FormDesignersAutocompleteDto>>(formDesigners);
@@ -56,7 +53,6 @@ namespace InvoiceDesigner.Application.Services.ServiceFormDesigner
 			MapFormDesigner(existsFormDesigner, formDesignerEditDto);
 
 			var entityId = await _repository.CreateFormDesignerAsync(existsFormDesigner);
-			await _userActivity.CreateActivityLog(userId, EDocumentsTypes.FormDesigner, EActivitiesType.Create, entityId);
 
 			return new ResponseRedirect
 			{
@@ -87,7 +83,6 @@ namespace InvoiceDesigner.Application.Services.ServiceFormDesigner
 			MapFormDesigner(existsFormDesigner, formDesignerEditDto);
 
 			var entityId = await _repository.UpdateFormDesignerAsync(existsFormDesigner);
-			await _userActivity.CreateActivityLog(userId, EDocumentsTypes.FormDesigner, EActivitiesType.Update, entityId);
 
 			return new ResponseRedirect
 			{
@@ -99,7 +94,6 @@ namespace InvoiceDesigner.Application.Services.ServiceFormDesigner
 		public async Task<ResponseBoolean> DeleteAsync(int userId, int id)
 		{
 			var existsFormDesigner = await ValidateExistsEntityAsync(id);
-			await _userActivity.CreateActivityLog(userId, EDocumentsTypes.FormDesigner, EActivitiesType.Delete, existsFormDesigner.Id);
 			return new ResponseBoolean
 			{
 				Result = await _repository.DeleteFormDesignerAsync(existsFormDesigner)
@@ -110,6 +104,13 @@ namespace InvoiceDesigner.Application.Services.ServiceFormDesigner
 		{
 			var item = _dropItemsService.AddEmptyBox();
 			return _mapper.Map<DropItemEditDto>(item);
+		}
+
+
+		public async Task<IReadOnlyCollection<FormDesignersAutocompleteDto>> FilteringData(QueryFiltering queryFilter)
+		{
+			var entities = await _repository.FilteringData(queryFilter);
+			return _mapper.Map<IReadOnlyCollection<FormDesignersAutocompleteDto>>(entities);
 		}
 
 		private async Task<FormDesigner> ValidateExistsEntityAsync(int id)
@@ -129,6 +130,7 @@ namespace InvoiceDesigner.Application.Services.ServiceFormDesigner
 		private void MapFormDesigner(FormDesigner existsFormDesigner, FormDesignerEditDto dto)
 		{
 			existsFormDesigner.Name = dto.Name.Trim();
+			existsFormDesigner.AccountingDocument = dto.AccountingDocument;
 			existsFormDesigner.DropItems = _dropItemsService.MapDropItems(dto.DropItems);
 
 			var newSchemes = new List<FormDesignerScheme>();

@@ -297,4 +297,61 @@
   <data name="ShowArchived" xml:space="preserve">
     <value>Mostra archiviati</value>
   </data>
+  <data name="Add" xml:space="preserve">
+    <value>Aggiungi</value>
+  </data>
+  <data name="Test" xml:space="preserve">
+    <value>Test</value>
+  </data>
+  <data name="General" xml:space="preserve">
+    <value>Generale</value>
+  </data>
+  <data name="AddEmptyBox" xml:space="preserve">
+    <value>Aggiungi casella vuota</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>Storico</value>
+  </data>
+  <data name="ChartOfAccounts" xml:space="preserve">
+    <value>Piano dei conti</value>
+  </data>
+  <data name="Asset" xml:space="preserve">
+    <value>Bene</value>
+  </data>
+  <data name="Accounting" xml:space="preserve">
+    <value>Contabilità</value>
+  </data>
+  <data name="Setup" xml:space="preserve">
+    <value>Configurazione</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Registri</value>
+  </data>
+  <data name="DoubleEntrySetup" xml:space="preserve">
+    <value>Configurazione della Contabilità Doppia</value>
+  </data>
+  <data name="AccountingDocument" xml:space="preserve">
+    <value>Documento Contabile</value>
+  </data>
+  <data name="HelpEntryMode" xml:space="preserve">
+    <value>Scegli tra una voce singola cumulativa o la suddivisione in più voci per ogni articolo del prodotto</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Modifica</value>
+  </data>
+  <data name="CancelAndArchiveDocument" xml:space="preserve">
+    <value>Annulla e Archivia Documento</value>
+  </data>
+  <data name="Approve" xml:space="preserve">
+    <value>Approvare</value>
+  </data>
+  <data name="BankReceipt" xml:space="preserve">
+    <value>Ricevuta bancaria</value>
+  </data>
+  <data name="New" xml:space="preserve">
+    <value>Nuovo</value>
+  </data>
+  <data name="BankReceipts" xml:space="preserve">
+    <value>Ricevute bancarie</value>
+  </data>
 </root>

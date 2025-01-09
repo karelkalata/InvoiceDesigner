@@ -3,7 +3,7 @@ using InvoiceDesigner.Domain.Shared.DTOs.Bank;
 using InvoiceDesigner.Domain.Shared.DTOs.Company;
 using InvoiceDesigner.Domain.Shared.DTOs.Currency;
 using InvoiceDesigner.Domain.Shared.DTOs.Customer;
-using InvoiceDesigner.Domain.Shared.DTOs.Invoice;
+using InvoiceDesigner.Domain.Shared.DTOs.InvoiceDTOs;
 using InvoiceDesigner.Domain.Shared.DTOs.InvoiceItem;
 
 namespace InvoiceDesigner.Application.Helpers
@@ -16,7 +16,7 @@ namespace InvoiceDesigner.Application.Helpers
 			var invoicePrintDto = new InvoicePrintDto();
 
 			Random random = new Random();
-			invoicePrintDto.InvoiceNumber = random.Next(10, 99999);
+			invoicePrintDto.Number = random.Next(10, 99999);
 			invoicePrintDto.PONumber = random.Next(10, 99999).ToString();
 			invoicePrintDto.DateTime = DateTime.Now;
 			invoicePrintDto.DueDate = DateTime.Now.AddDays(random.Next(3, 30));
@@ -69,7 +69,7 @@ namespace InvoiceDesigner.Application.Helpers
 				});
 			}
 
-			invoicePrintDto.TotalAmount = invoicePrintDto.InvoiceItems.Sum(item => item.Price * item.Quantity);
+			invoicePrintDto.Amount = invoicePrintDto.InvoiceItems.Sum(item => item.Price * item.Quantity);
 			return invoicePrintDto;
 
 		}

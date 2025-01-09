@@ -1,0 +1,171 @@
+﻿@using InvoiceDesigner.Domain.Shared.DTOs.BankReceiptDTOs
+@using InvoiceDesigner.Domain.Shared.DTOs.DtoFormDesigners
+@using InvoiceDesigner.Domain.Shared.DTOs.InvoiceDTOs
+@using InvoiceDesigner.Domain.Shared.Enums
+@using InvoiceDesigner.Domain.Shared.Extensions
+@using InvoiceDesigner.Domain.Shared.Helpers
+@using InvoiceDesigner.Domain.Shared.QueryParameters
+@using InvoiceDesigner.Domain.Shared.Responses
+
+@if (!_loaded)
+{
+	<MudText Align="Align.Center">@localizer["Loading"]</MudText>
+}
+else
+{
+	<MudDialog Class="p-1 w-auto">
+		<TitleContent>
+			@localizer["BankReceipt"] @(_bankReceiptViewDto.Number == 0 ? @localizer["New"] : @_bankReceiptViewDto.Number)
+		</TitleContent>
+		<DialogContent>
+			<MudDivider />
+			<MudGrid Class="d-flex p-2">
+				<MudItem xs="6">
+					<MudDatePicker @bind-Date="@_bankReceiptViewDto.DateTime"
+								   Label="@localizer["IssuedDate"]"
+								   For="(() => _bankReceiptViewDto.DateTime)" />
+				</MudItem>
+				<MudItem xs="6">
+					<MudTextField Value="@_bankReceiptViewDto.Amount" Label="@_bankReceiptViewDto.CurrencyName" Variant="Variant.Text" Disabled></MudTextField>
+				</MudItem>
+				<MudItem xs="6">
+					<MudTextField Value="@_bankReceiptViewDto.CompanyName" Label="@localizer["Company"]" Variant="Variant.Text" Disabled></MudTextField>
+				</MudItem>
+				<MudItem xs="6">
+					<MudTextField Value="@_bankReceiptViewDto.BankName" Label="@localizer["Bank"]" Variant="Variant.Text" Disabled></MudTextField>
+				</MudItem>
+				<MudItem xs="12">
+					<MudTextField Value="@_bankReceiptViewDto.CustomerName" Label="@localizer["Customer"]" Variant="Variant.Text" Disabled></MudTextField>
+				</MudItem>
+
+				<MudItem xs="3">
+					<MudText Typo="Typo.body2">@localizer["Status"]: </MudText>
+				</MudItem>
+				<MudItem xs="9">
+					<select @bind="_bankReceiptViewDto.Status" class="form-select form-select-sm">
+						<option value="@EStatus.Drafted">@EStatus.Drafted</option>
+						<option value="@EStatus.Approved">@EStatus.Approved</option>
+						<option value="@EStatus.Canceled">@EStatus.Canceled</option>
+					</select>
+				</MudItem>
+				@*
+				<MudItem xs="8" Style="display:flex;">
+					<MudAutocomplete T="FormDesignersAutocompleteDto" Clearable Dense
+									 Value="_selectedDesignersAutocompleteDto"
+									 Label="@localizer["SelectPDFForm"]"
+									 SearchFunc="@((value, token) => FilteringDataWithApi<FormDesignersAutocompleteDto>(value, "FormDesigner", token))"
+									 ToStringFunc="@(c => c?.Name ?? "")" />
+				</MudItem>
+				<MudItem xs="4" Style="display:flex;">
+					<MudTooltip Text="@localizer["PleaseSaveTheDocument"]">
+						<MudButton Variant="Variant.Filled"
+								   Disabled="@(_selectedDesignersAutocompleteDto == null || id == 0)"
+								   OnClick="GetPrintInvoiceUrl"
+								   Size="Size.Large"
+								   StartIcon="@Icons.Material.Filled.Download"
+								   Color="Color.Secondary">
+							<MudText Typo="Typo.body2">
+								@localizer["Get"]
+							</MudText>
+						</MudButton>
+
+					</MudTooltip>
+				</MudItem>
+				*@
+
+			</MudGrid>
+			<MudDivider />
+		</DialogContent>
+
+		<DialogActions>
+			<MudCheckBox @bind-Value="_bankReceiptViewDto.IsArchived" Label="Archived" />
+			<MudIconButton Icon="@Icons.Material.Filled.Save" Variant="Variant.Filled" Size="Size.Medium" Color="Color.Primary" OnClick="Submit" />
+			<MudButton Variant="Variant.Outlined" Size="Size.Medium" Color="Color.Primary" OnClick="SaveAndClose">
+				@localizer["Save"] & @localizer["Close"]
+			</MudButton>
+		</DialogActions>
+
+	</MudDialog>
+
+ 
+}
+
+@code {
+	[CascadingParameter]
+	private MudDialogInstance MudDialog { get; set; } = null!;
+
+	[Parameter]
+	public int id { get; set; }
+
+	[Parameter]
+	public int InvoiceId { get; set; }
+
+	private BankReceiptViewDto _bankReceiptViewDto = null!;
+
+	private bool _loaded = false;
+	private List<FormDesignersAutocompleteDto> _formDesignersAutocompleteDto = new();
+	private FormDesignersAutocompleteDto? _selectedDesignersAutocompleteDto = null;
+
+	private void Cancel() => MudDialog.Cancel();
+
+	protected override async Task OnInitializedAsync()
+	{
+		_formDesignersAutocompleteDto = await _httpHelper.GetDataFromAPI<List<FormDesignersAutocompleteDto>>($"api/FormDesigner/GetAllAutocompleteDto");
+
+		var queryParameters = new QueryGetEntity
+			{
+				EntityId = id,
+				ChildEntityId = InvoiceId
+			};
+		string queryString = queryParameters.ToQueryString();
+
+		_bankReceiptViewDto = await _httpHelper.GetDataFromAPI<BankReceiptViewDto>($"api/BankReceipts/{id}?{queryString}");
+		id = _bankReceiptViewDto.Id;
+		_loaded = true;
+	}
+
+	private async Task Submit()
+	{
+		var editedDto = new BankReceiptCreateDto
+			{
+				Id = _bankReceiptViewDto.Id,
+				DateTime = _bankReceiptViewDto.DateTime,
+				InvoiceId = _bankReceiptViewDto.InvoiceId,
+				IsArchived = _bankReceiptViewDto.IsArchived,
+				Status = _bankReceiptViewDto.Status
+			};
+		var newId = await _httpHelper.SendRequest("BankReceipts", editedDto, id > 0);
+		if (newId != null && newId.HasValue && newId > 0)
+		{
+			id = (int)newId;
+			_bankReceiptViewDto.Id = id;
+		}
+	}
+
+	private async Task<IEnumerable<T>> FilteringDataWithApi<T>(string value, string apiUrl, CancellationToken token) where T : IHasIdAndName
+	{
+		var queryParameters = new QueryFiltering
+			{
+				AccountingDocument = EAccountingDocument.BankReceipt,
+				SearchString = value
+			};
+		string queryString = queryParameters.ToQueryString();
+
+		return await _httpHelper.GetDataFromAPI<IEnumerable<T>>($"api/{apiUrl}/FilteringData?{queryString}");
+	}
+
+	private async Task SaveAndClose()
+	{
+		var editedDto = new BankReceiptCreateDto
+			{
+				Id = _bankReceiptViewDto.Id,
+				DateTime = _bankReceiptViewDto.DateTime,
+				InvoiceId = _bankReceiptViewDto.InvoiceId,
+				IsArchived = _bankReceiptViewDto.IsArchived,
+				Status = _bankReceiptViewDto.Status
+			};
+		await _httpHelper.SendRequest("BankReceipts", editedDto, id > 0);
+		MudDialog.Close();
+	}
+
+}

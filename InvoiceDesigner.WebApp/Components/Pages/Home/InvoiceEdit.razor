@@ -6,8 +6,9 @@
 @using InvoiceDesigner.Domain.Shared.DTOs.Company
 @using InvoiceDesigner.Domain.Shared.DTOs.Currency
 @using InvoiceDesigner.Domain.Shared.DTOs.Customer
-@using InvoiceDesigner.Domain.Shared.DTOs.Invoice
+@using InvoiceDesigner.Domain.Shared.DTOs.InvoiceDTOs
 @using InvoiceDesigner.Domain.Shared.DTOs.Product
+@using InvoiceDesigner.Domain.Shared.Enums
 @using InvoiceDesigner.Domain.Shared.Helpers
 @using InvoiceDesigner.Domain.Shared.Responses
 @inject IJSRuntime JS
@@ -31,7 +32,7 @@
 									<MudAutocomplete T="CompanyAutocompleteDto" Required Dense Clearable
 													 Value="@_invoiceEditDto.Company"
 													 ValueChanged="OnCompanyChanged"
-													 Disabled="@(id.HasValue && id > 0)"
+													 Disabled="@(id > 0)"
 													 Label="@localizer["Company"]"
 													 SearchFunc="@((value, token) => SearchElements<CompanyAutocompleteDto>(value, _companiesAutocomplete, token))"
 													 ToStringFunc="@(c => c?.Name ?? "")"
@@ -75,10 +76,10 @@
 								</ColGroup>
 								<Columns>
 									<SelectColumn />
-									<PropertyColumn Property="x => x.Product" Title="@localizer["Product"]">
+									<PropertyColumn Property="x => x.Item" Title="@localizer["Item"]">
 										<EditTemplate>
 											<MudAutocomplete T="ProductAutocompleteDto" Required Dense Clearable
-															 Value="@context.Item.Product"
+															 Value="@context.Item.Item"
 															 ValueChanged="@(product => OnProductSelected(product, context.Item))"
 															 Placeholder="@localizer["SelectProduct"]"
 															 SearchFunc="@((value, token) => FilteringDataWithApi<ProductAutocompleteDto>(value, "Products", token))"
@@ -128,7 +129,7 @@
 
 							<MudGrid Class="d-flex pa-2">
 								<MudItem xs="6">
-									<MudTextField @bind-Value="@_invoiceEditDto.InvoiceNumber" Disabled="true" Label="@localizer["InvoiceNumber"]" />
+									<MudTextField @bind-Value="@_invoiceEditDto.Number" Disabled="true" Label="@localizer["Number"]" />
 								</MudItem>
 								<MudItem xs="6">
 									<MudCheckBox @bind-Value="@_invoiceEditDto.EnabledVat" Label="@($"{@localizer["VAT"]}: {_invoiceEditDto.Vat}%")" @onclick="DeleteSelectedItems"></MudCheckBox>
@@ -149,7 +150,7 @@
 								</MudItem>
 
 								<MudItem xs="12">
-									<MudAutocomplete T="CustomerAutocompleteDto" Required Dense
+									<MudAutocomplete T="CustomerAutocompleteDto" Required Dense Clearable
 													 @bind-Value="_invoiceEditDto.Customer"
 													 Label="@localizer["Customer"]"
 													 SearchFunc="@((value, token) => FilteringDataWithApi<CustomerAutocompleteDto>(value, "Customers", token))"
@@ -207,36 +208,46 @@
 										<MudButton Variant="Variant.Filled"
 												   Disabled="@(_selectedDesignersAutocompleteDto == null || id == 0)"
 												   OnClick="GetPrintInvoiceUrl"
-												   Size="Size.Large"
+												   Size="Size.Small"
 												   StartIcon="@Icons.Material.Filled.Download"
 												   Color="Color.Secondary">
-											@localizer["Get"]
+											<MudText Typo="Typo.body2">
+												@localizer["Get"]
+											</MudText>
 										</MudButton>
 									</MudTooltip>
 								</MudItem>
 							</MudGrid>
 						</MudCardContent>
 						<MudCardActions>
-
-							<MudGrid Class="d-flex">
-								<MudItem xs="6" Style="display:flex;" Class="justify-content-start">
-
+							<MudGrid>
+								<MudItem xs="4">
+									<select @bind="_invoiceEditDto.Status" class="form-select form-select-sm">
+										<option value="@EStatus.Drafted">@EStatus.Drafted</option>
+										<option value="@EStatus.Approved">@EStatus.Approved</option>
+										<option value="@EStatus.Canceled">@EStatus.Canceled</option>
+									</select>
+								</MudItem>
+								<MudItem xs="4">
 									<MudButton Variant="Variant.Filled"
-											   Size="Size.Large"
+											   Size="Size.Small"
 											   StartIcon="@Icons.Material.Filled.Save"
 											   Color="Color.Primary"
 											   ButtonType="ButtonType.Submit">
-										@localizer["Save"]
+										<MudText Typo="Typo.body2">
+											@localizer["Save"]
+										</MudText>
 									</MudButton>
-
 								</MudItem>
-								<MudItem xs="6" Style="display:flex;" Class="justify-content-end">
-									<MudButton Variant="Variant.Outlined"
+								<MudItem xs="4">
+									<MudButton Variant="Variant.Filled"
 											   Href="/Invoices"
-											   Size="Size.Large"
-											   StartIcon="@Icons.Material.Filled.Save"
-											   Color="Color.Primary">
-										@localizer["Close"]
+											   Size="Size.Small"
+											   StartIcon="@Icons.Material.Filled.Close"
+											   Color="Color.Default">
+										<MudText Typo="Typo.body2">
+											@localizer["Close"]
+										</MudText>
 									</MudButton>
 								</MudItem>
 							</MudGrid>
@@ -251,16 +262,17 @@
 </MudContainer>
 <script>
 	function openPdf(pdfDataUrl) {
-		if (pdfDataUrl) {
-			window.open(pdfDataUrl, '_blank');
-		}
+	if (pdfDataUrl) {
+	window.open(pdfDataUrl, '_blank');
+	}
 	}
 </script>
 @code {
 	[Parameter]
-	public int? id { get; set; }
+	public int id { get; set; }
 
 	private bool _isLoaded;
+
 	private InvoiceEditDto _invoiceEditDto = new();
 	private decimal _subTotal
 	{
@@ -311,7 +323,7 @@
 		_currenciesAutocomplete = infoForNewInvoiceDto.Currencies.ToList();
 
 
-		if (id.HasValue && id > 0)
+		if (id > 0)
 		{
 			_invoiceEditDto = await _httpHelper.GetDataFromAPI<InvoiceEditDto>($"api/Invoices/{id}");
 			_banksAutocomplete = _invoiceEditDto.Company.Banks.ToList();
@@ -364,7 +376,6 @@
 		}
 	}
 
-
 	private void OnCurrencyChanged(CurrencyAutocompleteDto currency)
 	{
 		if (currency == null)
@@ -384,12 +395,10 @@
 		StateHasChanged();
 	}
 
-
 	private void AddInvoiceItems()
 	{
 		_invoiceEditDto.InvoiceItems.Add(new InvoiceItemDto());
 	}
-
 
 	private void DeleteSelectedItems()
 	{
@@ -401,25 +410,30 @@
 		}
 	}
 
-
 	private void OnProductSelected(ProductAutocompleteDto product, InvoiceItemDto item)
 	{
 		if (product != null && _invoiceEditDto.Currency != null)
 		{
-			item.Product = product;
+			item.Item = product;
 			item.Price = product.PriceByCurrency.GetValueOrDefault(_invoiceEditDto.Currency.Id, 0);
 		}
 	}
 
 	private async Task OnValidSubmit()
 	{
-		id = await _httpHelper.SendRequest("Invoices", _invoiceEditDto, id.HasValue && id > 0);
+		var newId = await _httpHelper.SendRequest("Invoices", _invoiceEditDto, id > 0);
+		if (newId != null)
+		{
+			id = (int)newId;
+			_invoiceEditDto.Id = id;
+		}
+
+
 		Nav.NavigateTo($"/Invoices/{id}");
 	}
 
 	private Task<IEnumerable<T>> SearchElements<T>(string value, IEnumerable<T> items, CancellationToken token) where T : IHasIdAndName
 	{
-
 		if (string.IsNullOrEmpty(value))
 			return Task.FromResult(items.AsEnumerable());
 
@@ -427,7 +441,6 @@
 						.Where(c => c.Name.Contains(value, StringComparison.OrdinalIgnoreCase))
 						.AsEnumerable());
 	}
-
 
 	private async Task<IEnumerable<T>> FilteringDataWithApi<T>(string value, string apiUrl, CancellationToken token) where T : IHasIdAndName
 	{
@@ -440,4 +453,6 @@
 		var client = await _httpHelper.CreateHttpClient();
 		await JS.InvokeVoidAsync("open", $"{client?.BaseAddress?.ToString()}api/PrintInvoice/{PdfGuid.Guid}", "_blank");
 	}
+
+
 }

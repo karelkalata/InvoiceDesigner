@@ -297,4 +297,61 @@
   <data name="ShowArchived" xml:space="preserve">
     <value>Zobrazit archivované</value>
   </data>
+  <data name="Add" xml:space="preserve">
+    <value>Přidat</value>
+  </data>
+  <data name="Test" xml:space="preserve">
+    <value>Test</value>
+  </data>
+  <data name="General" xml:space="preserve">
+    <value>Obecné</value>
+  </data>
+  <data name="AddEmptyBox" xml:space="preserve">
+    <value>Přidat prázdné pole</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>Historie</value>
+  </data>
+  <data name="ChartOfAccounts" xml:space="preserve">
+    <value>Účetní rozvrh</value>
+  </data>
+  <data name="Asset" xml:space="preserve">
+    <value>Aktivum</value>
+  </data>
+  <data name="Accounting" xml:space="preserve">
+    <value>Účetnictví</value>
+  </data>
+  <data name="Setup" xml:space="preserve">
+    <value>Nastavení</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Záznamy</value>
+  </data>
+  <data name="DoubleEntrySetup" xml:space="preserve">
+    <value>Nastavení podvojného účetnictví</value>
+  </data>
+  <data name="AccountingDocument" xml:space="preserve">
+    <value>Účetní dokument</value>
+  </data>
+  <data name="HelpEntryMode" xml:space="preserve">
+    <value>Vyberte mezi kumulativním jednotlivým zápisem nebo rozdělením do více zápisů pro každou položku produktu</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Upravit</value>
+  </data>
+  <data name="CancelAndArchiveDocument" xml:space="preserve">
+    <value>Zrušit a archivovat dokument</value>
+  </data>
+  <data name="Approve" xml:space="preserve">
+    <value>Schválit</value>
+  </data>
+  <data name="BankReceipt" xml:space="preserve">
+    <value>Bankovní příjem</value>
+  </data>
+  <data name="New" xml:space="preserve">
+    <value>Nový</value>
+  </data>
+  <data name="BankReceipts" xml:space="preserve">
+    <value>Bankovní příjmy</value>
+  </data>
 </root>

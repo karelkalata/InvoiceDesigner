@@ -79,11 +79,47 @@ namespace InvoiceDesigner.Localization.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Accounting.
+        /// </summary>
+        public static string Accounting {
+            get {
+                return ResourceManager.GetString("Accounting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Accounting Document.
+        /// </summary>
+        public static string AccountingDocument {
+            get {
+                return ResourceManager.GetString("AccountingDocument", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add.
+        /// </summary>
+        public static string Add {
+            get {
+                return ResourceManager.GetString("Add", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Bank Account.
         /// </summary>
         public static string AddBankAccount {
             get {
                 return ResourceManager.GetString("AddBankAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Empty Box.
+        /// </summary>
+        public static string AddEmptyBox {
+            get {
+                return ResourceManager.GetString("AddEmptyBox", resourceCulture);
             }
         }
         
@@ -133,6 +169,24 @@ namespace InvoiceDesigner.Localization.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Approve.
+        /// </summary>
+        public static string Approve {
+            get {
+                return ResourceManager.GetString("Approve", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Asset.
+        /// </summary>
+        public static string Asset {
+            get {
+                return ResourceManager.GetString("Asset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bank.
         /// </summary>
         public static string Bank {
@@ -142,11 +196,47 @@ namespace InvoiceDesigner.Localization.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bank Receipt.
+        /// </summary>
+        public static string BankReceipt {
+            get {
+                return ResourceManager.GetString("BankReceipt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bank Receipts.
+        /// </summary>
+        public static string BankReceipts {
+            get {
+                return ResourceManager.GetString("BankReceipts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string Cancel {
             get {
                 return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel And Archive Document.
+        /// </summary>
+        public static string CancelAndArchiveDocument {
+            get {
+                return ResourceManager.GetString("CancelAndArchiveDocument", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Chart Of Accounts.
+        /// </summary>
+        public static string ChartOfAccounts {
+            get {
+                return ResourceManager.GetString("ChartOfAccounts", resourceCulture);
             }
         }
         
@@ -277,6 +367,15 @@ namespace InvoiceDesigner.Localization.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Double-Entry Setup.
+        /// </summary>
+        public static string DoubleEntrySetup {
+            get {
+                return ResourceManager.GetString("DoubleEntrySetup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Do you really want to delete?.
         /// </summary>
         public static string DoYouReallyWantToDelete {
@@ -291,6 +390,15 @@ namespace InvoiceDesigner.Localization.Resources {
         public static string DueDate {
             get {
                 return ResourceManager.GetString("DueDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit.
+        /// </summary>
+        public static string Edit {
+            get {
+                return ResourceManager.GetString("Edit", resourceCulture);
             }
         }
         
@@ -313,11 +421,38 @@ namespace InvoiceDesigner.Localization.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to General.
+        /// </summary>
+        public static string General {
+            get {
+                return ResourceManager.GetString("General", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Get.
         /// </summary>
         public static string Get {
             get {
                 return ResourceManager.GetString("Get", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose between a cumulative single entry or splitting into multiple entries for each product item..
+        /// </summary>
+        public static string HelpEntryMode {
+            get {
+                return ResourceManager.GetString("HelpEntryMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to History.
+        /// </summary>
+        public static string History {
+            get {
+                return ResourceManager.GetString("History", resourceCulture);
             }
         }
         
@@ -376,6 +511,15 @@ namespace InvoiceDesigner.Localization.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Logs.
+        /// </summary>
+        public static string Logs {
+            get {
+                return ResourceManager.GetString("Logs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mark As Deleted.
         /// </summary>
         public static string MarkAsDeleted {
@@ -390,6 +534,15 @@ namespace InvoiceDesigner.Localization.Resources {
         public static string Name {
             get {
                 return ResourceManager.GetString("Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New.
+        /// </summary>
+        public static string New {
+            get {
+                return ResourceManager.GetString("New", resourceCulture);
             }
         }
         
@@ -520,6 +673,15 @@ namespace InvoiceDesigner.Localization.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Setup.
+        /// </summary>
+        public static string Setup {
+            get {
+                return ResourceManager.GetString("Setup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show Archived.
         /// </summary>
         public static string ShowArchived {
@@ -561,6 +723,15 @@ namespace InvoiceDesigner.Localization.Resources {
         public static string TaxId {
             get {
                 return ResourceManager.GetString("TaxId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Test.
+        /// </summary>
+        public static string Test {
+            get {
+                return ResourceManager.GetString("Test", resourceCulture);
             }
         }
         

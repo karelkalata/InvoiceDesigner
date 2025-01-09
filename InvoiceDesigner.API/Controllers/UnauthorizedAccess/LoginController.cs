@@ -1,4 +1,4 @@
-﻿using InvoiceDesigner.Application.Interfaces;
+﻿using InvoiceDesigner.Application.Interfaces.InterfacesUser;
 using InvoiceDesigner.Domain.Shared.DTOs.User;
 using InvoiceDesigner.Domain.Shared.Responses;
 using Microsoft.AspNetCore.Mvc;

@@ -178,7 +178,7 @@
     <value>Срок оплаты</value>
   </data>
   <data name="AdditionalInfo" xml:space="preserve">
-    <value>Добавить цену</value>
+    <value>Дополнительная информация</value>
   </data>
   <data name="NoBanksAvailable" xml:space="preserve">
     <value>Банки недоступны</value>
@@ -193,13 +193,13 @@
     <value>Клиенты</value>
   </data>
   <data name="Products" xml:space="preserve">
-    <value>Продукты</value>
+    <value>Каталог</value>
   </data>
   <data name="Price" xml:space="preserve">
     <value>Цена</value>
   </data>
   <data name="AddPrice" xml:space="preserve">
-    <value>Дополнительная информация</value>
+    <value>Добавить цену</value>
   </data>
   <data name="DeletePrice" xml:space="preserve">
     <value>Удалить цену</value>
@@ -238,7 +238,7 @@
     <value>Удалить элемент</value>
   </data>
   <data name="InvoiceNumber" xml:space="preserve">
-    <value>Неверные учетные данные</value>
+    <value>Номер</value>
   </data>
   <data name="IssuedDate" xml:space="preserve">
     <value>Дата выставления</value>
@@ -274,7 +274,7 @@
     <value>Сущность не найдена</value>
   </data>
   <data name="InvalidCredentials" xml:space="preserve">
-    <value>Счета</value>
+    <value>Неверные учетные данные</value>
   </data>
   <data name="DoYouReallyWantToDelete" xml:space="preserve">
     <value>Вы действительно хотите удалить?</value>
@@ -296,5 +296,62 @@
   </data>
   <data name="ShowArchived" xml:space="preserve">
     <value>Показать архивированные</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Добавить</value>
+  </data>
+  <data name="Test" xml:space="preserve">
+    <value>Test</value>
+  </data>
+  <data name="General" xml:space="preserve">
+    <value>Общее</value>
+  </data>
+  <data name="AddEmptyBox" xml:space="preserve">
+    <value>Добавить пустую ячейку</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>История</value>
+  </data>
+  <data name="ChartOfAccounts" xml:space="preserve">
+    <value>План Счетов</value>
+  </data>
+  <data name="Asset" xml:space="preserve">
+    <value>Актив</value>
+  </data>
+  <data name="Accounting" xml:space="preserve">
+    <value>Бухгалтерия</value>
+  </data>
+  <data name="Setup" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Журнал логов</value>
+  </data>
+  <data name="DoubleEntrySetup" xml:space="preserve">
+    <value>Настройка проводок</value>
+  </data>
+  <data name="AccountingDocument" xml:space="preserve">
+    <value>Бухгалтерский документ</value>
+  </data>
+  <data name="HelpEntryMode" xml:space="preserve">
+    <value>Выберите между кумулятивной единой записью или разделением на несколько записей для каждого товара</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Редактировать</value>
+  </data>
+  <data name="CancelAndArchiveDocument" xml:space="preserve">
+    <value>Отменить и архивировать документ</value>
+  </data>
+  <data name="Approve" xml:space="preserve">
+    <value>Утвердить</value>
+  </data>
+  <data name="BankReceipt" xml:space="preserve">
+    <value> Банковская квитанция</value>
+  </data>
+  <data name="New" xml:space="preserve">
+    <value>Новый</value>
+  </data>
+  <data name="BankReceipts" xml:space="preserve">
+    <value>Банковские квитанции</value>
   </data>
 </root>

@@ -17,105 +17,7 @@ namespace InvoiceDesigner.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.10");
 
-            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Accounting.AccountingChartOfAccounts", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Asset1")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Asset2")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Asset3")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AccountingChartOfAccounts");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1030,
-                            Asset1 = 3,
-                            Asset2 = 4,
-                            Asset3 = 0,
-                            Name = "Bank: Operating"
-                        });
-                });
-
-            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Accounting.AccountingDoubleEntry", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("Count")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Credit")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CreditAsset1")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CreditAsset2")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CreditAsset3")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CurrencyId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("DateTime")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Debit")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("DebitAsset1")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("DebitAsset2")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("DebitAsset3")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("DocumentId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("DocumentType")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Credit");
-
-                    b.HasIndex("CurrencyId");
-
-                    b.HasIndex("Debit");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AccountingDoubleEntries");
-                });
-
-            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Bank", b =>
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Directories.Bank", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -155,7 +57,7 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.ToTable("Banks");
                 });
 
-            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Company", b =>
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Directories.Company", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -211,7 +113,7 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.ToTable("Companies");
                 });
 
-            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Currency", b =>
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Directories.Currency", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -261,7 +163,7 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Customer", b =>
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Directories.Customer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -287,11 +189,171 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Invoice", b =>
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Directories.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Directories.ProductPrice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CurrencyId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CurrencyId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductPrice");
+                });
+
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Directories.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Locale")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Login")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Login")
+                        .IsUnique();
+
+                    b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsAdmin = true,
+                            IsDeleted = false,
+                            Locale = "en-US",
+                            Login = "admin",
+                            Name = "Super Admin",
+                            PasswordHash = "1708D30988E562DD2958B50B77F0D61C47C59FD7555F3B91AB02D486F361504F7E0C569157D104D99E5076BFF20AF9EE38482A63BA10993B28C38F9936668010",
+                            PasswordSalt = "7A6604F49A4E8EFCBB8B6CA86305FB0E4E14F817AE6D8726DE7A56463581A1D21D68699970298BBFE2182AE02366BCBB56C14DF47B9D000AF0C5D74DCED88953"
+                        });
+                });
+
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Documents.BankReceipt", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Amount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasDefaultValue(0m);
+
+                    b.Property<int>("BankId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CurrencyId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("InvoiceId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Number")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BankId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("CurrencyId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("InvoiceId")
+                        .IsUnique();
+
+                    b.ToTable("BankReceipts");
+                });
+
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Documents.Invoice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Amount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasDefaultValue(0m);
 
                     b.Property<int>("BankId")
                         .HasColumnType("INTEGER");
@@ -316,13 +378,13 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                         .HasColumnType("INTEGER")
                         .HasDefaultValue(true);
 
-                    b.Property<int>("InvoiceNumber")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsArchived")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Number")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("PONumber")
@@ -331,11 +393,6 @@ namespace InvoiceDesigner.Infrastructure.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("TotalAmount")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValue(0m);
 
                     b.Property<decimal>("Vat")
                         .ValueGeneratedOnAdd()
@@ -355,7 +412,7 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.ToTable("Invoices");
                 });
 
-            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.InvoiceItem", b =>
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Documents.InvoiceItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -364,13 +421,13 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.Property<int>("InvoiceId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("ItemId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<decimal>("Price")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT")
                         .HasDefaultValue(0m);
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("INTEGER");
 
                     b.Property<decimal>("Quantity")
                         .ValueGeneratedOnAdd()
@@ -381,9 +438,197 @@ namespace InvoiceDesigner.Infrastructure.Migrations
 
                     b.HasIndex("InvoiceId");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("ItemId");
 
                     b.ToTable("InvoiceItems");
+                });
+
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.ModelsAccounting.ChartOfAccounts", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Asset1")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Asset2")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Asset3")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Code")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ChartOfAccounts");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Asset1 = 2,
+                            Asset2 = 0,
+                            Asset3 = 0,
+                            Code = 1200,
+                            Name = "Accounts Receivable"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Asset1 = 1,
+                            Asset2 = 0,
+                            Asset3 = 0,
+                            Code = 1030,
+                            Name = "Bank: Operating"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Asset1 = 0,
+                            Asset2 = 0,
+                            Asset3 = 0,
+                            Code = 2200,
+                            Name = "Sales Tax"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Asset1 = 3,
+                            Asset2 = 0,
+                            Asset3 = 0,
+                            Code = 4000,
+                            Name = "Sales"
+                        });
+                });
+
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.ModelsAccounting.DoubleEntry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AccountingDocument")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Count")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Credit")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CreditAsset1")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CreditAsset2")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CreditAsset3")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CurrencyId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Debit")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DebitAsset1")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DebitAsset2")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DebitAsset3")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DocumentId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("Credit");
+
+                    b.HasIndex("CurrencyId");
+
+                    b.HasIndex("Debit");
+
+                    b.ToTable("Accounting");
+                });
+
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.ModelsAccounting.DoubleEntrySetup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AccountingDocument")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AmountType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Credit")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Debit")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EntryMode")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Credit");
+
+                    b.HasIndex("Debit");
+
+                    b.ToTable("DoubleEntriesSetup");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AccountingDocument = 0,
+                            AmountType = 1,
+                            Credit = 4,
+                            Debit = 1,
+                            EntryMode = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AccountingDocument = 0,
+                            AmountType = 2,
+                            Credit = 3,
+                            Debit = 1,
+                            EntryMode = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AccountingDocument = 1,
+                            AmountType = 0,
+                            Credit = 1,
+                            Debit = 2,
+                            EntryMode = 1
+                        });
                 });
 
             modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner.CssStyle", b =>
@@ -1136,8 +1381,8 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                             FormDesignerSchemeId = 1,
                             Selector = "coor_0_0",
                             StartSelector = "_Invoice",
-                            UniqueId = "{Invoice.InvoiceNumber}",
-                            Value = "Invoice #{Invoice.InvoiceNumber}"
+                            UniqueId = "{Invoice.Number}",
+                            Value = "Invoice #{Invoice.Number}"
                         },
                         new
                         {
@@ -1282,6 +1527,9 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("AccountingDocument")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -1294,6 +1542,7 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
+                            AccountingDocument = 0,
                             Name = "default"
                         });
                 });
@@ -1566,140 +1815,6 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.ToTable("PrintInvoices");
                 });
 
-            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Product", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.ProductPrice", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CurrencyId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CurrencyId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductPrice");
-                });
-
-            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsAdmin")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Locale")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Login")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PasswordSalt")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Login")
-                        .IsUnique();
-
-                    b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            IsAdmin = true,
-                            IsDeleted = false,
-                            Locale = "en-US",
-                            Login = "admin",
-                            Name = "Super Admin",
-                            PasswordHash = "1708D30988E562DD2958B50B77F0D61C47C59FD7555F3B91AB02D486F361504F7E0C569157D104D99E5076BFF20AF9EE38482A63BA10993B28C38F9936668010",
-                            PasswordSalt = "7A6604F49A4E8EFCBB8B6CA86305FB0E4E14F817AE6D8726DE7A56463581A1D21D68699970298BBFE2182AE02366BCBB56C14DF47B9D000AF0C5D74DCED88953"
-                        });
-                });
-
-            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.UserActivityLog", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ActivitiesType")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("DateTime")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("DocumentTypes")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("EntityId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("EntityNumber")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("UserId1")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("UserId1");
-
-                    b.ToTable("UserActivityLogs");
-                });
-
             modelBuilder.Entity("UserCompany", b =>
                 {
                     b.Property<int>("ActivityUserId")
@@ -1715,50 +1830,15 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.ToTable("UserCompany");
                 });
 
-            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Accounting.AccountingDoubleEntry", b =>
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Directories.Bank", b =>
                 {
-                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Accounting.AccountingChartOfAccounts", "CreditAccount")
-                        .WithMany()
-                        .HasForeignKey("Credit")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Currency", "Currency")
-                        .WithMany()
-                        .HasForeignKey("CurrencyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Accounting.AccountingChartOfAccounts", "DebitAccount")
-                        .WithMany()
-                        .HasForeignKey("Debit")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("CreditAccount");
-
-                    b.Navigation("Currency");
-
-                    b.Navigation("DebitAccount");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Bank", b =>
-                {
-                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Company", "Company")
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Directories.Company", "Company")
                         .WithMany("Banks")
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Currency", "Currency")
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Directories.Currency", "Currency")
                         .WithMany()
                         .HasForeignKey("CurrencyId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1769,9 +1849,9 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.Navigation("Currency");
                 });
 
-            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Company", b =>
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Directories.Company", b =>
                 {
-                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Currency", "Currency")
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Directories.Currency", "Currency")
                         .WithMany()
                         .HasForeignKey("CurrencyId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1780,27 +1860,87 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.Navigation("Currency");
                 });
 
-            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Invoice", b =>
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Directories.ProductPrice", b =>
                 {
-                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Bank", "Bank")
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Directories.Currency", "Currency")
+                        .WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Directories.Product", null)
+                        .WithMany("ProductPrice")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Currency");
+                });
+
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Documents.BankReceipt", b =>
+                {
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Directories.Bank", "Bank")
                         .WithMany()
                         .HasForeignKey("BankId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Company", "Company")
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Directories.Company", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Currency", "Currency")
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Directories.Currency", "Currency")
                         .WithMany()
                         .HasForeignKey("CurrencyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Customer", "Customer")
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Directories.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Documents.Invoice", "Invoice")
+                        .WithOne()
+                        .HasForeignKey("InvoiceDesigner.Domain.Shared.Models.Documents.BankReceipt", "InvoiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Bank");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Currency");
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Invoice");
+                });
+
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Documents.Invoice", b =>
+                {
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Directories.Bank", "Bank")
+                        .WithMany()
+                        .HasForeignKey("BankId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Directories.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Directories.Currency", "Currency")
+                        .WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Directories.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1815,23 +1955,77 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.InvoiceItem", b =>
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Documents.InvoiceItem", b =>
                 {
-                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Invoice", "Invoice")
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Documents.Invoice", "Invoice")
                         .WithMany("InvoiceItems")
                         .HasForeignKey("InvoiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Product", "Product")
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Directories.Product", "Item")
                         .WithMany()
-                        .HasForeignKey("ProductId")
+                        .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Invoice");
 
-                    b.Navigation("Product");
+                    b.Navigation("Item");
+                });
+
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.ModelsAccounting.DoubleEntry", b =>
+                {
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Directories.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.ModelsAccounting.ChartOfAccounts", "CreditAccount")
+                        .WithMany()
+                        .HasForeignKey("Credit")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Directories.Currency", "Currency")
+                        .WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.ModelsAccounting.ChartOfAccounts", "DebitAccount")
+                        .WithMany()
+                        .HasForeignKey("Debit")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("CreditAccount");
+
+                    b.Navigation("Currency");
+
+                    b.Navigation("DebitAccount");
+                });
+
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.ModelsAccounting.DoubleEntrySetup", b =>
+                {
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.ModelsAccounting.ChartOfAccounts", "CreditAccount")
+                        .WithMany()
+                        .HasForeignKey("Credit")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.ModelsAccounting.ChartOfAccounts", "DebitAccount")
+                        .WithMany()
+                        .HasForeignKey("Debit")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CreditAccount");
+
+                    b.Navigation("DebitAccount");
                 });
 
             modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner.CssStyle", b =>
@@ -1863,61 +2057,32 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.ProductPrice", b =>
-                {
-                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Currency", "Currency")
-                        .WithMany()
-                        .HasForeignKey("CurrencyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Product", null)
-                        .WithMany("ProductPrice")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Currency");
-                });
-
-            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.UserActivityLog", b =>
-                {
-                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("UserCompany", b =>
                 {
-                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.User", null)
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Directories.User", null)
                         .WithMany()
                         .HasForeignKey("ActivityUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Company", null)
+                    b.HasOne("InvoiceDesigner.Domain.Shared.Models.Directories.Company", null)
                         .WithMany()
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Company", b =>
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Directories.Company", b =>
                 {
                     b.Navigation("Banks");
                 });
 
-            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Invoice", b =>
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Directories.Product", b =>
+                {
+                    b.Navigation("ProductPrice");
+                });
+
+            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Documents.Invoice", b =>
                 {
                     b.Navigation("InvoiceItems");
                 });
@@ -1932,11 +2097,6 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.Navigation("DropItems");
 
                     b.Navigation("Schemes");
-                });
-
-            modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Product", b =>
-                {
-                    b.Navigation("ProductPrice");
                 });
 #pragma warning restore 612, 618
         }

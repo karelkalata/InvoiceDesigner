@@ -1,7 +1,6 @@
 ﻿using InvoiceDesigner.Application.Authorization;
-using InvoiceDesigner.Application.Interfaces;
+using InvoiceDesigner.Application.Interfaces.InterfacesUser;
 using InvoiceDesigner.Domain.Shared.DTOs.User;
-using InvoiceDesigner.Domain.Shared.Enums;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Responses;
 using Microsoft.Extensions.Configuration;
@@ -16,13 +15,11 @@ namespace InvoiceDesigner.Application.Services
 	{
 		private readonly IUserRepository _repository;
 		private readonly IConfiguration _configuration;
-		private readonly IUserActivityLogService _serviceUserActivityLog;
 
-		public AuthorizationUserService(IUserRepository repository, IConfiguration configuration, IUserActivityLogService userActivity)
+		public AuthorizationUserService(IUserRepository repository, IConfiguration configuration)
 		{
 			_repository = repository;
 			_configuration = configuration;
-			_serviceUserActivityLog = userActivity;
 		}
 
 		public async Task<ResponseJwtToken> LoginAsync(UserLoginDto dto)
@@ -38,7 +35,6 @@ namespace InvoiceDesigner.Application.Services
 
 			if (!UserPaswordHasher.VerifyPassword(dto.Password, existUser.PasswordHash, existUser.PasswordSalt))
 			{
-				await _serviceUserActivityLog.UserLogin(existUser, EActivitiesType.LoginFailure);
 				return result;
 			}
 
@@ -47,8 +43,6 @@ namespace InvoiceDesigner.Application.Services
 			var secretKey = _configuration["JWTOption:SecretKey"];
 			if (secretKey == null)
 				throw new InvalidOperationException("JWTOption:SecretKey is null");
-
-			await _serviceUserActivityLog.UserLogin(existUser, EActivitiesType.LoginSuccess);
 
 			var signingCredentials = new SigningCredentials(
 										new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
@@ -75,13 +69,5 @@ namespace InvoiceDesigner.Application.Services
 
 		}
 
-		public async Task LogoutUser(int userId)
-		{
-			var existUser = await _repository.GetUserByIdAsync(userId);
-			if (existUser != null)
-			{
-				await _serviceUserActivityLog.UserLogout(existUser);
-			}
-		}
 	}
 }

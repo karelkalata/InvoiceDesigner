@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using InvoiceDesigner.Application.Helpers;
 using InvoiceDesigner.Application.Interfaces;
+using InvoiceDesigner.Application.Interfaces.Documents;
 using InvoiceDesigner.Application.Interfaces.InterfacesFormDesigner;
-using InvoiceDesigner.Domain.Shared.DTOs.Invoice;
+using InvoiceDesigner.Domain.Shared.DTOs.InvoiceDTOs;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models;
 using InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner;
@@ -51,7 +52,7 @@ namespace InvoiceDesigner.Application.Services
 			var invoiceId = printInvoice.InvoiceId;
 			var printform = printInvoice.PrintFormId;
 
-			var invoice = await _invoiceService.GetInvoiceByIdAsync(0, true, invoiceId);
+			var invoice = await _invoiceService.GetByIdAsync(0, true, invoiceId);
 			if (invoice == null)
 			{
 				_invoicePrintDto = (new InvoiceExample()).GetInvoiceExample();
@@ -286,7 +287,7 @@ namespace InvoiceDesigner.Application.Services
 			return new ResponsePdf()
 			{
 				ByteArray = pdfBytes,
-				FileName = $"Invoice_{_invoicePrintDto.InvoiceNumber}.pdf",
+				FileName = $"Invoice_{_invoicePrintDto.Number}.pdf",
 				MimeType = "application/pdf"
 			};
 

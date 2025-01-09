@@ -1,4 +1,4 @@
-﻿using InvoiceDesigner.Domain.Shared.Models;
+﻿using InvoiceDesigner.Domain.Shared.Models.Directories;
 
 namespace InvoiceDesigner.Application.Interfaces.InterfacesUser
 {

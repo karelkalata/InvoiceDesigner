@@ -1,5 +1,5 @@
 ﻿using InvoiceDesigner.API.Controllers.Abstract;
-using InvoiceDesigner.Application.Interfaces;
+using InvoiceDesigner.Application.Interfaces.InterfacesUser;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InvoiceDesigner.API.Controllers.User
@@ -16,20 +16,9 @@ namespace InvoiceDesigner.API.Controllers.User
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> Logout()
+		public IActionResult Logout()
 		{
-			try
-			{
-				await _service.LogoutUser(UserId);
-				return NoContent();
-			}
-			catch (InvalidOperationException ex)
-			{
-				return BadRequest(new
-				{
-					message = ex.Message
-				});
-			}
+			return NoContent();
 		}
 	}
 }

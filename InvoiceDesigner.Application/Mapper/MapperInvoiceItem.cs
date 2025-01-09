@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using InvoiceDesigner.Domain.Shared.DTOs.InvoiceItem;
-using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.Models.Documents;
 
 namespace InvoiceDesigner.Application.Mapper
 {
@@ -13,7 +13,7 @@ namespace InvoiceDesigner.Application.Mapper
 
 			CreateMap<InvoiceItem, InvoiceItemPrintDto>().ForMember(
 					dest => dest.ProductName,
-					opt => opt.MapFrom(src => src.Product.Name)
+					opt => opt.MapFrom(src => src.Item.Name)
 				);
 		}
 	}

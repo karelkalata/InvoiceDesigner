@@ -11,7 +11,7 @@ namespace InvoiceDesigner.API.Controllers.User
 	{
 		private readonly IUserService _service;
 
-		public AccountController(IUserService service)  
+		public AccountController(IUserService service)
 		{
 			_service = service;
 		}

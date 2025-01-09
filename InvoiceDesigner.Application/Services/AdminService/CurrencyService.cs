@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using InvoiceDesigner.Application.Interfaces;
+using InvoiceDesigner.Application.Interfaces.Admin;
 using InvoiceDesigner.Domain.Shared.DTOs.Currency;
-using InvoiceDesigner.Domain.Shared.Enums;
 using InvoiceDesigner.Domain.Shared.Interfaces;
-using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
 
@@ -17,15 +17,13 @@ namespace InvoiceDesigner.Application.Services.AdminService
 		private readonly IInvoiceServiceHelper _invoiceServiceHelper;
 		private readonly ICompanyServiceHelper _companyServiceHelper;
 		private readonly IProductServiceHelper _productServiceHelper;
-		private readonly IUserActivityLogService _userActivity;
 
 		public CurrencyService(ICurrencyRepository repoCurrency,
 								IMapper mapper,
 								IBankServiceHelper bankServiceHelper,
 								IInvoiceServiceHelper invoiceServiceHelper,
 								ICompanyServiceHelper companyServiceHelper,
-								IProductServiceHelper productServiceHelper,
-								IUserActivityLogService userActivity)
+								IProductServiceHelper productServiceHelper)
 		{
 			_repoCurrency = repoCurrency;
 			_mapper = mapper;
@@ -33,7 +31,6 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			_invoiceServiceHelper = invoiceServiceHelper;
 			_companyServiceHelper = companyServiceHelper;
 			_productServiceHelper = productServiceHelper;
-			_userActivity = userActivity;
 		}
 
 		public async Task<ResponsePaged<CurrencyViewDto>> GetPagedEntitiesAsync(QueryPaged queryPaged)
@@ -61,7 +58,6 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			MapCurrency(existingCurrency, newCurrency);
 
 			var entityId = await _repoCurrency.CreateAsync(existingCurrency);
-			await _userActivity.CreateActivityLog(userId, EDocumentsTypes.Currency, EActivitiesType.Create, entityId);
 
 			return new ResponseRedirect
 			{
@@ -84,7 +80,6 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			MapCurrency(existingCurrency, editedCurrency);
 
 			var entityId = await _repoCurrency.UpdateAsync(existingCurrency);
-			await _userActivity.CreateActivityLog(userId, EDocumentsTypes.Currency, EActivitiesType.Update, entityId);
 
 			return new ResponseRedirect
 			{
@@ -110,8 +105,6 @@ namespace InvoiceDesigner.Application.Services.AdminService
 				if (await _productServiceHelper.IsCurrencyUsedInProduct(queryDeleteEntity.EntityId))
 					throw new InvalidOperationException($"{existsEntity.Name} is in use in Products and cannot be deleted.");
 
-				await _userActivity.CreateActivityLog(queryDeleteEntity.UserId, EDocumentsTypes.Currency, EActivitiesType.Delete, existsEntity.Id);
-
 				return new ResponseBoolean
 				{
 					Result = await _repoCurrency.DeleteAsync(existsEntity)
@@ -121,7 +114,6 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			{
 				existsEntity.IsDeleted = true;
 				await _repoCurrency.UpdateAsync(existsEntity);
-				await _userActivity.CreateActivityLog(queryDeleteEntity.UserId, EDocumentsTypes.Currency, EActivitiesType.MarkedAsDeleted, existsEntity.Id);
 
 				return new ResponseBoolean
 				{

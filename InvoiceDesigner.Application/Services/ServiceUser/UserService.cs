@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using InvoiceDesigner.Application.Authorization;
-using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Application.Interfaces.InterfacesUser;
 using InvoiceDesigner.Domain.Shared.DTOs.User;
-using InvoiceDesigner.Domain.Shared.Enums;
 using InvoiceDesigner.Domain.Shared.Interfaces;
-using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Domain.Shared.Responses;
 using InvoiceDesigner.Localization;
 
@@ -15,13 +13,11 @@ namespace InvoiceDesigner.Application.Services.ServiceUser
 	{
 		private readonly IUserRepository _repoUser;
 		private readonly IMapper _mapper;
-		private readonly IUserActivityLogService _userActivity;
 
-		public UserService(IUserRepository repoUser, IMapper mapper, IUserActivityLogService userActivity)
+		public UserService(IUserRepository repoUser, IMapper mapper)
 		{
 			_repoUser = repoUser;
 			_mapper = mapper;
-			_userActivity = userActivity;
 		}
 
 		public async Task<UserEditDto> GetEditDtoByIdAsync(int id)
@@ -39,7 +35,6 @@ namespace InvoiceDesigner.Application.Services.ServiceUser
 			MapUser(existEntity, dto);
 
 			var entityId = await _repoUser.UpdateUserAsync(existEntity);
-			await _userActivity.CreateActivityLog(userId, EDocumentsTypes.User, EActivitiesType.Update, entityId);
 
 			return new ResponseRedirect
 			{

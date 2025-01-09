@@ -4,8 +4,8 @@
     "Id": 967,
     "Selector": "coor_0_0",
     "StartSelector": "_Invoice",
-    "UniqueId": "{Invoice.InvoiceNumber}",
-    "Value": "Invoice #{Invoice.InvoiceNumber}"
+    "UniqueId": "{Invoice.Number}",
+    "Value": "Invoice #{Invoice.Number}"
   },
   {
     "FormDesignerSchemeId": 1,

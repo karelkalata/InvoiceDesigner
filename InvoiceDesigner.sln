@@ -5,7 +5,7 @@ VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InvoiceDesigner.API", "InvoiceDesigner.API\InvoiceDesigner.API.csproj", "{5C857A62-3F5F-4992-8EFB-37A1AEEF1259}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InvoiceDesigner.Domain.Shared", "InvoiceDesigner.Models\InvoiceDesigner.Domain.Shared.csproj", "{B482875E-E01C-487D-A3F1-C56D5CECBB44}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InvoiceDesigner.Domain.Shared", "InvoiceDesigner.Domain.Shared\InvoiceDesigner.Domain.Shared.csproj", "{B482875E-E01C-487D-A3F1-C56D5CECBB44}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InvoiceDesigner.Application", "InvoiceDesigner.Application\InvoiceDesigner.Application.csproj", "{7B2E3B52-E5B7-419D-927C-1B12027A0691}"
 EndProject

@@ -1,6 +1,7 @@
 [
   {
     "Id": 1,
+    "AccountingDocument": 0,
     "Name": "default"
   }
 ]

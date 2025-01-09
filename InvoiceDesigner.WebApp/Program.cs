@@ -15,7 +15,18 @@ builder.Services.AddLocalization();
 builder.Services.AddRazorComponents()
 	.AddInteractiveServerComponents();
 
-builder.Services.AddMudServices();
+builder.Services.AddMudServices(config =>
+{
+	config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
+	config.SnackbarConfiguration.PreventDuplicates = false;
+	config.SnackbarConfiguration.NewestOnTop = false;
+	config.SnackbarConfiguration.ShowCloseIcon = true;
+	config.SnackbarConfiguration.VisibleStateDuration = 1000;
+	config.SnackbarConfiguration.HideTransitionDuration = 200;
+	config.SnackbarConfiguration.ShowTransitionDuration = 200;
+	config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+});
+
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<AuthenticationStateProvider, AuthenticationStateProviderHelper>();
 builder.Services.AddAuthorizationCore();

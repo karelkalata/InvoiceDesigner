@@ -20,16 +20,13 @@
 								  @bind-Value="_productEditDto.Name"
 								  Label="@localizer["Name"]"
 								  For="(() => _productEditDto.Name)" />
-					<MudDataGrid Class="pa-2"
+					<MudDataGrid Class="pa-2" Dense Hover Striped
 								 T="ProductPriceEditDto"
 								 @ref="dataGrid"
 								 @bind-SelectedItems="selectedItems"
 								 Items="_productEditDto.ProductPrice"
 								 SortMode="SortMode.None"
 								 ReadOnly="false"
-								 Striped="true"
-								 Hover="true"
-								 Dense="true"
 								 EditMode="DataGridEditMode.Cell"
 								 EditTrigger="DataGridEditTrigger.Manual">
 						<ColGroup>

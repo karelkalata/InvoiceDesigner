@@ -1,0 +1,87 @@
+﻿@using InvoiceDesigner.Domain.Shared.DTOs.AccountingDTOs
+@using InvoiceDesigner.Domain.Shared.Enums
+
+<MudDialog>
+	<DialogContent>
+		<MudGrid Spacing="2">
+			<MudItem xs="3">
+				<MudTextField @bind-Value="editedDto.Code" Class="d-flex pa-0 ma-0" Required
+							  Label="@localizer["Code"]"
+							  For="(() => editedDto.Code)" />
+			</MudItem>
+			<MudItem xs="9">
+				<MudTextField @bind-Value="editedDto.Name" Class="d-flex pa-0 ma-0" Required
+							  Label="@localizer["Name"]"
+							  For="(() => editedDto.Name)" />
+			</MudItem>
+			<MudItem xs="4">
+				<MudSelect T="EAssetType" Dense
+						   @bind-Value="editedDto.Asset1"
+						   Typo="Typo.inherit"
+						   Label="@($"{localizer["Asset"]} 1")"
+						   Variant="Variant.Outlined">
+					@foreach (var value in Enum.GetValues(typeof(EAssetType)).Cast<EAssetType>())
+					{
+						<MudSelectItem value="@value">@value</MudSelectItem>
+					}
+				</MudSelect>
+			</MudItem>
+			<MudItem xs="4">
+				<MudSelect T="EAssetType" Dense
+						   @bind-Value="editedDto.Asset2"
+						   Typo="Typo.inherit"
+						   Label="@($"{localizer["Asset"]} 2")"
+						   Variant="Variant.Outlined">
+					@foreach (var value in Enum.GetValues(typeof(EAssetType)).Cast<EAssetType>())
+					{
+						<MudSelectItem value="@value">@value</MudSelectItem>
+					}
+				</MudSelect>
+			</MudItem>
+			<MudItem xs="4">
+				<MudSelect T="EAssetType" Dense
+						   @bind-Value="editedDto.Asset3"
+						   Typo="Typo.inherit"
+						   Label="@($"{localizer["Asset"]} 3")"
+						   Variant="Variant.Outlined">
+					@foreach (var value in Enum.GetValues(typeof(EAssetType)).Cast<EAssetType>())
+					{
+						<MudSelectItem value="@value">@value</MudSelectItem>
+					}
+				</MudSelect>
+			</MudItem>
+		</MudGrid>
+	</DialogContent>
+	<DialogActions>
+		<MudButton OnClick="Cancel">@localizer["Cancel"]</MudButton>
+		<MudButton Color="Color.Primary" OnClick="Submit">@localizer["Save"]</MudButton>
+	</DialogActions>
+</MudDialog>
+
+@code {
+	[CascadingParameter]
+	private MudDialogInstance MudDialog { get; set; } = null!;
+
+	[Parameter]
+	public ChartOfAccountsDto originalDto { get; set; } = null!;
+
+	public ChartOfAccountsDto editedDto = new();
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		editedDto.Id = originalDto.Id;
+		editedDto.Code = originalDto.Code;
+		editedDto.Name = originalDto.Name;
+		editedDto.Asset1 = originalDto.Asset1;
+		editedDto.Asset2 = originalDto.Asset2;
+		editedDto.Asset3 = originalDto.Asset3;
+	}
+
+	private void Cancel() => MudDialog.Cancel();
+
+	private void Submit()
+	{
+		MudDialog.Close(DialogResult.Ok(editedDto));
+	}
+}

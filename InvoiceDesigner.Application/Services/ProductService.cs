@@ -1,10 +1,10 @@
 ﻿
 using AutoMapper;
 using InvoiceDesigner.Application.Interfaces;
+using InvoiceDesigner.Application.Interfaces.Admin;
 using InvoiceDesigner.Domain.Shared.DTOs.Product;
-using InvoiceDesigner.Domain.Shared.Enums;
 using InvoiceDesigner.Domain.Shared.Interfaces;
-using InvoiceDesigner.Domain.Shared.Models;
+using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
 
@@ -16,19 +16,16 @@ namespace InvoiceDesigner.Application.Services
 		private readonly IMapper _mapper;
 		private readonly IInvoiceServiceHelper _invoiceServiceHelper;
 		private readonly ICurrencyService _currencyService;
-		private readonly IUserActivityLogService _userActivity;
 
 		public ProductService(IProductRepository repoProduct,
 								IMapper mapper,
 								IInvoiceServiceHelper invoiceServiceHelper,
-								ICurrencyService currencyService,
-								IUserActivityLogService userActivity)
+								ICurrencyService currencyService)
 		{
 			_repoProduct = repoProduct;
 			_mapper = mapper;
 			_invoiceServiceHelper = invoiceServiceHelper;
 			_currencyService = currencyService;
-			_userActivity = userActivity;
 		}
 
 		public async Task<ResponsePaged<ProductsViewDto>> GetPagedAsync(QueryPaged queryPaged)
@@ -57,7 +54,6 @@ namespace InvoiceDesigner.Application.Services
 			await MapProduct(existsProduct, productEditDto);
 
 			var entityId = await _repoProduct.CreateAsync(existsProduct);
-			await _userActivity.CreateActivityLog(userId, EDocumentsTypes.Product, EActivitiesType.Create, entityId);
 
 			return new ResponseRedirect
 			{
@@ -79,7 +75,6 @@ namespace InvoiceDesigner.Application.Services
 			await MapProduct(existsProduct, productEditDto);
 
 			var entityId = await _repoProduct.UpdateAsync(existsProduct);
-			await _userActivity.CreateActivityLog(userId, EDocumentsTypes.Product, EActivitiesType.Update, entityId);
 
 			return new ResponseRedirect
 			{
@@ -96,8 +91,6 @@ namespace InvoiceDesigner.Application.Services
 				if (await _invoiceServiceHelper.IsProductUsedInInvoiceItems(queryDeleteEntity.EntityId))
 					throw new InvalidOperationException($"{existsEntity.Name} is in use in Invoices and cannot be deleted.");
 
-				await _userActivity.CreateActivityLog(queryDeleteEntity.UserId, EDocumentsTypes.Product, EActivitiesType.Delete, existsEntity.Id);
-
 				return new ResponseBoolean
 				{
 					Result = await _repoProduct.DeleteAsync(existsEntity)
@@ -107,7 +100,6 @@ namespace InvoiceDesigner.Application.Services
 			{
 				existsEntity.IsDeleted = true;
 				await _repoProduct.UpdateAsync(existsEntity);
-				await _userActivity.CreateActivityLog(queryDeleteEntity.UserId, EDocumentsTypes.Product, EActivitiesType.MarkedAsDeleted, existsEntity.Id);
 
 				return new ResponseBoolean
 				{
@@ -135,7 +127,7 @@ namespace InvoiceDesigner.Application.Services
 		private async Task<Product> ValidateExistsEntityAsync(int id)
 		{
 			var existsProduct = await _repoProduct.GetByIdAsync(id)
-				?? throw new InvalidOperationException("Product not found");
+				?? throw new InvalidOperationException("Item not found");
 			return existsProduct;
 		}
 

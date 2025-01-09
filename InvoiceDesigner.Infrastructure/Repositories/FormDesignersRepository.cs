@@ -1,5 +1,6 @@
 ﻿using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner;
+using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,24 @@ namespace InvoiceDesigner.Infrastructure.Repositories
 		public FormDesignersRepository(DataContext context)
 		{
 			_context = context;
+		}
+
+
+		public async Task<IReadOnlyCollection<FormDesigner>> FilteringData(QueryFiltering queryFilter)
+		{
+			IQueryable<FormDesigner> queryDB = _context.FormDesigners.AsNoTracking();
+
+			if (!string.IsNullOrEmpty(queryFilter.SearchString))
+			{
+				queryDB = queryDB.Where(c => c.Name.ToLower().Contains(queryFilter.SearchString.ToLower()));
+			}
+
+			queryDB = queryDB.OrderByDescending(c => c.Name);
+
+			return await queryDB
+				.Where(e => e.AccountingDocument == queryFilter.AccountingDocument)
+				.Take(10)
+				.ToListAsync();
 		}
 
 		public async Task<IReadOnlyCollection<FormDesigner>> GetAllFormDesignersAsync()

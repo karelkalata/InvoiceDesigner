@@ -1,10 +1,9 @@
 ﻿using InvoiceDesigner.API.Controllers.Abstract;
-using InvoiceDesigner.Application.Interfaces;
+using InvoiceDesigner.Application.Interfaces.Documents;
 using InvoiceDesigner.Domain.Shared.DTOs;
-using InvoiceDesigner.Domain.Shared.DTOs.Invoice;
+using InvoiceDesigner.Domain.Shared.DTOs.InvoiceDTOs;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InvoiceDesigner.API.Controllers
@@ -29,7 +28,7 @@ namespace InvoiceDesigner.API.Controllers
 			{
 				queryPaged.UserId = UserId;
 				queryPaged.IsAdmin = IsAdmin;
-				var result = await _service.GetPagedInvoicesAsync(queryPaged);
+				var result = await _service.GetPagedAsync(queryPaged);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -52,7 +51,7 @@ namespace InvoiceDesigner.API.Controllers
 
 			try
 			{
-				var result = await _service.CreateInvoiceAsync(UserId, IsAdmin, invoiceDto);
+				var result = await _service.CreateAsync(UserId, IsAdmin, invoiceDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -71,7 +70,7 @@ namespace InvoiceDesigner.API.Controllers
 		{
 			try
 			{
-				var result = await _service.GetInvoiceDtoByIdAsync(UserId, IsAdmin, id);
+				var result = await _service.GetDtoByIdAsync(UserId, IsAdmin, id);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -83,40 +82,20 @@ namespace InvoiceDesigner.API.Controllers
 			}
 		}
 
-		[HttpGet("ArchiveUnarchive")]
+		[HttpGet("InvoiceChangeProperty")]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseBoolean))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> ArchiveInvoice([FromQuery] QueryInvoiceChangeArchive queryArchive)
+		public async Task<IActionResult> InvoiceChangeProperty([FromQuery] QueryOnChangeProperty query)
 		{
+			if (!ModelState.IsValid)
+				return BadRequest(ModelState);
+
 			try
 			{
-				queryArchive.UserId = UserId;
-				queryArchive.IsAdmin = IsAdmin;
+				query.UserId = UserId;
+				query.IsAdmin = IsAdmin;
 
-				var result = await _service.ArchiveUnarchiveEntity(queryArchive);
-				return Ok(result);
-			}
-			catch (InvalidOperationException ex)
-			{
-				return BadRequest(new
-				{
-					message = ex.Message
-				});
-			}
-		}
-
-		[HttpGet("ChangeInvoiceStatus")]
-		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseBoolean))]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> ArchiveInvoice([FromQuery] QueryInvoiceChangeStatus queryStatus)
-		{
-			try
-			{
-
-				queryStatus.UserId = UserId;
-				queryStatus.IsAdmin = IsAdmin;
-
-				var result = await _service.ChangeInvoiceStatus(queryStatus);
+				var result = await _service.OnChangeProperty(query);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -138,7 +117,7 @@ namespace InvoiceDesigner.API.Controllers
 
 			try
 			{
-				var result = await _service.UpdateInvoiceAsync(UserId, IsAdmin, InvoiceDto);
+				var result = await _service.UpdateAsync(UserId, IsAdmin, InvoiceDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -157,7 +136,7 @@ namespace InvoiceDesigner.API.Controllers
 		{
 			try
 			{
-				var result = await _service.DeleteInvoiceAsync(UserId, IsAdmin, id);
+				var result = await _service.DeleteAsync(UserId, IsAdmin, id);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)

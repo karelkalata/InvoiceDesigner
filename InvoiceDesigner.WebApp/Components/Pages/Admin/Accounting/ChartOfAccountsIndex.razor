@@ -1,0 +1,133 @@
+﻿@page "/Admin/Accounting/ChartOfAccountsIndex"
+@using InvoiceDesigner.Domain.Shared.DTOs.AccountingDTOs
+@using InvoiceDesigner.Domain.Shared.Enums
+@using InvoiceDesigner.Domain.Shared.Extensions
+@using InvoiceDesigner.Domain.Shared.QueryParameters
+@using InvoiceDesigner.Domain.Shared.Responses
+<MudContainer>
+	<MudTable ServerData="ServerReload" @ref="_table" Dense="true" Hover="true" RowsPerPage="10">
+		<ToolBarContent>
+
+			<MudText Typo="Typo.h6">@localizer["ChartOfAccounts"]</MudText>
+			<MudSpacer />
+			<MudSpacer />
+			<MudIconButton Icon="@Icons.Material.Filled.PlaylistAdd" Size="Size.Medium" OnClick="(() => OnEdit(null))" />
+		</ToolBarContent>
+
+		<HeaderContent>
+			<MudTh>
+				<MudTableSortLabel T="ChartOfAccountsDto" SortLabel="Id" InitialDirection="SortDirection.Ascending">
+					@localizer["Code"]
+				</MudTableSortLabel>
+			</MudTh>
+			<MudTh>
+				<MudTableSortLabel T="ChartOfAccountsDto" SortLabel="Name">
+					@localizer["Name"]
+				</MudTableSortLabel>
+			</MudTh>
+			<MudTh>@localizer["Asset"] 1</MudTh>
+			<MudTh>@localizer["Asset"] 2</MudTh>
+			<MudTh>@localizer["Asset"] 3</MudTh>
+			<MudTh></MudTh>
+		</HeaderContent>
+		<RowTemplate>
+			<MudTd DataLabel="Code">@context.Code</MudTd>
+			<MudTd DataLabel="Name">@context.Name</MudTd>
+			<MudTd DataLabel="Asset1">@(context.Asset1 == EAssetType.Unknown ? "" : context.Asset1)</MudTd>
+			<MudTd DataLabel="Asset2">@(context.Asset2 == EAssetType.Unknown ? "" : context.Asset2)</MudTd>
+			<MudTd DataLabel="Asset3">@(context.Asset3 == EAssetType.Unknown ? "" : context.Asset3)</MudTd>
+			<MudTd Style="width:25px" Class="pa-0">
+				<MudIconButton OnClick="@(() => OnEdit(context))"
+				Icon="@Icons.Material.Filled.Edit"
+				Size="Size.Small"
+				Color="Color.Default" />
+			</MudTd>
+			<MudTd Style="width:25px" Class="pa-0">
+				<MudIconButton Icon="@Icons.Material.Filled.DeleteForever"
+							   Size="Size.Small"
+							   Color="Color.Default"
+							   OnClick="() => RedirectToDeleteRow(context.Id)" />
+			</MudTd>
+		</RowTemplate>
+		<NoRecordsContent>
+			<MudText>@localizer["NoMatchingRecordsFound"]</MudText>
+		</NoRecordsContent>
+		<LoadingContent>
+			<MudText>@localizer["Loading"]</MudText>
+		</LoadingContent>
+		<PagerContent>
+			<MudTablePager PageSizeOptions="new int[] {10, 20, 30, 40, 50}" />
+		</PagerContent>
+	</MudTable>
+</MudContainer>
+@code {
+	private MudTable<ChartOfAccountsDto> _table = new();
+	private ResponsePaged<ChartOfAccountsDto>? _pagedResult;
+
+	private async Task<TableData<ChartOfAccountsDto>> ServerReload(TableState state, CancellationToken token)
+	{
+
+		var queryParameters = new QueryPaged
+			{
+				PageSize = state.PageSize,
+				Page = state.Page + 1,
+				SortLabel = $"{state.SortLabel}{(state.SortDirection == SortDirection.Descending ? "_desc" : "")}"
+			};
+
+		string queryString = queryParameters.ToQueryString();
+
+		_pagedResult = await _httpHelper.GetDataFromAPI<ResponsePaged<ChartOfAccountsDto>>($"api/Admin/Accounting/ChartOfAccounts?{queryString}");
+
+		if (_pagedResult != null)
+			return new TableData<ChartOfAccountsDto>()
+				{
+					TotalItems = _pagedResult.TotalCount,
+					Items = _pagedResult.Items
+				};
+
+		return new();
+	}
+
+	private async Task RedirectToDeleteRow(int id)
+	{
+		if (await _httpHelper.DeleteWithConfirmationAsync($"Admin/Accounting/ChartOfAccounts/{id}"))
+			await _table.ReloadServerData();
+	}
+
+	private async Task OnEdit(ChartOfAccountsDto? dto)
+	{
+		var editEntity = true;
+		if (dto == null)
+		{
+			editEntity = false;
+			dto = new ChartOfAccountsDto();
+		}
+
+		var parameters = new DialogParameters<ChartOfAccountsEdit_dialog>
+		{
+			{ x => x.originalDto, dto }
+		};
+
+		var options = new DialogOptions { CloseOnEscapeKey = true };
+		var dialog = await DialogService.ShowAsync<ChartOfAccountsEdit_dialog>(string.Empty, parameters, options);
+		var result = await dialog.Result;
+
+		if (result != null && !result.Canceled)
+		{
+			var res = result.Data;
+			if (res != null)
+			{
+				var editedDto = res as ChartOfAccountsDto;
+				if (editedDto != null)
+				{
+					dto = editedDto;
+					await _httpHelper.SendRequest("Admin/Accounting/ChartOfAccounts", dto, editEntity);
+					await _table.ReloadServerData();
+					StateHasChanged();
+				}
+
+			}
+
+		}
+	}
+}

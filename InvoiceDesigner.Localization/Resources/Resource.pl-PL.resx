@@ -171,6 +171,9 @@
   <data name="VatId" xml:space="preserve">
     <value>NIP</value>
   </data>
+  <data name="DefaultVat" xml:space="preserve">
+    <value>VAT</value>
+  </data>
   <data name="PaymentTerms" xml:space="preserve">
     <value>Warunki płatności</value>
   </data>
@@ -293,5 +296,62 @@
   </data>
   <data name="ShowArchived" xml:space="preserve">
     <value>Pokaż zarchiwizowane</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Dodaj</value>
+  </data>
+  <data name="Test" xml:space="preserve">
+    <value>Test</value>
+  </data>
+  <data name="General" xml:space="preserve">
+    <value>Ogólne</value>
+  </data>
+  <data name="AddEmptyBox" xml:space="preserve">
+    <value>Dodaj puste pole</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>Historia</value>
+  </data>
+  <data name="ChartOfAccounts" xml:space="preserve">
+    <value>Plan kont</value>
+  </data>
+  <data name="Asset" xml:space="preserve">
+    <value>Aktywo</value>
+  </data>
+  <data name="Accounting" xml:space="preserve">
+    <value>Księgowość</value>
+  </data>
+  <data name="Setup" xml:space="preserve">
+    <value>Ustawienia</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Logi</value>
+  </data>
+  <data name="DoubleEntrySetup" xml:space="preserve">
+    <value>Konfiguracja Podwójnego Zapisu</value>
+  </data>
+  <data name="AccountingDocument" xml:space="preserve">
+    <value>Dokument Księgowy</value>
+  </data>
+  <data name="HelpEntryMode" xml:space="preserve">
+    <value>Wybierz między kumulacyjnym pojedynczym zapisem a podziałem na wiele zapisów dla każdej pozycji produktu</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edytować</value>
+  </data>
+  <data name="CancelAndArchiveDocument" xml:space="preserve">
+    <value>Anuluj i Archiwizuj Dokument</value>
+  </data>
+  <data name="Approve" xml:space="preserve">
+    <value>Zatwierdzić</value>
+  </data>
+  <data name="BankReceipt" xml:space="preserve">
+    <value>Pokwitowanie bankowe</value>
+  </data>
+  <data name="New" xml:space="preserve">
+    <value>Nowy</value>
+  </data>
+  <data name="BankReceipts" xml:space="preserve">
+    <value>Pokwitowania bankowe</value>
   </data>
 </root>

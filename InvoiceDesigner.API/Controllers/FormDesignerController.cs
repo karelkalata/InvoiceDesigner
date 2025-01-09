@@ -1,9 +1,9 @@
-﻿using AutoMapper;
-using InvoiceDesigner.API.Controllers.Abstract;
+﻿using InvoiceDesigner.API.Controllers.Abstract;
 using InvoiceDesigner.Application.Interfaces.InterfacesFormDesigner;
 using InvoiceDesigner.Domain.Shared.DTOs.DtoFormDesigners;
+using InvoiceDesigner.Domain.Shared.Enums;
+using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InvoiceDesigner.API.Controllers
@@ -107,11 +107,11 @@ namespace InvoiceDesigner.API.Controllers
 
 		[HttpGet("GetAllAutocompleteDto")]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IReadOnlyCollection<FormDesignersAutocompleteDto>))]
-		public async Task<IActionResult> GetAllAutocompleteDto()
+		public async Task<IActionResult> GetAllAutocompleteDto([FromQuery] EAccountingDocument typeDocument)
 		{
 			try
 			{
-				var result = await _service.GetAllAutocompleteDto();
+				var result = await _service.GetAllAutocompleteDto(typeDocument);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -142,5 +142,25 @@ namespace InvoiceDesigner.API.Controllers
 			}
 		}
 
+		[HttpGet("FilteringData")]
+		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<FormDesignersAutocompleteDto>))]
+		public async Task<IActionResult> FilteringData([FromQuery] QueryFiltering queryFilter)
+		{
+			if (!ModelState.IsValid)
+				return BadRequest(ModelState);
+
+			try
+			{
+				var result = await _service.FilteringData(queryFilter);
+				return Ok(result);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(new
+				{
+					message = ex.Message
+				});
+			}
+		}
 	}
 }

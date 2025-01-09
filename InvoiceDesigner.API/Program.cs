@@ -1,16 +1,25 @@
 ﻿using InvoiceDesigner.API.Helpers;
 using InvoiceDesigner.Application.Authorization;
 using InvoiceDesigner.Application.Interfaces;
+using InvoiceDesigner.Application.Interfaces.Admin;
 using InvoiceDesigner.Application.Interfaces.AdminInterfaces;
+using InvoiceDesigner.Application.Interfaces.Documents;
+using InvoiceDesigner.Application.Interfaces.InterfacesAccounting;
 using InvoiceDesigner.Application.Interfaces.InterfacesFormDesigner;
 using InvoiceDesigner.Application.Interfaces.InterfacesUser;
 using InvoiceDesigner.Application.Services;
+using InvoiceDesigner.Application.Services.Accounting;
 using InvoiceDesigner.Application.Services.AdminService;
+using InvoiceDesigner.Application.Services.Documents;
 using InvoiceDesigner.Application.Services.ServiceFormDesigner;
 using InvoiceDesigner.Application.Services.ServiceUser;
 using InvoiceDesigner.Domain.Shared.Interfaces;
+using InvoiceDesigner.Domain.Shared.Interfaces.Accounting;
+using InvoiceDesigner.Domain.Shared.Interfaces.Documents;
 using InvoiceDesigner.Infrastructure.Data;
 using InvoiceDesigner.Infrastructure.Repositories;
+using InvoiceDesigner.Infrastructure.Repositories.Accounting;
+using InvoiceDesigner.Infrastructure.Repositories.Documents;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -76,10 +85,6 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductServiceHelper, ProductServiceHelper>();
 
-builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
-builder.Services.AddScoped<IInvoiceService, InvoiceService>();
-builder.Services.AddScoped<IInvoiceServiceHelper, InvoiceServiceHelper>();
-
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAdminUserInterface, AdminUserService>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -87,17 +92,38 @@ builder.Services.AddScoped<IUserServiceHelper, UserServiceHelper>();
 builder.Services.AddScoped<IUserAuthorizedDataService, UserAuthorizedDataService>();
 builder.Services.AddScoped<IAuthorizationUserService, AuthorizationUserService>();
 
-builder.Services.AddScoped<IUserActivityLogRepository, UserActivityLogRepository>();
-builder.Services.AddScoped<IUserActivityLogService, UserActivityLogService>();
-
+#region FormDesigners
 builder.Services.AddScoped<IFormDesignersRepository, FormDesignersRepository>();
 builder.Services.AddScoped<IFormDesignersService, FormDesignersService>();
-
 builder.Services.AddScoped<IDropItemsService, DropItemsService>();
 builder.Services.AddScoped<ICssStyleService, CssStyleService>();
+#endregion
 
 builder.Services.AddScoped<IPrintInvoiceRepository, PrintInvoiceRepository>();
 builder.Services.AddScoped<IPrintInvoiceService, PrintInvoiceService>();
+
+#region Documents
+builder.Services.AddScoped<IBankReceiptRepository, BankReceiptRepository>();
+builder.Services.AddScoped<IBankReceiptService, BankReceiptService>();
+
+builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+builder.Services.AddScoped<IInvoiceServiceHelper, InvoiceServiceHelper>();
+#endregion
+
+#region Real Accointing
+builder.Services.AddScoped<IChartOfAccountsRepository, ChartOfAccountsRepository>();
+builder.Services.AddScoped<IChartOfAccountsService, ChartOfAccountsService>();
+
+builder.Services.AddScoped<IDoubleEntrySetupRepository, DoubleEntrySetupRepository>();
+builder.Services.AddScoped<IDoubleEntrySetupService, DoubleEntrySetupService>();
+
+builder.Services.AddScoped<IAccountingRepository, AccountingRepository>();
+builder.Services.AddScoped<IAccountingService, AccountingService>();
+#endregion
+
+
+
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();

@@ -1,10 +1,11 @@
 ﻿@page "/Invoices"
-@using InvoiceDesigner.Domain.Shared.DTOs.Invoice
+@using InvoiceDesigner.Domain.Shared.DTOs.BankReceiptDTOs
+@using InvoiceDesigner.Domain.Shared.DTOs.InvoiceDTOs
 @using InvoiceDesigner.Domain.Shared.Enums
 @using InvoiceDesigner.Domain.Shared.Extensions
 @using InvoiceDesigner.Domain.Shared.QueryParameters
 @using InvoiceDesigner.Domain.Shared.Responses
-@using InvoiceDesigner.WebApp.Components.Pages.Helpers
+@using InvoiceDesigner.WebApp.Components.Pages.BankReceipt
 
 <MudContainer>
 	<MudTable ServerData="ServerReload" @ref="_table" Dense Hover RowsPerPage="20">
@@ -38,63 +39,50 @@
 			<MudTh>@localizer["Currency"]</MudTh>
 			<MudTh>@localizer["Status"]</MudTh>
 			<MudTh></MudTh>
-			<MudTh></MudTh>
-			<MudTh></MudTh>
-			<MudTh></MudTh>
 		</HeaderContent>
 		<RowTemplate>
-			<MudTd DataLabel="Id">@context.InvoiceNumber</MudTd>
+			<MudTd DataLabel="Id">@context.Number</MudTd>
 			<MudTd DataLabel="Date">@context.DateTime.ToString("dd.MM.yyyy")</MudTd>
 			<MudTd DataLabel="Comapny">@context.CompanyName</MudTd>
 			<MudTd DataLabel="Custome">@context.CustomerName</MudTd>
-			<MudTd DataLabel="Amount">@context.TotalAmount.ToString("N2")</MudTd>
+			<MudTd DataLabel="Amount">@context.Amount.ToString("N2")</MudTd>
 			<MudTd DataLabel="Currency">@context.CurrencyName</MudTd>
-			<MudTd DataLabel="Status">
-				<MudSelect T="EInvoiceStatus"
-						   Value="@context.Status"
-						   ValueChanged="@(val => OnChangedInvoiceStatus(context, val))"
-						   Style="width: 50px;">
-					<MudSelectItem T="EInvoiceStatus" Value="EInvoiceStatus.Active">
-						<MudChip Class="ma-0" T="EInvoiceStatus" Style="height: 25px;" Color="Color.Primary">
-							@EInvoiceStatus.Active
-						</MudChip>
-					</MudSelectItem>
-					<MudSelectItem T="EInvoiceStatus" Value="EInvoiceStatus.Paid">
-						<MudChip Class="ma-0" T="EInvoiceStatus" Style="height: 25px;" Color="Color.Success">
-							@EInvoiceStatus.Paid
-						</MudChip>
+			<MudTd DataLabel="Status">@context.Status</MudTd>
 
-					</MudSelectItem>
-					<MudSelectItem T="EInvoiceStatus" Value="EInvoiceStatus.Canceled">
-						<MudChip Class="ma-0" T="EInvoiceStatus" Style="height: 25px;" Color="Color.Warning">
-							@EInvoiceStatus.Canceled
-						</MudChip>
+			<MudTd Class="pa-0">
+				<MudMenu Icon="@Icons.Material.Filled.MoreVert" Dense>
 
-					</MudSelectItem>
-				</MudSelect>
+					<MudNavLink OnClick="(() => InputBankReceipt(context))" Class="d-flex flex-nowrap" Disabled="!(context.Status == EStatus.Approved)">
+						<MudIcon Icon="@Icons.Material.Filled.Receipt" Class="me-2" />
+						@localizer["BankReceipt"]
+					</MudNavLink>
 
-			</MudTd>
-			<MudTd Style="width:25px" Class="pa-0">
-				<MudIconButton Href="@($"/Invoices/{context.Id}")"
-							   Icon="@Icons.Material.Filled.Edit"
-							   Size="Size.Small"
-							   Color="Color.Default" />
-			</MudTd>
-			<MudTd Style="width:25px" Class="pa-0">
-				<ActivityLogsHelper DocumentType=EDocumentsTypes.Invoice
-									EntityId="@context.Id" />
-			</MudTd>
-			<MudTd Style="width:25px" Class="pa-0">
-				<MudIconButton Icon="@(context.IsDeleted ? Icons.Material.Filled.DeleteForever : Icons.Material.Filled.Delete)"
-							   Color="Color.Default"
-							   Size="Size.Small"
-							   OnClick="() => RedirectToDeleteRow(context.Id)" />
-			</MudTd>
-			<MudTd Style="width:25px" Class="pa-0">
-				<MudIconButton Icon="@(context.IsArchived ? Icons.Material.Outlined.Unarchive : Icons.Material.Filled.Archive)"
-							   Color="Color.Default"
-							   Size="Size.Small"
-							   OnClick="() => ArchiveUnarchiveEntity(context.Id, !context.IsArchived)" />
+					<MudDivider />
+
+					<MudNavLink Href="@($"/Invoices/{context.Id}")" Class="d-flex flex-nowrap">
+						<MudIcon Icon="@Icons.Material.Filled.Edit" Class="me-2" />
+						@localizer["Edit"] @localizer["Invoice"] @context.Number
+					</MudNavLink>
+
+					<MudNavLink OnClick="() => OnInvoiceChangeProperty(context.Id, context.IsDeleted, true, EStatus.Canceled)" Class="d-flex flex-nowrap">
+						<MudIcon Icon="@Icons.Material.Filled.Cancel" Class="me-2" />
+						@localizer["CancelAndArchiveDocument"]
+					</MudNavLink>
+
+					<MudPaper Elevation="3">
+						<MudNavGroup Title="Action">
+							<MudNavLink OnClick="() => OnInvoiceChangeProperty(context.Id, !context.IsArchived, context.IsDeleted, context.Status)" Class="d-flex flex-nowrap">
+								<MudIcon Icon="@(context.IsArchived ? Icons.Material.Outlined.Unarchive : Icons.Material.Filled.Archive)" Class="me-2" />
+								Archive/Unarchive
+							</MudNavLink>
+							<MudNavLink OnClick="() => RedirectToDeleteRow(context.Id)" Class="d-flex flex-nowrap">
+								<MudIcon Icon="@(context.IsDeleted ? Icons.Material.Filled.DeleteForever : Icons.Material.Filled.Delete)" Class="me-2" />
+								@localizer["Delete"]
+							</MudNavLink>
+						</MudNavGroup>
+					</MudPaper>
+
+				</MudMenu>
 			</MudTd>
 		</RowTemplate>
 		<NoRecordsContent>
@@ -171,37 +159,38 @@
 		await _table.ReloadServerData();
 	}
 
-	private async Task ArchiveUnarchiveEntity(int id, bool archive)
+	private async Task OnInvoiceChangeProperty(int id, bool isDeleted, bool isArchived, EStatus status)
 	{
-		var queryParameters = new QueryInvoiceChangeArchive
+		var queryParameters = new QueryOnChangeProperty
 			{
-				InvoiceId = id,
-				Archive = archive
+				EntityId = id,
+				IsDeleted = isDeleted,
+				IsArchived = isArchived,
+				Status = status
 			};
-
 		string queryString = queryParameters.ToQueryString();
 
-		var result = await _httpHelper.GetDataFromAPI<ResponseBoolean>($"api/Invoices/ArchiveUnarchive?{queryString}");
+		var result = await _httpHelper.GetDataFromAPI<ResponseBoolean>($"api/Invoices/InvoiceChangeProperty?{queryString}");
 		if (result.Result)
 			await _table.ReloadServerData();
 	}
 
-	private async Task OnChangedInvoiceStatus(InvoicesViewDto entity, EInvoiceStatus newStatus)
+	private async Task InputBankReceipt(InvoicesViewDto invoicesViewDto)
 	{
-		var queryParameters = new QueryInvoiceChangeStatus
-			{
-				EntityId = entity.Id,
-				Status = newStatus
-			};
-
-		string queryString = queryParameters.ToQueryString();
-
-		var result = await _httpHelper.GetDataFromAPI<ResponseBoolean>($"api/Invoices/ChangeInvoiceStatus?{queryString}");
-
-		if (result.Result)
+		var parameters = new DialogParameters<BankReceiptEdit_dialog>
 		{
-			entity.Status = newStatus;
-			Snackbar.Add("Status updated!", Severity.Success);
-		}
+			{ x => x.InvoiceId, invoicesViewDto.Id  },
+			{ x => x.id, 0 }
+		};
+
+		var options = new DialogOptions
+			{
+				CloseOnEscapeKey = true,
+				CloseButton = true,
+				BackdropClick = false
+			};
+		var dialog = await DialogService.ShowAsync<BankReceiptEdit_dialog>(string.Empty, parameters, options);
+		var result = await dialog.Result;
+
 	}
 }
