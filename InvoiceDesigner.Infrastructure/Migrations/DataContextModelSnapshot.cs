@@ -43,6 +43,12 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.Property<int>("CurrencyId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -77,6 +83,9 @@ namespace InvoiceDesigner.Infrastructure.Migrations
 
                     b.Property<string>("Info")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
@@ -124,6 +133,9 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
@@ -144,6 +156,7 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                         {
                             Id = 1,
                             Description = "US Dollar",
+                            IsArchived = false,
                             IsDeleted = false,
                             Name = "USD"
                         },
@@ -151,6 +164,7 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                         {
                             Id = 2,
                             Description = "Euro",
+                            IsArchived = false,
                             IsDeleted = false,
                             Name = "EUR"
                         },
@@ -158,6 +172,7 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                         {
                             Id = 3,
                             Description = "Czech Koruna",
+                            IsArchived = false,
                             IsDeleted = false,
                             Name = "CZK"
                         });
@@ -167,6 +182,9 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsArchived")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsDeleted")
@@ -193,6 +211,9 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsArchived")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsDeleted")
@@ -241,6 +262,9 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.Property<bool>("IsAdmin")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
@@ -278,6 +302,7 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                         {
                             Id = 1,
                             IsAdmin = true,
+                            IsArchived = false,
                             IsDeleted = false,
                             Locale = "en-US",
                             Login = "admin",
@@ -624,7 +649,7 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                         {
                             Id = 3,
                             AccountingDocument = 1,
-                            AmountType = 0,
+                            AmountType = 1,
                             Credit = 1,
                             Debit = 2,
                             EntryMode = 1
@@ -1865,7 +1890,7 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.HasOne("InvoiceDesigner.Domain.Shared.Models.Directories.Currency", "Currency")
                         .WithMany()
                         .HasForeignKey("CurrencyId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("InvoiceDesigner.Domain.Shared.Models.Directories.Product", null)

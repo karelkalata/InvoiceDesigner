@@ -1,15 +1,10 @@
-﻿namespace InvoiceDesigner.Domain.Shared.Models.Directories
+﻿using InvoiceDesigner.Domain.Shared.Interfaces.Abstract;
+using InvoiceDesigner.Domain.Shared.Models.Abstract;
+
+namespace InvoiceDesigner.Domain.Shared.Models.Directories
 {
-	public class Currency
+	public class Currency : ABaseEntity
 	{
-		public int Id { get; init; }
-
-		public string Name { get; set; } = null!;
-
-		public bool IsDeleted { get; set; }
-
 		public string Description { get; set; } = string.Empty;
-
-
 	}
 }

@@ -2,7 +2,7 @@
 using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Application.Interfaces.Admin;
 using InvoiceDesigner.Domain.Shared.DTOs.Currency;
-using InvoiceDesigner.Domain.Shared.Interfaces;
+using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
@@ -13,21 +13,18 @@ namespace InvoiceDesigner.Application.Services.AdminService
 	{
 		private readonly ICurrencyRepository _repoCurrency;
 		private readonly IMapper _mapper;
-		private readonly IBankServiceHelper _bankServiceHelper;
 		private readonly IInvoiceServiceHelper _invoiceServiceHelper;
 		private readonly ICompanyServiceHelper _companyServiceHelper;
 		private readonly IProductServiceHelper _productServiceHelper;
 
 		public CurrencyService(ICurrencyRepository repoCurrency,
 								IMapper mapper,
-								IBankServiceHelper bankServiceHelper,
 								IInvoiceServiceHelper invoiceServiceHelper,
 								ICompanyServiceHelper companyServiceHelper,
 								IProductServiceHelper productServiceHelper)
 		{
 			_repoCurrency = repoCurrency;
 			_mapper = mapper;
-			_bankServiceHelper = bankServiceHelper;
 			_invoiceServiceHelper = invoiceServiceHelper;
 			_companyServiceHelper = companyServiceHelper;
 			_productServiceHelper = productServiceHelper;
@@ -38,8 +35,14 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			queryPaged.PageSize = Math.Max(queryPaged.PageSize, 1);
 			queryPaged.Page = Math.Max(queryPaged.Page, 1);
 
-			var currenciesTask = _repoCurrency.GetEntitiesAsync(queryPaged, GetOrdering(queryPaged.SortLabel));
-			var totalCountTask = _repoCurrency.GetCountAsync(queryPaged.ShowDeleted);
+			var currenciesTask = _repoCurrency.GetEntitiesAsync(queryPaged, queryPaged.SortLabel);
+
+			var queryGetCount = new QueryGetCount
+			{
+				ShowDeleted = queryPaged.ShowDeleted,
+				ShowArchived = queryPaged.ShowArchived
+			};
+			var totalCountTask = _repoCurrency.GetCountAsync(queryGetCount);
 
 			await Task.WhenAll(currenciesTask, totalCountTask);
 
@@ -79,7 +82,7 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			var existingCurrency = await ValidateExistsEntityAsync(editedCurrency.Id);
 			MapCurrency(existingCurrency, editedCurrency);
 
-			var entityId = await _repoCurrency.UpdateAsync(existingCurrency);
+			await _repoCurrency.UpdateAsync(existingCurrency);
 
 			return new ResponseRedirect
 			{
@@ -93,17 +96,12 @@ namespace InvoiceDesigner.Application.Services.AdminService
 
 			if (!queryDeleteEntity.MarkAsDeleted)
 			{
-				if (await _bankServiceHelper.IsCurrencyUsedInBanks(queryDeleteEntity.EntityId))
-					throw new InvalidOperationException($"{existsEntity.Name} is in use in Banks and cannot be deleted.");
 
 				if (await _invoiceServiceHelper.IsCurrencyUsedInInvoices(queryDeleteEntity.EntityId))
 					throw new InvalidOperationException($"{existsEntity.Name} is in use in Invoices and cannot be deleted.");
 
 				if (await _companyServiceHelper.IsCurrencyUsedInCompany(queryDeleteEntity.EntityId))
 					throw new InvalidOperationException($"{existsEntity.Name} is in use in Company and cannot be deleted.");
-
-				if (await _productServiceHelper.IsCurrencyUsedInProduct(queryDeleteEntity.EntityId))
-					throw new InvalidOperationException($"{existsEntity.Name} is in use in Products and cannot be deleted.");
 
 				return new ResponseBoolean
 				{
@@ -124,7 +122,7 @@ namespace InvoiceDesigner.Application.Services.AdminService
 
 		public Task<int> GetCountAsync()
 		{
-			return _repoCurrency.GetCountAsync();
+			return _repoCurrency.GetCountAsync(new QueryGetCount());
 		}
 
 		public async Task<IReadOnlyCollection<CurrencyAutocompleteDto>> GetAutocompleteDto()
@@ -142,7 +140,7 @@ namespace InvoiceDesigner.Application.Services.AdminService
 				SearchString = searchText
 			};
 
-			var currencies = await _repoCurrency.GetEntitiesAsync(queryPaged, GetOrdering("Value"));
+			var currencies = await _repoCurrency.GetEntitiesAsync(queryPaged, "Name");
 
 			return _mapper.Map<IReadOnlyCollection<CurrencyAutocompleteDto>>(currencies);
 		}
@@ -161,19 +159,5 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			existingCurrency.Name = dto.Name.ToUpper();
 			existingCurrency.Description = dto.Description.Trim();
 		}
-
-		private Func<IQueryable<Currency>, IOrderedQueryable<Currency>> GetOrdering(string sortLabel)
-		{
-			var sortingOptions = new Dictionary<string, Func<IQueryable<Currency>, IOrderedQueryable<Currency>>>
-			{
-				{"Id_desc", q => q.OrderByDescending(e => e.Id)},
-				{"Code", q => q.OrderBy(e => e.Name)},
-				{"Code_desc", q => q.OrderByDescending(e => e.Name)},
-				{"Id", q => q.OrderBy(e => e.Id)}
-			};
-
-			return sortingOptions.TryGetValue(sortLabel, out var orderFunc) ? orderFunc : sortingOptions["Id"];
-		}
 	}
-
 }

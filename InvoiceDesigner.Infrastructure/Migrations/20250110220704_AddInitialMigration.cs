@@ -36,9 +36,10 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     Name = table.Column<string>(type: "TEXT", maxLength: 3, nullable: false),
                     IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    Description = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false)
+                    IsArchived = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -51,10 +52,11 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    TaxId = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
+                    VatId = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    TaxId = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
-                    VatId = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true)
+                    IsArchived = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -96,7 +98,8 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
-                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsArchived = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -110,12 +113,13 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Login = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     Locale = table.Column<string>(type: "TEXT", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsAdmin = table.Column<bool>(type: "INTEGER", nullable: false),
                     PasswordHash = table.Column<string>(type: "TEXT", nullable: false),
-                    PasswordSalt = table.Column<string>(type: "TEXT", nullable: false)
+                    PasswordSalt = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsArchived = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -157,8 +161,6 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 300, nullable: false),
-                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
                     TaxId = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     VatId = table.Column<string>(type: "TEXT", nullable: true),
                     WWW = table.Column<string>(type: "TEXT", nullable: true),
@@ -168,7 +170,10 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     Info = table.Column<string>(type: "TEXT", nullable: true),
                     PaymentTerms = table.Column<int>(type: "INTEGER", nullable: false),
                     DefaultVat = table.Column<decimal>(type: "TEXT", nullable: false),
-                    CurrencyId = table.Column<int>(type: "INTEGER", nullable: false)
+                    CurrencyId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 300, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsArchived = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -243,7 +248,7 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                         column: x => x.CurrencyId,
                         principalTable: "Currencies",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ProductPrice_Products_ProductId",
                         column: x => x.ProductId,
@@ -309,12 +314,14 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
                     BIC = table.Column<string>(type: "TEXT", maxLength: 11, nullable: false),
                     Account = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     Address = table.Column<string>(type: "TEXT", nullable: false),
                     CurrencyId = table.Column<int>(type: "INTEGER", nullable: false),
-                    CompanyId = table.Column<int>(type: "INTEGER", nullable: false)
+                    CompanyId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsArchived = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -522,12 +529,12 @@ namespace InvoiceDesigner.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "Currencies",
-                columns: new[] { "Id", "Description", "IsDeleted", "Name" },
+                columns: new[] { "Id", "Description", "IsArchived", "IsDeleted", "Name" },
                 values: new object[,]
                 {
-                    { 1, "US Dollar", false, "USD" },
-                    { 2, "Euro", false, "EUR" },
-                    { 3, "Czech Koruna", false, "CZK" }
+                    { 1, "US Dollar", false, false, "USD" },
+                    { 2, "Euro", false, false, "EUR" },
+                    { 3, "Czech Koruna", false, false, "CZK" }
                 });
 
             migrationBuilder.InsertData(
@@ -537,8 +544,8 @@ namespace InvoiceDesigner.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "IsAdmin", "IsDeleted", "Locale", "Login", "Name", "PasswordHash", "PasswordSalt" },
-                values: new object[] { 1, true, false, "en-US", "admin", "Super Admin", "1708D30988E562DD2958B50B77F0D61C47C59FD7555F3B91AB02D486F361504F7E0C569157D104D99E5076BFF20AF9EE38482A63BA10993B28C38F9936668010", "7A6604F49A4E8EFCBB8B6CA86305FB0E4E14F817AE6D8726DE7A56463581A1D21D68699970298BBFE2182AE02366BCBB56C14DF47B9D000AF0C5D74DCED88953" });
+                columns: new[] { "Id", "IsAdmin", "IsArchived", "IsDeleted", "Locale", "Login", "Name", "PasswordHash", "PasswordSalt" },
+                values: new object[] { 1, true, false, false, "en-US", "admin", "Super Admin", "1708D30988E562DD2958B50B77F0D61C47C59FD7555F3B91AB02D486F361504F7E0C569157D104D99E5076BFF20AF9EE38482A63BA10993B28C38F9936668010", "7A6604F49A4E8EFCBB8B6CA86305FB0E4E14F817AE6D8726DE7A56463581A1D21D68699970298BBFE2182AE02366BCBB56C14DF47B9D000AF0C5D74DCED88953" });
 
             migrationBuilder.InsertData(
                 table: "DoubleEntriesSetup",
@@ -547,7 +554,7 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                 {
                     { 1, 0, 1, 4, 1, 0 },
                     { 2, 0, 2, 3, 1, 1 },
-                    { 3, 1, 0, 1, 2, 1 }
+                    { 3, 1, 1, 1, 2, 1 }
                 });
 
             migrationBuilder.InsertData(

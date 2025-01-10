@@ -1,7 +1,7 @@
 ﻿using InvoiceDesigner.Application.Authorization;
 using InvoiceDesigner.Application.Interfaces.InterfacesUser;
 using InvoiceDesigner.Domain.Shared.DTOs.User;
-using InvoiceDesigner.Domain.Shared.Interfaces;
+using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
 using InvoiceDesigner.Domain.Shared.Responses;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -29,7 +29,7 @@ namespace InvoiceDesigner.Application.Services
 				JwtToken = string.Empty
 			};
 
-			var existUser = await _repository.GetUserByLoginAsync(dto.Login);
+			var existUser = await _repository.GetByLoginAsync(dto.Login);
 			if (existUser == null || existUser.IsDeleted)
 				return result;
 

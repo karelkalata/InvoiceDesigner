@@ -4,7 +4,7 @@ using InvoiceDesigner.Application.Interfaces.Admin;
 using InvoiceDesigner.Application.Interfaces.AdminInterfaces;
 using InvoiceDesigner.Domain.Shared.DTOs.Company;
 using InvoiceDesigner.Domain.Shared.DTOs.User;
-using InvoiceDesigner.Domain.Shared.Interfaces;
+using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
@@ -33,8 +33,14 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			queryPaged.PageSize = Math.Max(queryPaged.PageSize, 1);
 			queryPaged.Page = Math.Max(queryPaged.Page, 1);
 
-			var usersTask = _repoUser.GetUsersAsync(queryPaged, GetOrdering(queryPaged.SortLabel));
-			var totalCountTask = _repoUser.GetCountUsersAsync(queryPaged.ShowDeleted);
+			var usersTask = _repoUser.GetEntitiesAsync(queryPaged, queryPaged.SortLabel);
+
+			var queryGetCount = new QueryGetCount
+			{
+				ShowArchived = queryPaged.ShowArchived,
+				ShowDeleted = queryPaged.ShowDeleted,
+			};
+			var totalCountTask = _repoUser.GetCountAsync(queryGetCount);
 
 			await Task.WhenAll(usersTask, totalCountTask);
 
@@ -51,7 +57,7 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			var existUser = new User();
 			await MapUser(existUser, dto);
 
-			var entityId = await _repoUser.CreateUserAsync(existUser);
+			var entityId = await _repoUser.CreateAsync(existUser);
 
 			return new ResponseRedirect
 			{
@@ -72,7 +78,7 @@ namespace InvoiceDesigner.Application.Services.AdminService
 
 			await MapUser(existEntity, dto);
 
-			var entityId = await _repoUser.UpdateUserAsync(existEntity);
+			 await _repoUser.UpdateAsync(existEntity);
 
 			return new ResponseRedirect
 			{
@@ -88,13 +94,13 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			{
 				return new ResponseBoolean
 				{
-					Result = await _repoUser.DeleteUserAsync(existsEntity)
+					Result = await _repoUser.DeleteAsync(existsEntity)
 				};
 			}
 			else
 			{
 				existsEntity.IsDeleted = true;
-				await _repoUser.UpdateUserAsync(existsEntity);
+				await _repoUser.UpdateAsync(existsEntity);
 
 				return new ResponseBoolean
 				{
@@ -112,7 +118,7 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			}
 			else
 			{
-				var existsUser = await _repoUser.GetUserByLoginAsync(loginName);
+				var existsUser = await _repoUser.GetByLoginAsync(loginName);
 				result.Result = existsUser != null;
 			}
 
@@ -121,7 +127,7 @@ namespace InvoiceDesigner.Application.Services.AdminService
 
 		private async Task<User> ValidateExistsEntityAsync(int id)
 		{
-			var user = await _repoUser.GetUserByIdAsync(id)
+			var user = await _repoUser.GetByIdAsync(id)
 						?? throw new InvalidOperationException("User not found");
 			return user;
 		}
@@ -167,18 +173,6 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			}
 
 			return result;
-		}
-
-		private Func<IQueryable<User>, IOrderedQueryable<User>> GetOrdering(string sortLabel)
-		{
-			var orderingOptions = new Dictionary<string, Func<IQueryable<User>, IOrderedQueryable<User>>>
-			{
-				{"Id_desc", q => q.OrderByDescending(e => e.Id)},
-				{"Value", q => q.OrderBy(e => e.Name)},
-				{"Name_desc", q => q.OrderByDescending(e => e.Name)}
-			};
-
-			return orderingOptions.GetValueOrDefault(sortLabel, q => q.OrderBy(e => e.Id));
 		}
 	}
 }

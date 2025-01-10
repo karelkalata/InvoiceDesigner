@@ -1,5 +1,5 @@
 ﻿using InvoiceDesigner.Domain.Shared.Enums;
-using InvoiceDesigner.Domain.Shared.Helpers;
+using InvoiceDesigner.Domain.Shared.Interfaces.Abstract;
 
 namespace InvoiceDesigner.Domain.Shared.DTOs.DtoFormDesigners
 {

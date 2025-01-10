@@ -1,4 +1,4 @@
-﻿namespace InvoiceDesigner.Domain.Shared.Helpers
+﻿namespace InvoiceDesigner.Domain.Shared.Interfaces.Abstract
 {
 	public interface IHasIdAndName
 	{

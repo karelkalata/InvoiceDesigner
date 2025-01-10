@@ -3,7 +3,7 @@ using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Application.Interfaces.Admin;
 using InvoiceDesigner.Application.Interfaces.InterfacesUser;
 using InvoiceDesigner.Domain.Shared.DTOs.Company;
-using InvoiceDesigner.Domain.Shared.Interfaces;
+using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
@@ -36,8 +36,14 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			queryPaged.PageSize = Math.Max(queryPaged.PageSize, 1);
 			queryPaged.Page = Math.Max(queryPaged.Page, 1);
 
-			var companiesTask = _repoCompany.GetEntitiesAsync(queryPaged, GetOrdering(queryPaged.SortLabel));
-			var totalCountTask = _repoCompany.GetCountAsync();
+			var companiesTask = _repoCompany.GetEntitiesAsync(queryPaged, queryPaged.SortLabel);
+
+			var queryGetCount = new QueryGetCount
+			{
+				ShowArchived = queryPaged.ShowArchived,
+				ShowDeleted = queryPaged.ShowDeleted,
+			};
+			var totalCountTask = _repoCompany.GetCountAsync(queryGetCount);
 
 			await Task.WhenAll(companiesTask, totalCountTask);
 
@@ -83,7 +89,7 @@ namespace InvoiceDesigner.Application.Services.AdminService
 
 			await MapCompany(existingCompany, companyEditDto, currency);
 
-			var entityId = await _repoCompany.UpdateAsync(existingCompany);
+			await _repoCompany.UpdateAsync(existingCompany);
 
 			return new ResponseRedirect
 			{
@@ -117,7 +123,7 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			}
 		}
 
-		public async Task<int> GetCountAsync() => await _repoCompany.GetCountAsync();
+		public async Task<int> GetCountAsync() => await _repoCompany.GetCountAsync(new QueryGetCount());
 
 		public async Task<IReadOnlyCollection<Company>> GetAuthorizedCompaniesAsync(int userId, bool isAdmin)
 		{
@@ -142,7 +148,7 @@ namespace InvoiceDesigner.Application.Services.AdminService
 				SearchString = searchText
 			};
 
-			var companies = await _repoCompany.GetEntitiesAsync(queryPaged, GetOrdering("Value"));
+			var companies = await _repoCompany.GetEntitiesAsync(queryPaged, "Name");
 			return _mapper.Map<IReadOnlyCollection<CompanyAutocompleteDto>>(companies);
 		}
 
@@ -204,23 +210,5 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			company.Banks = itemsBanks;
 			return company;
 		}
-
-		private Func<IQueryable<Company>, IOrderedQueryable<Company>> GetOrdering(string sortLabel)
-		{
-			var sortingOptions = new Dictionary<string, Func<IQueryable<Company>, IOrderedQueryable<Company>>>
-			{
-				{"Id_desc", q => q.OrderByDescending(c => c.Id)},
-				{"TaxId", q => q.OrderBy(c => c.TaxId)},
-				{"TaxId_desc", q => q.OrderByDescending(c => c.TaxId)},
-				{"Value", q => q.OrderBy(c => c.Name)},
-				{"Name_desc", q => q.OrderByDescending(c => c.Name)},
-				{"Id", q => q.OrderBy(c => c.Id)}
-			};
-
-			return sortingOptions.TryGetValue(sortLabel, out var orderFunc) ? orderFunc : sortingOptions["Id"];
-		}
-
-
 	}
-
 }

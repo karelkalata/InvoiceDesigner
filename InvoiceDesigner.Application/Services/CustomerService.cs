@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Domain.Shared.DTOs.Customer;
-using InvoiceDesigner.Domain.Shared.Interfaces;
+using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
@@ -28,8 +28,14 @@ namespace InvoiceDesigner.Application.Services
 			queryPaged.PageSize = Math.Max(queryPaged.PageSize, 1);
 			queryPaged.Page = Math.Max(queryPaged.Page, 1);
 
-			var clientsTask = _repoCustomer.GetEntitiesAsync(queryPaged, GetOrdering(queryPaged.SortLabel));
-			var totalCountTask = _repoCustomer.GetCountAsync(queryPaged.ShowDeleted);
+			var clientsTask = _repoCustomer.GetEntitiesAsync(queryPaged, queryPaged.SortLabel);
+
+			var queryGetCount = new QueryGetCount
+			{
+				ShowArchived = queryPaged.ShowArchived,
+				ShowDeleted = queryPaged.ShowDeleted
+			};
+			var totalCountTask = _repoCustomer.GetCountAsync(queryGetCount);
 
 			await Task.WhenAll(clientsTask, totalCountTask);
 
@@ -71,7 +77,7 @@ namespace InvoiceDesigner.Application.Services
 
 			MapCustomer(existsCustomer, editedCustomer);
 
-			var entityId = await _repoCustomer.UpdateAsync(existsCustomer);
+			await _repoCustomer.UpdateAsync(existsCustomer);
 
 			return new ResponseRedirect
 			{
@@ -102,7 +108,7 @@ namespace InvoiceDesigner.Application.Services
 			}
 		}
 
-		public Task<int> GetCountAsync() => _repoCustomer.GetCountAsync();
+		public Task<int> GetCountAsync() => _repoCustomer.GetCountAsync(new QueryGetCount());
 
 		public async Task<IReadOnlyCollection<CustomerAutocompleteDto>> FilteringData(string searchText)
 		{
@@ -113,7 +119,7 @@ namespace InvoiceDesigner.Application.Services
 				SearchString = searchText
 			};
 
-			var customers = await _repoCustomer.GetEntitiesAsync(queryPaged, GetOrdering("Value"));
+			var customers = await _repoCustomer.GetEntitiesAsync(queryPaged, "Name");
 			return _mapper.Map<IReadOnlyCollection<CustomerAutocompleteDto>>(customers);
 		}
 

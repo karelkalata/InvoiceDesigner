@@ -2,7 +2,7 @@
 using InvoiceDesigner.Application.Authorization;
 using InvoiceDesigner.Application.Interfaces.InterfacesUser;
 using InvoiceDesigner.Domain.Shared.DTOs.User;
-using InvoiceDesigner.Domain.Shared.Interfaces;
+using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Domain.Shared.Responses;
 using InvoiceDesigner.Localization;
@@ -34,7 +34,7 @@ namespace InvoiceDesigner.Application.Services.ServiceUser
 			var existEntity = await ValidateExistsEntityAsync(dto.Id);
 			MapUser(existEntity, dto);
 
-			var entityId = await _repoUser.UpdateUserAsync(existEntity);
+			await _repoUser.UpdateAsync(existEntity);
 
 			return new ResponseRedirect
 			{
@@ -44,7 +44,7 @@ namespace InvoiceDesigner.Application.Services.ServiceUser
 
 		private async Task<User> ValidateExistsEntityAsync(int id)
 		{
-			var user = await _repoUser.GetUserByIdAsync(id)
+			var user = await _repoUser.GetByIdAsync(id)
 						?? throw new InvalidOperationException("User not found");
 			return user;
 		}

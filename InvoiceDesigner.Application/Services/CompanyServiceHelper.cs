@@ -1,5 +1,5 @@
 ﻿using InvoiceDesigner.Application.Interfaces;
-using InvoiceDesigner.Domain.Shared.Interfaces;
+using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
 
 namespace InvoiceDesigner.Application.Services
 {

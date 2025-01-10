@@ -3,7 +3,7 @@ using AutoMapper;
 using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Application.Interfaces.Admin;
 using InvoiceDesigner.Domain.Shared.DTOs.Product;
-using InvoiceDesigner.Domain.Shared.Interfaces;
+using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
@@ -33,8 +33,14 @@ namespace InvoiceDesigner.Application.Services
 			queryPaged.PageSize = Math.Max(queryPaged.PageSize, 1);
 			queryPaged.Page = Math.Max(queryPaged.Page, 1);
 
-			var productsTask = _repoProduct.GetEntitiesAsync(queryPaged, GetOrdering(queryPaged.SortLabel));
-			var totalCountTask = _repoProduct.GetCountAsync(queryPaged.ShowDeleted);
+			var productsTask = _repoProduct.GetEntitiesAsync(queryPaged, queryPaged.SortLabel);
+
+			var queryGetCount = new QueryGetCount
+			{
+				ShowArchived = queryPaged.ShowArchived,
+				ShowDeleted = queryPaged.ShowDeleted,
+			};
+			var totalCountTask = _repoProduct.GetCountAsync(queryGetCount);
 
 			await Task.WhenAll(productsTask, totalCountTask);
 
@@ -74,7 +80,7 @@ namespace InvoiceDesigner.Application.Services
 			var existsProduct = await ValidateExistsEntityAsync(productEditDto.Id);
 			await MapProduct(existsProduct, productEditDto);
 
-			var entityId = await _repoProduct.UpdateAsync(existsProduct);
+			await _repoProduct.UpdateAsync(existsProduct);
 
 			return new ResponseRedirect
 			{
@@ -108,7 +114,7 @@ namespace InvoiceDesigner.Application.Services
 			}
 		}
 
-		public Task<int> GetCountAsync() => _repoProduct.GetCountAsync();
+		public Task<int> GetCountAsync() => _repoProduct.GetCountAsync(new QueryGetCount());
 
 		public async Task<IReadOnlyCollection<ProductAutocompleteDto>> FilteringData(string searchText)
 		{
@@ -119,7 +125,7 @@ namespace InvoiceDesigner.Application.Services
 				SearchString = searchText
 			};
 
-			var products = await _repoProduct.GetEntitiesAsync(queryPaged, GetOrdering("Value"));
+			var products = await _repoProduct.GetEntitiesAsync(queryPaged, "Name");
 
 			return _mapper.Map<IReadOnlyCollection<ProductAutocompleteDto>>(products);
 		}
@@ -151,18 +157,6 @@ namespace InvoiceDesigner.Application.Services
 				});
 			}
 			existsProduct.ProductPrice = newProductPrices;
-		}
-
-		private Func<IQueryable<Product>, IOrderedQueryable<Product>> GetOrdering(string sortLabel)
-		{
-			var sortingOptions = new Dictionary<string, Func<IQueryable<Product>, IOrderedQueryable<Product>>>
-			{
-				{ "Id_desc", q => q.OrderByDescending(e => e.Id) },
-				{ "Name", q => q.OrderBy(e => e.Name) },
-				{ "Name_desc", q => q.OrderByDescending(e => e.Name) }
-			};
-
-			return sortingOptions.TryGetValue(sortLabel, out var orderFunc) ? orderFunc : q => q.OrderBy(e => e.Id);
 		}
 	}
 }

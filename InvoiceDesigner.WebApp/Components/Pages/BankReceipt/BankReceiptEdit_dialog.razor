@@ -4,6 +4,7 @@
 @using InvoiceDesigner.Domain.Shared.Enums
 @using InvoiceDesigner.Domain.Shared.Extensions
 @using InvoiceDesigner.Domain.Shared.Helpers
+@using InvoiceDesigner.Domain.Shared.Interfaces.Abstract
 @using InvoiceDesigner.Domain.Shared.QueryParameters
 @using InvoiceDesigner.Domain.Shared.Responses
 
@@ -22,8 +23,8 @@ else
 			<MudGrid Class="d-flex p-2">
 				<MudItem xs="6">
 					<MudDatePicker @bind-Date="@_bankReceiptViewDto.DateTime"
-								   Label="@localizer["IssuedDate"]"
-								   For="(() => _bankReceiptViewDto.DateTime)" />
+					Label="@localizer["IssuedDate"]"
+					For="(() => _bankReceiptViewDto.DateTime)" />
 				</MudItem>
 				<MudItem xs="6">
 					<MudTextField Value="@_bankReceiptViewDto.Amount" Label="@_bankReceiptViewDto.CurrencyName" Variant="Variant.Text" Disabled></MudTextField>
@@ -86,7 +87,6 @@ else
 		</DialogActions>
 
 	</MudDialog>
-
  
 }
 

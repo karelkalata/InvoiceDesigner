@@ -15,10 +15,12 @@ using InvoiceDesigner.Application.Services.ServiceFormDesigner;
 using InvoiceDesigner.Application.Services.ServiceUser;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Interfaces.Accounting;
+using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
 using InvoiceDesigner.Domain.Shared.Interfaces.Documents;
 using InvoiceDesigner.Infrastructure.Data;
 using InvoiceDesigner.Infrastructure.Repositories;
 using InvoiceDesigner.Infrastructure.Repositories.Accounting;
+using InvoiceDesigner.Infrastructure.Repositories.Directories;
 using InvoiceDesigner.Infrastructure.Repositories.Documents;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -76,7 +78,6 @@ builder.Services.AddScoped<ICurrencyService, CurrencyService>();
 
 builder.Services.AddScoped<IBankRepository, BankRepository>();
 builder.Services.AddScoped<IBankService, BankService>();
-builder.Services.AddScoped<IBankServiceHelper, BankServiceHelper>();
 
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();

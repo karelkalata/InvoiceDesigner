@@ -156,7 +156,7 @@ namespace InvoiceDesigner.Infrastructure.Data
 				productPrice.HasOne(e => e.Currency)
 					.WithMany()
 					.HasForeignKey(e => e.CurrencyId)
-					.OnDelete(DeleteBehavior.Restrict);
+					.OnDelete(DeleteBehavior.Cascade);
 			});
 
 			modelBuilder.Entity<User>(user =>
