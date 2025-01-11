@@ -78,7 +78,7 @@ namespace InvoiceDesigner.Application.Services.AdminService
 
 			await MapUser(existEntity, dto);
 
-			 await _repoUser.UpdateAsync(existEntity);
+			await _repoUser.UpdateAsync(existEntity);
 
 			return new ResponseRedirect
 			{

@@ -5,6 +5,6 @@ namespace InvoiceDesigner.Domain.Shared.Interfaces.Directories
 {
 	public interface IProductRepository : IABaseRepository<Product>
 	{
- 
+
 	}
 }

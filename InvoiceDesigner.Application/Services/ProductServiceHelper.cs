@@ -12,6 +12,6 @@ namespace InvoiceDesigner.Application.Services
 			_repository = repository;
 		}
 
- 
+
 	}
 }

@@ -9,7 +9,7 @@ namespace InvoiceDesigner.Infrastructure.Repositories.Directories
 {
 	public class ProductRepository : ABaseRepository<Product>, IProductRepository
 	{
-		public ProductRepository(DataContext context) : base(context){ }
+		public ProductRepository(DataContext context) : base(context) { }
 
 		public override async Task<IReadOnlyCollection<Product>> GetEntitiesAsync(QueryPaged queryPaged, string sortLabel)
 		{
@@ -44,6 +44,6 @@ namespace InvoiceDesigner.Infrastructure.Repositories.Directories
 				.Where(c => c.Id == id)
 				.SingleOrDefaultAsync();
 		}
- 
+
 	}
 }

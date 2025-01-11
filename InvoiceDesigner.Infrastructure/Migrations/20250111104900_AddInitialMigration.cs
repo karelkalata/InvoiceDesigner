@@ -20,10 +20,12 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Code = table.Column<int>(type: "INTEGER", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
                     Asset1 = table.Column<int>(type: "INTEGER", nullable: false),
                     Asset2 = table.Column<int>(type: "INTEGER", nullable: false),
-                    Asset3 = table.Column<int>(type: "INTEGER", nullable: false)
+                    Asset3 = table.Column<int>(type: "INTEGER", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsArchived = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -136,7 +138,10 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     Credit = table.Column<int>(type: "INTEGER", nullable: false),
                     Debit = table.Column<int>(type: "INTEGER", nullable: false),
                     EntryMode = table.Column<int>(type: "INTEGER", nullable: false),
-                    AmountType = table.Column<int>(type: "INTEGER", nullable: false)
+                    AmountType = table.Column<int>(type: "INTEGER", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsArchived = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -518,13 +523,13 @@ namespace InvoiceDesigner.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "ChartOfAccounts",
-                columns: new[] { "Id", "Asset1", "Asset2", "Asset3", "Code", "Name" },
+                columns: new[] { "Id", "Asset1", "Asset2", "Asset3", "Code", "IsArchived", "IsDeleted", "Name" },
                 values: new object[,]
                 {
-                    { 1, 2, 0, 0, 1200, "Accounts Receivable" },
-                    { 2, 1, 0, 0, 1030, "Bank: Operating" },
-                    { 3, 0, 0, 0, 2200, "Sales Tax" },
-                    { 4, 3, 0, 0, 4000, "Sales" }
+                    { 1, 2, 0, 0, 1200, false, false, "Accounts Receivable" },
+                    { 2, 1, 0, 0, 1030, false, false, "Bank: Operating" },
+                    { 3, 0, 0, 0, 2200, false, false, "Sales Tax" },
+                    { 4, 3, 0, 0, 4000, false, false, "Sales" }
                 });
 
             migrationBuilder.InsertData(
@@ -549,12 +554,12 @@ namespace InvoiceDesigner.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "DoubleEntriesSetup",
-                columns: new[] { "Id", "AccountingDocument", "AmountType", "Credit", "Debit", "EntryMode" },
+                columns: new[] { "Id", "AccountingDocument", "AmountType", "Credit", "Debit", "EntryMode", "IsArchived", "IsDeleted", "Name" },
                 values: new object[,]
                 {
-                    { 1, 0, 1, 4, 1, 0 },
-                    { 2, 0, 2, 3, 1, 1 },
-                    { 3, 1, 1, 1, 2, 1 }
+                    { 1, 0, 1, 4, 1, 0, false, false, "" },
+                    { 2, 0, 2, 3, 1, 1, false, false, "" },
+                    { 3, 1, 1, 1, 2, 1, false, false, "" }
                 });
 
             migrationBuilder.InsertData(

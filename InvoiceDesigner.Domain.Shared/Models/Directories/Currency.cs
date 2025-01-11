@@ -1,5 +1,4 @@
-﻿using InvoiceDesigner.Domain.Shared.Interfaces.Abstract;
-using InvoiceDesigner.Domain.Shared.Models.Abstract;
+﻿using InvoiceDesigner.Domain.Shared.Models.Abstract;
 
 namespace InvoiceDesigner.Domain.Shared.Models.Directories
 {

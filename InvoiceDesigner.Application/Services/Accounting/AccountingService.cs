@@ -140,7 +140,7 @@ namespace InvoiceDesigner.Application.Services.Accounting
 			{
 				Page = 1,
 				PageSize = await _serviceDoubleEntrySetup.GetCountByTypeDocumentAsync(typeDocument),
-				TypeDocument = typeDocument
+				AccountingDocument = typeDocument
 			};
 			return await _serviceDoubleEntrySetup.GetEntitiesAsync(query);
 		}

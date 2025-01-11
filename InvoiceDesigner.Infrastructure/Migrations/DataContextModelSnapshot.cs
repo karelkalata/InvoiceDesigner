@@ -486,6 +486,12 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.Property<int>("Code")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -502,6 +508,8 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                             Asset2 = 0,
                             Asset3 = 0,
                             Code = 1200,
+                            IsArchived = false,
+                            IsDeleted = false,
                             Name = "Accounts Receivable"
                         },
                         new
@@ -511,6 +519,8 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                             Asset2 = 0,
                             Asset3 = 0,
                             Code = 1030,
+                            IsArchived = false,
+                            IsDeleted = false,
                             Name = "Bank: Operating"
                         },
                         new
@@ -520,6 +530,8 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                             Asset2 = 0,
                             Asset3 = 0,
                             Code = 2200,
+                            IsArchived = false,
+                            IsDeleted = false,
                             Name = "Sales Tax"
                         },
                         new
@@ -529,6 +541,8 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                             Asset2 = 0,
                             Asset3 = 0,
                             Code = 4000,
+                            IsArchived = false,
+                            IsDeleted = false,
                             Name = "Sales"
                         });
                 });
@@ -618,6 +632,16 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.Property<int>("EntryMode")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Credit");
@@ -634,7 +658,10 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                             AmountType = 1,
                             Credit = 4,
                             Debit = 1,
-                            EntryMode = 0
+                            EntryMode = 0,
+                            IsArchived = false,
+                            IsDeleted = false,
+                            Name = ""
                         },
                         new
                         {
@@ -643,7 +670,10 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                             AmountType = 2,
                             Credit = 3,
                             Debit = 1,
-                            EntryMode = 1
+                            EntryMode = 1,
+                            IsArchived = false,
+                            IsDeleted = false,
+                            Name = ""
                         },
                         new
                         {
@@ -652,7 +682,10 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                             AmountType = 1,
                             Credit = 1,
                             Debit = 2,
-                            EntryMode = 1
+                            EntryMode = 1,
+                            IsArchived = false,
+                            IsDeleted = false,
+                            Name = ""
                         });
                 });
 

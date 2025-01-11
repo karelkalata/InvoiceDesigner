@@ -24,8 +24,14 @@ namespace InvoiceDesigner.Application.Services.Accounting
 			queryPaged.PageSize = Math.Max(queryPaged.PageSize, 1);
 			queryPaged.Page = Math.Max(queryPaged.Page, 1);
 
-			var entitiesTask = _repoChartOfAccounts.GetEntitiesAsync(queryPaged, GetOrdering(queryPaged.SortLabel));
-			var totalCountTask = _repoChartOfAccounts.GetCountAsync();
+			var entitiesTask = _repoChartOfAccounts.GetEntitiesAsync(queryPaged, queryPaged.SortLabel);
+
+			var queryGetCount = new QueryGetCount
+			{
+				ShowArchived = queryPaged.ShowArchived,
+				ShowDeleted = queryPaged.ShowDeleted,
+			};
+			var totalCountTask = _repoChartOfAccounts.GetCountAsync(queryGetCount);
 
 			await Task.WhenAll(entitiesTask, totalCountTask);
 
@@ -59,12 +65,12 @@ namespace InvoiceDesigner.Application.Services.Accounting
 
 			await MapDtoToEntity(existsEntity, editedDto);
 
-			var entityId = await _repoChartOfAccounts.UpdateAsync(existsEntity);
+			await _repoChartOfAccounts.UpdateAsync(existsEntity);
 
 			return new ResponseRedirect
 			{
 				RedirectUrl = string.Empty,
-				entityId = entityId
+				entityId = existsEntity.Id
 			};
 		}
 
@@ -87,7 +93,7 @@ namespace InvoiceDesigner.Application.Services.Accounting
 				SearchString = searchText
 			};
 
-			var entities = await _repoChartOfAccounts.GetEntitiesAsync(queryPaged, GetOrdering("Value"));
+			var entities = await _repoChartOfAccounts.GetEntitiesAsync(queryPaged, "Name");
 
 			return _mapper.Map<IReadOnlyCollection<ChartOfAccountsAutocompleteDto>>(entities);
 		}
@@ -119,18 +125,5 @@ namespace InvoiceDesigner.Application.Services.Accounting
 			existsEntity.Asset2 = dto.Asset2;
 			existsEntity.Asset3 = dto.Asset3;
 		}
-
-		private static Func<IQueryable<ChartOfAccounts>, IOrderedQueryable<ChartOfAccounts>> GetOrdering(string sortLabel)
-		{
-			var sortingOptions = new Dictionary<string, Func<IQueryable<ChartOfAccounts>, IOrderedQueryable<ChartOfAccounts>>>
-			{
-				{ "Id_desc", q => q.OrderByDescending(e => e.Id) },
-				{ "Name", q => q.OrderBy(e => e.Name) },
-				{ "Name_desc", q => q.OrderByDescending(e => e.Name) }
-			};
-
-			return sortingOptions.TryGetValue(sortLabel, out var orderFunc) ? orderFunc : q => q.OrderBy(e => e.Id);
-		}
-
 	}
 }

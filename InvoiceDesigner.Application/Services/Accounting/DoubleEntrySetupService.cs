@@ -28,7 +28,7 @@ namespace InvoiceDesigner.Application.Services.Accounting
 			queryPaged.Page = Math.Max(queryPaged.Page, 1);
 
 			var entitiesTask = _repoDoubleEntrySetup.GetEntitiesAsync(queryPaged);
-			var totalCountTask = _repoDoubleEntrySetup.GetCountAsync();
+			var totalCountTask = _repoDoubleEntrySetup.GetCountByTypeDocumentAsync(queryPaged.AccountingDocument);
 
 			await Task.WhenAll(entitiesTask, totalCountTask);
 
@@ -68,7 +68,7 @@ namespace InvoiceDesigner.Application.Services.Accounting
 
 			await MapDtoToEntity(existsEntity, editedDto);
 
-			var entityId = await _repoDoubleEntrySetup.UpdateAsync(existsEntity);
+			await _repoDoubleEntrySetup.UpdateAsync(existsEntity);
 
 			return new ResponseRedirect
 			{

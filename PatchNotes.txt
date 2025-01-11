@@ -1,5 +1,5 @@
 1.2.0  
-    Accounting Engine:  
+	Accounting Engine:  
         - Implemented a double-entry bookkeeping engine based on a customizable chart of accounts, following GAAP principles.  
         - Added editable templates for double-entry bookkeeping, allowing predefined debit and credit entries for each type of accounting document.  
         - Accounting documents now use these templates to automatically generate journal entries.  

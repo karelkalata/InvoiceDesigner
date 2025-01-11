@@ -1,16 +1,10 @@
-﻿using InvoiceDesigner.Domain.Shared.Models.ModelsAccounting;
-using InvoiceDesigner.Domain.Shared.QueryParameters;
+﻿using InvoiceDesigner.Domain.Shared.Interfaces.Abstract;
+using InvoiceDesigner.Domain.Shared.Models.ModelsAccounting;
 
 namespace InvoiceDesigner.Domain.Shared.Interfaces.Accounting
 {
-	public interface IChartOfAccountsRepository
+	public interface IChartOfAccountsRepository : IABaseRepository<ChartOfAccounts>
 	{
-		Task<IReadOnlyCollection<ChartOfAccounts>> GetEntitiesAsync(QueryPaged queryPaged, Func<IQueryable<ChartOfAccounts>, IOrderedQueryable<ChartOfAccounts>> orderBy);
-		Task<int> CreateAsync(ChartOfAccounts entity);
-		Task<ChartOfAccounts?> GetByIdAsync(int id);
 		Task<ChartOfAccounts?> GetByCodeAsync(int code);
-		Task<int> UpdateAsync(ChartOfAccounts entity);
-		Task<bool> DeleteAsync(ChartOfAccounts entity);
-		Task<int> GetCountAsync();
 	}
 }
