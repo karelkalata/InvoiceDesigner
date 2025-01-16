@@ -84,6 +84,11 @@ namespace InvoiceDesigner.Application.Services.Accounting
 			};
 		}
 
+		public async Task<int> GetCountAsunc()
+		{
+			return await _repoChartOfAccounts.GetCountAsync(new QueryGetCount());
+		}
+
 		public async Task<IReadOnlyCollection<ChartOfAccountsAutocompleteDto>> FilteringData(string searchText)
 		{
 			var queryPaged = new QueryPaged
@@ -121,6 +126,7 @@ namespace InvoiceDesigner.Application.Services.Accounting
 
 			existsEntity.Code = dto.Code;
 			existsEntity.Name = dto.Name.Trim();
+			existsEntity.TypeChartOfAccount = dto.TypeChartOfAccount;
 			existsEntity.Asset1 = dto.Asset1;
 			existsEntity.Asset2 = dto.Asset2;
 			existsEntity.Asset3 = dto.Asset3;

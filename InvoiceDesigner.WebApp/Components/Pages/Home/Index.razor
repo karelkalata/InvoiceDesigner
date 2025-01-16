@@ -50,20 +50,18 @@
 			<MudTd DataLabel="Status">@context.Status</MudTd>
 
 			<MudTd Class="pa-0">
-				<MudMenu Icon="@Icons.Material.Filled.MoreVert" Dense>
-
-					<MudNavLink OnClick="(() => InputBankReceipt(context))" Class="d-flex flex-nowrap" Disabled="!(context.Status == EStatus.Approved)">
-						<MudIcon Icon="@Icons.Material.Filled.Receipt" Class="me-2" />
-						@localizer["BankReceipt"]
-					</MudNavLink>
-
-					<MudDivider />
+				<MudMenu Icon="@Icons.Material.Filled.MoreVert" Dense Size="Size.Small">
 
 					<MudNavLink Href="@($"/Invoices/{context.Id}")" Class="d-flex flex-nowrap">
 						<MudIcon Icon="@Icons.Material.Filled.Edit" Class="me-2" />
 						@localizer["Edit"] @localizer["Invoice"] @context.Number
 					</MudNavLink>
-
+					<MudDivider />
+					<MudNavLink OnClick="(() => InputBankReceipt(context))" Class="d-flex flex-nowrap" Disabled="!(context.Status == EStatus.Approved)">
+						<MudIcon Icon="@Icons.Material.Filled.Receipt" Class="me-2" />
+						@localizer["BankReceipt"]
+					</MudNavLink>
+					<MudDivider />
 					<MudNavLink OnClick="() => OnInvoiceChangeProperty(context.Id, context.IsDeleted, true, EStatus.Canceled)" Class="d-flex flex-nowrap">
 						<MudIcon Icon="@Icons.Material.Filled.Cancel" Class="me-2" />
 						@localizer["CancelAndArchiveDocument"]

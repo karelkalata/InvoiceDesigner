@@ -7,21 +7,26 @@ using InvoiceDesigner.Application.Interfaces.Documents;
 using InvoiceDesigner.Application.Interfaces.InterfacesAccounting;
 using InvoiceDesigner.Application.Interfaces.InterfacesFormDesigner;
 using InvoiceDesigner.Application.Interfaces.InterfacesUser;
+using InvoiceDesigner.Application.Interfaces.Reports;
 using InvoiceDesigner.Application.Services;
 using InvoiceDesigner.Application.Services.Accounting;
 using InvoiceDesigner.Application.Services.AdminService;
 using InvoiceDesigner.Application.Services.Documents;
+using InvoiceDesigner.Application.Services.Reports;
 using InvoiceDesigner.Application.Services.ServiceFormDesigner;
 using InvoiceDesigner.Application.Services.ServiceUser;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Interfaces.Accounting;
 using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
 using InvoiceDesigner.Domain.Shared.Interfaces.Documents;
+using InvoiceDesigner.Domain.Shared.Interfaces.Reports;
 using InvoiceDesigner.Infrastructure.Data;
 using InvoiceDesigner.Infrastructure.Repositories;
 using InvoiceDesigner.Infrastructure.Repositories.Accounting;
 using InvoiceDesigner.Infrastructure.Repositories.Directories;
 using InvoiceDesigner.Infrastructure.Repositories.Documents;
+using InvoiceDesigner.Infrastructure.Repositories.Reports;
+using InvoiceDesigner.Infrastructure.Serializers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -56,6 +61,20 @@ builder.Services.AddAuthorization(option =>
 {
 	option.AddPolicy(UserPolicy.IsAdmin, policy => policy.RequireClaim(UserPolicy.IsAdmin, "true"));
 });
+
+#region Serializers dateTime format ISO 8601
+builder.Services.Configure<Microsoft.AspNetCore.Mvc.MvcOptions>(options =>
+{
+	options.ModelBindingMessageProvider.SetAttemptedValueIsInvalidAccessor((value, propertyName) =>
+		$"The value '{value}' is not valid for {propertyName}.");
+});
+
+builder.Services.AddControllersWithViews()
+	.AddJsonOptions(options =>
+	{
+		options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
+	});
+#endregion
 
 //	AutoMapper is used solely to convert models to DTOs.
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -123,7 +142,10 @@ builder.Services.AddScoped<IAccountingRepository, AccountingRepository>();
 builder.Services.AddScoped<IAccountingService, AccountingService>();
 #endregion
 
-
+#region Reports Accointing
+builder.Services.AddScoped<ITrialBalanceRepository, TrialBalanceRepository>();
+builder.Services.AddScoped<ITrialBalanceService, TrialBalanceService>();
+#endregion
 
 
 builder.Logging.ClearProviders();

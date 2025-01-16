@@ -354,4 +354,25 @@
   <data name="BankReceipts" xml:space="preserve">
     <value>Reçus bancaire</value>
   </data>
+  <data name="ExportAccountingData" xml:space="preserve">
+    <value>Exporter les données comptables</value>
+  </data>
+  <data name="ExportAccountingDataText" xml:space="preserve">
+    <value>Cette section est encore en développement, mais si vous pouvez aider avec le format requis, tout sera mis en œuvre beaucoup plus rapidement.</value>
+  </data>
+  <data name="BalanceSheet" xml:space="preserve">
+    <value>Bilan</value>
+  </data>
+  <data name="DateEnd" xml:space="preserve">
+    <value>Date de Fin</value>
+  </data>
+  <data name="DateStart" xml:space="preserve">
+    <value>Date de Début</value>
+  </data>
+  <data name="TrialBalance" xml:space="preserve">
+    <value>Balance de Vérification</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Rapports</value>
+  </data>
 </root>

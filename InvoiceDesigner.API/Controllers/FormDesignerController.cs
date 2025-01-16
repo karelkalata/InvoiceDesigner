@@ -23,9 +23,6 @@ namespace InvoiceDesigner.API.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> CreateAsync([FromBody] FormDesignerEditDto editDto)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
-
 			try
 			{
 				var result = await _service.CreateAsync(UserId, editDto);
@@ -67,9 +64,6 @@ namespace InvoiceDesigner.API.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> UpdateAsync([FromBody] FormDesignerEditDto formDesignerEditDto)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
-
 			try
 			{
 				var result = await _service.UpdateAsync(UserId, formDesignerEditDto);
@@ -146,9 +140,6 @@ namespace InvoiceDesigner.API.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<FormDesignersAutocompleteDto>))]
 		public async Task<IActionResult> FilteringData([FromQuery] QueryFiltering queryFilter)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
-
 			try
 			{
 				var result = await _service.FilteringData(queryFilter);

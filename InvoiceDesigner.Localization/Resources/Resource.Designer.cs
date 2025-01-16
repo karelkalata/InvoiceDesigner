@@ -187,6 +187,15 @@ namespace InvoiceDesigner.Localization.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Balance Sheet.
+        /// </summary>
+        public static string BalanceSheet {
+            get {
+                return ResourceManager.GetString("BalanceSheet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bank.
         /// </summary>
         public static string Bank {
@@ -322,6 +331,24 @@ namespace InvoiceDesigner.Localization.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Date End.
+        /// </summary>
+        public static string DateEnd {
+            get {
+                return ResourceManager.GetString("DateEnd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Date Start.
+        /// </summary>
+        public static string DateStart {
+            get {
+                return ResourceManager.GetString("DateStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sales TAX.
         /// </summary>
         public static string DefaultVat {
@@ -408,6 +435,24 @@ namespace InvoiceDesigner.Localization.Resources {
         public static string ERROR_EntityNotFound {
             get {
                 return ResourceManager.GetString("ERROR.EntityNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export Accounting Data.
+        /// </summary>
+        public static string ExportAccountingData {
+            get {
+                return ResourceManager.GetString("ExportAccountingData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This section is still in development, but if you can help with the required format, everything will be implemented much faster..
+        /// </summary>
+        public static string ExportAccountingDataText {
+            get {
+                return ResourceManager.GetString("ExportAccountingDataText", resourceCulture);
             }
         }
         
@@ -637,6 +682,15 @@ namespace InvoiceDesigner.Localization.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reports.
+        /// </summary>
+        public static string Reports {
+            get {
+                return ResourceManager.GetString("Reports", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save.
         /// </summary>
         public static string Save {
@@ -741,6 +795,15 @@ namespace InvoiceDesigner.Localization.Resources {
         public static string Total {
             get {
                 return ResourceManager.GetString("Total", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trial Balance.
+        /// </summary>
+        public static string TrialBalance {
+            get {
+                return ResourceManager.GetString("TrialBalance", resourceCulture);
             }
         }
         

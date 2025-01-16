@@ -2,23 +2,27 @@
   {
     "Id": 1,
     "Code": 1200,
+    "TypeChartOfAccount": 0,
     "Name": "Accounts Receivable",
     "Asset1": 2
   },
   {
     "Id": 2,
     "Code": 1030,
+    "TypeChartOfAccount": 0,
     "Name": "Bank: Operating",
     "Asset1": 1
   },
   {
     "Id": 3,
     "Code": 2200,
+    "TypeChartOfAccount": 1,
     "Name": "Sales Tax"
   },
   {
     "Id": 4,
     "Code": 4000,
+    "TypeChartOfAccount": 2,
     "Name": "Sales",
     "Asset1": 3
   }

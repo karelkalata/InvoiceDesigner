@@ -20,6 +20,7 @@
 					@localizer["Code"]
 				</MudTableSortLabel>
 			</MudTh>
+			<MudTh>type</MudTh>
 			<MudTh>
 				<MudTableSortLabel T="ChartOfAccountsDto" SortLabel="Name">
 					@localizer["Name"]
@@ -32,6 +33,7 @@
 		</HeaderContent>
 		<RowTemplate>
 			<MudTd DataLabel="Code">@context.Code</MudTd>
+			<MudTd DataLabel="type">@context.TypeChartOfAccount</MudTd>
 			<MudTd DataLabel="Name">@context.Name</MudTd>
 			<MudTd DataLabel="Asset1">@(context.Asset1 == EAssetType.Unknown ? "" : context.Asset1)</MudTd>
 			<MudTd DataLabel="Asset2">@(context.Asset2 == EAssetType.Unknown ? "" : context.Asset2)</MudTd>

@@ -1,0 +1,113 @@
+﻿@page "/Reports/TrialBalance"
+@using InvoiceDesigner.Domain.Shared.DTOs.Company
+@using InvoiceDesigner.Domain.Shared.DTOs.Reports
+@using InvoiceDesigner.Domain.Shared.Extensions
+@using InvoiceDesigner.Domain.Shared.QueryParameters.Report
+@using InvoiceDesigner.Domain.Shared.Responses
+@using InvoiceDesigner.WebApp.Components.Pages.Helpers
+
+<MudContainer Class="p-2">
+	<MudTable ServerData="ServerReload" @ref="_table" Dense Hover RowsPerPage="100">
+		<ToolBarContent>
+			<MudGrid>
+				<MudItem xs="3" Class="d-inline-flex">
+					<MudDatePicker @bind-Date="_queryParameters.DateStart" Class="m-2"
+								   Label="@localizer["DateStart"]" />
+					<MudDatePicker @bind-Date="_queryParameters.DateEnd" Class="m-2"
+								   Label="@localizer["DateEnd"]" />
+				</MudItem>
+				<MudItem xs="8">
+					<MudSelect T="string" Class="m-2"
+							   Label="@localizer["Company"]"
+							   MultiSelection="true"
+							   @bind-Value="_selectedCompanyString"
+							   @bind-SelectedValues="_selectedCompany">
+						@foreach (var company in listCompany)
+						{
+							<MudSelectItem T="string" Value="@company">@company</MudSelectItem>
+						}
+
+					</MudSelect>
+				</MudItem>
+				<MudItem xs="1" Class="d-inline-flex">
+					<MudIconButton Icon="@Icons.Material.Filled.RestartAlt" OnClick="GetReports" Size="Size.Medium" Color="Color.Success" Class="m-2" />
+				</MudItem>
+			</MudGrid>
+			<MudSpacer />
+		</ToolBarContent>
+		<HeaderContent>
+			<MudTh>@localizer["ChartOfAccounts"]</MudTh>
+			<MudTh>@localizer["Amount"]</MudTh>
+			<MudTh>@localizer["Currency"]</MudTh>
+		</HeaderContent>
+		<RowTemplate>
+			<MudTd>@context.Name</MudTd>
+			<MudTd DataLabel="Balance">@context.Balance.ToString("N2")</MudTd>
+			<MudTd Style="width:50px">@context.CurrencyName</MudTd>
+		</RowTemplate>
+		<NoRecordsContent>
+			<MudText>@localizer["NoMatchingRecordsFound"]</MudText>
+		</NoRecordsContent>
+		<LoadingContent>
+			<MudText>@localizer["Loading"]</MudText>
+		</LoadingContent>
+		<PagerContent>
+			<MudTablePager PageSizeOptions="new int[] {10, 20, 30, 40, 50}" />
+		</PagerContent>
+	</MudTable>
+
+</MudContainer>
+@code {
+	private static string _controller = "Reports/TrialBalance";
+
+	private List<CompanyAutocompleteDto> _companyAutocompleteDto = new List<CompanyAutocompleteDto>();
+	private string _selectedCompanyString { get; set; } = "";
+	private IEnumerable<string> _selectedCompany { get; set; } = new List<string>();
+	private string[] listCompany = [];
+
+	private MudTable<ReportTrialBalance> _table = new();
+	private ResponsePaged<ReportTrialBalance>? _pagedResult;
+	private QueryTrialBalance _queryParameters = new QueryTrialBalance
+		{
+			DateStart = DateTime.UtcNow.AddMonths(-1),
+			DateEnd = DateTime.UtcNow
+		};
+
+	protected override async Task OnInitializedAsync()
+	{
+		_companyAutocompleteDto = await _httpHelper.GetDataFromAPI<List<CompanyAutocompleteDto>>("api/Companies/GetAllAutocompleteDto");
+		listCompany = _companyAutocompleteDto.Select(c => c.Name).ToArray();
+	}
+
+	private async Task<TableData<ReportTrialBalance>> ServerReload(TableState state, CancellationToken token)
+	{
+		if (_selectedCompany.Count() > 0)
+		{
+
+			_queryParameters.CompaniesIDs = new List<int>();
+			foreach (var item in _selectedCompany)
+			{
+				var company = _companyAutocompleteDto.FirstOrDefault(e => e.Name == item);
+				if (company != null)
+					_queryParameters.CompaniesIDs.Add(company.Id);
+			}
+
+			string queryString = _queryParameters.ToQueryString();
+
+			_pagedResult = await _httpHelper.GetDataFromAPI<ResponsePaged<ReportTrialBalance>>($"api/{_controller}?{queryString}");
+
+			if (_pagedResult != null)
+				return new TableData<ReportTrialBalance>()
+					{
+						TotalItems = _pagedResult.TotalCount,
+						Items = _pagedResult.Items
+					};
+		}
+		return new();
+	}
+
+	private async Task GetReports()
+	{
+		await _table.ReloadServerData();
+	}
+}

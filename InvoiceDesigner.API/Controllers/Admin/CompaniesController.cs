@@ -23,9 +23,6 @@ namespace InvoiceDesigner.API.Controllers.Admin
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponsePaged<CompanyViewDto>))]
 		public async Task<IActionResult> Index([FromQuery] QueryPaged queryPaged)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
-
 			try
 			{
 				var result = await _service.GetPagedEntitiesAsync(queryPaged);
@@ -45,9 +42,6 @@ namespace InvoiceDesigner.API.Controllers.Admin
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> CreateAsync([FromBody] CompanyEditDto companyCreateDto)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
-
 			try
 			{
 				var result = await _service.CreateAsync(UserId, companyCreateDto);
@@ -86,9 +80,6 @@ namespace InvoiceDesigner.API.Controllers.Admin
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> UpdateAsync([FromBody] CompanyEditDto companyCreateDto)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
-
 			try
 			{
 				var result = await _service.UpdateAsync(UserId, companyCreateDto);

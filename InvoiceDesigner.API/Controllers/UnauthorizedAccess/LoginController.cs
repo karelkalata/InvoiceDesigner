@@ -21,9 +21,6 @@ namespace InvoiceDesigner.API.Controllers.Unauthorized
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> LoginAsync([FromBody] UserLoginDto userLogin)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
-
 			try
 			{
 				var result = await _service.LoginAsync(userLogin);

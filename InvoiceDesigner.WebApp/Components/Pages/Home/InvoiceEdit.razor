@@ -344,8 +344,8 @@
 					Company = defaultCompany,
 					Vat = defaultCompany.DefaultVat,
 					Currency = defaultCompany.Currency,
-					DateTime = DateTime.Now,
-					DueDate = DateTime.Now.AddDays(defaultCompany.PaymentTerms)
+					DateTime = DateTime.UtcNow,
+					DueDate = DateTime.UtcNow.AddDays(defaultCompany.PaymentTerms)
 				};
 
 			_banksAutocomplete = _invoiceEditDto.Company.Banks.ToList();
@@ -363,8 +363,8 @@
 		if (selectedCompany != null)
 		{
 
-			_invoiceEditDto.DateTime = DateTime.Now;
-			_invoiceEditDto.DueDate = DateTime.Now.AddDays(selectedCompany.PaymentTerms);
+			_invoiceEditDto.DateTime = DateTime.UtcNow;
+			_invoiceEditDto.DueDate = DateTime.UtcNow.AddDays(selectedCompany.PaymentTerms);
 			_invoiceEditDto.Company = selectedCompany;
 			_invoiceEditDto.Vat = selectedCompany.DefaultVat;
 			_invoiceEditDto.Currency = selectedCompany.Currency;

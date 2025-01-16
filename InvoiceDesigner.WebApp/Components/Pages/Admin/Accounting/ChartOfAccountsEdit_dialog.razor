@@ -6,20 +6,32 @@
 		<MudGrid Spacing="2">
 			<MudItem xs="3">
 				<MudTextField @bind-Value="editedDto.Code" Class="d-flex pa-0 ma-0" Required
-							  Label="@localizer["Code"]"
-							  For="(() => editedDto.Code)" />
+				Label="@localizer["Code"]"
+				For="(() => editedDto.Code)" />
 			</MudItem>
-			<MudItem xs="9">
+			<MudItem xs="6">
 				<MudTextField @bind-Value="editedDto.Name" Class="d-flex pa-0 ma-0" Required
-							  Label="@localizer["Name"]"
-							  For="(() => editedDto.Name)" />
+				Label="@localizer["Name"]"
+				For="(() => editedDto.Name)" />
+			</MudItem>
+			<MudItem xs="3">
+				<MudSelect T="ETypeChartOfAccount" Dense
+				@bind-Value="editedDto.TypeChartOfAccount"
+				Typo="Typo.inherit"
+				Label="type"
+				Variant="Variant.Outlined">
+					@foreach (var value in Enum.GetValues(typeof(ETypeChartOfAccount)).Cast<ETypeChartOfAccount>())
+					{
+						<MudSelectItem value="@value">@value</MudSelectItem>
+					}
+				</MudSelect>
 			</MudItem>
 			<MudItem xs="4">
 				<MudSelect T="EAssetType" Dense
-						   @bind-Value="editedDto.Asset1"
-						   Typo="Typo.inherit"
-						   Label="@($"{localizer["Asset"]} 1")"
-						   Variant="Variant.Outlined">
+				@bind-Value="editedDto.Asset1"
+				Typo="Typo.inherit"
+				Label="@($"{localizer["Asset"]} 1")"
+				Variant="Variant.Outlined">
 					@foreach (var value in Enum.GetValues(typeof(EAssetType)).Cast<EAssetType>())
 					{
 						<MudSelectItem value="@value">@value</MudSelectItem>
@@ -28,10 +40,10 @@
 			</MudItem>
 			<MudItem xs="4">
 				<MudSelect T="EAssetType" Dense
-						   @bind-Value="editedDto.Asset2"
-						   Typo="Typo.inherit"
-						   Label="@($"{localizer["Asset"]} 2")"
-						   Variant="Variant.Outlined">
+				@bind-Value="editedDto.Asset2"
+				Typo="Typo.inherit"
+				Label="@($"{localizer["Asset"]} 2")"
+				Variant="Variant.Outlined">
 					@foreach (var value in Enum.GetValues(typeof(EAssetType)).Cast<EAssetType>())
 					{
 						<MudSelectItem value="@value">@value</MudSelectItem>
@@ -40,10 +52,10 @@
 			</MudItem>
 			<MudItem xs="4">
 				<MudSelect T="EAssetType" Dense
-						   @bind-Value="editedDto.Asset3"
-						   Typo="Typo.inherit"
-						   Label="@($"{localizer["Asset"]} 3")"
-						   Variant="Variant.Outlined">
+				@bind-Value="editedDto.Asset3"
+				Typo="Typo.inherit"
+				Label="@($"{localizer["Asset"]} 3")"
+				Variant="Variant.Outlined">
 					@foreach (var value in Enum.GetValues(typeof(EAssetType)).Cast<EAssetType>())
 					{
 						<MudSelectItem value="@value">@value</MudSelectItem>
@@ -72,6 +84,7 @@
 		base.OnInitialized();
 		editedDto.Id = originalDto.Id;
 		editedDto.Code = originalDto.Code;
+		editedDto.TypeChartOfAccount = originalDto.TypeChartOfAccount;
 		editedDto.Name = originalDto.Name;
 		editedDto.Asset1 = originalDto.Asset1;
 		editedDto.Asset2 = originalDto.Asset2;

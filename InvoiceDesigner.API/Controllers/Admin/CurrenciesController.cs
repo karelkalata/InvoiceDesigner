@@ -23,9 +23,6 @@ namespace InvoiceDesigner.API.Controllers.Admin
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponsePaged<CurrencyViewDto>))]
 		public async Task<IActionResult> Index([FromQuery] QueryPaged queryPaged)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
-
 			try
 			{
 				var result = await _serviceAdminCurrency.GetPagedEntitiesAsync(queryPaged);
@@ -45,9 +42,6 @@ namespace InvoiceDesigner.API.Controllers.Admin
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> CreateAsync([FromBody] CurrencyEditDto currencyEditDto)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
-
 			try
 			{
 				var result = await _serviceAdminCurrency.CreateAsync(UserId, currencyEditDto);
@@ -86,9 +80,6 @@ namespace InvoiceDesigner.API.Controllers.Admin
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<IActionResult> UpdateAsync([FromBody] CurrencyEditDto currencyEditDto)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
-
 			try
 			{
 				var result = await _serviceAdminCurrency.UpdateAsync(UserId, currencyEditDto);

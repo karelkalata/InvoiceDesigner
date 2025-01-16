@@ -1,4 +1,5 @@
-﻿using InvoiceDesigner.Domain.Shared.Interfaces.Abstract;
+﻿using InvoiceDesigner.Domain.Shared.Enums;
+using InvoiceDesigner.Domain.Shared.Interfaces.Abstract;
 
 namespace InvoiceDesigner.Domain.Shared.DTOs.AccountingDTOs
 {
@@ -7,5 +8,8 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.AccountingDTOs
 		public int Id { get; set; }
 		public int Code { get; set; }
 		public string Name { get; set; } = string.Empty;
+		public EAssetType Asset1 { get; set; }
+		public EAssetType Asset2 { get; set; }
+		public EAssetType Asset3 { get; set; }
 	}
 }

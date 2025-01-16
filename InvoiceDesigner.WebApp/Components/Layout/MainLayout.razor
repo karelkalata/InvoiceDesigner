@@ -47,6 +47,9 @@
 							<MudNavLink Icon="@Icons.Material.Filled.UnfoldMoreDouble" Href="/Admin/Accounting/DoubleEntrySetupIndex" Match="NavLinkMatch.Prefix">
 								@localizer["DoubleEntrySetup"]
 							</MudNavLink>
+							<MudNavLink Icon="@Icons.Material.Filled.ImportExport" Href="/Admin/Export/ExportAccountingData" Match="NavLinkMatch.Prefix">
+								@localizer["ExportAccountingData"]
+							</MudNavLink>
 						</ChildContent>
 					</MudMenu>
 				}
@@ -78,10 +81,13 @@
 			<Authorized>
 				<MudNavMenu Bordered="true">
 					<MudText Typo="Typo.h6" Class="px-4 pt-2">Invoice Designer</MudText>
-					<MudNavLink Icon="@Icons.Material.Filled.House" Href="/" Match="NavLinkMatch.All">Home</MudNavLink>
+					<MudNavLink Icon="@Icons.Material.Filled.House" Href="/" Match="NavLinkMatch.All">Invoices</MudNavLink>
+					<MudNavLink Icon="@Icons.Material.Filled.Receipt" Href="/BankReceipts" Match="NavLinkMatch.Prefix">@localizer["BankReceipts"]</MudNavLink>
 					<MudNavLink Icon="@Icons.Material.Filled.Group" Href="/Customers" Match="NavLinkMatch.Prefix">@localizer["Customers"]</MudNavLink>
 					<MudNavLink Icon="@Icons.Material.Filled.ListAlt" Href="/Products" Match="NavLinkMatch.Prefix">@localizer["Products"]</MudNavLink>
-					<MudNavLink Icon="@Icons.Material.Filled.Receipt" Href="/BankReceipts" Match="NavLinkMatch.Prefix">@localizer["BankReceipts"]</MudNavLink>
+					<MudNavGroup Title="@localizer["Reports"]">
+						<MudNavLink Icon="@Icons.Material.Filled.AutoStories" Href="/Reports/TrialBalance" Match="NavLinkMatch.Prefix">@localizer["TrialBalance"]</MudNavLink>
+					</MudNavGroup>
 					<MudNavLink Icon="@Icons.Material.Filled.DesignServices" Href="/FormDesigner" Match="NavLinkMatch.Prefix">Form Designer</MudNavLink>
 				</MudNavMenu>
 			</Authorized>

@@ -20,9 +20,6 @@ namespace InvoiceDesigner.API.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponsePaged<BankReceiptViewDto>))]
 		public async Task<IActionResult> Index([FromQuery] QueryPaged queryPaged)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
-
 			try
 			{
 				queryPaged.UserId = UserId;
@@ -44,9 +41,6 @@ namespace InvoiceDesigner.API.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> CreateAsync([FromBody] BankReceiptCreateDto editedDto)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
-
 			try
 			{
 				var result = await _service.CreateAsync(UserId, IsAdmin, editedDto);
@@ -66,9 +60,6 @@ namespace InvoiceDesigner.API.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> GetById(int id, [FromQuery] QueryGetEntity queryGetEntity)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
-
 			try
 			{
 				queryGetEntity.UserId = UserId;
@@ -90,9 +81,6 @@ namespace InvoiceDesigner.API.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> UpdateAsync([FromBody] BankReceiptCreateDto editedDto)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
-
 			try
 			{
 				var result = await _service.UpdateAsync(UserId, IsAdmin, editedDto);
@@ -139,9 +127,6 @@ namespace InvoiceDesigner.API.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> OnChangeProperty([FromQuery] QueryOnChangeProperty query)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
-
 			try
 			{
 				query.UserId = UserId;

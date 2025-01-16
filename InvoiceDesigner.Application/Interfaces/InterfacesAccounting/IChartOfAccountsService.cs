@@ -12,6 +12,7 @@ namespace InvoiceDesigner.Application.Interfaces.InterfacesAccounting
 		Task<ChartOfAccounts> ValidateExistsEntityAsync(int id);
 		Task<ResponseRedirect> UpdateAsync(ChartOfAccountsDto editedDto);
 		Task<ResponseBoolean> DeleteAsync(int id);
+		Task<int> GetCountAsunc();
 		Task<IReadOnlyCollection<ChartOfAccountsAutocompleteDto>> FilteringData(string f);
 	}
 }

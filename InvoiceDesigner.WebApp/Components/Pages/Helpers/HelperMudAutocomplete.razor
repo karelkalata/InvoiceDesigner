@@ -1,0 +1,60 @@
+﻿@using InvoiceDesigner.Domain.Shared.Interfaces.Abstract
+@typeparam TModel where TModel : IHasIdAndName
+<MudAutocomplete T="TModel" Clearable Dense
+				 Disabled="@Disabled"
+				 Class="@AddClass"
+				 style="@AddStyle"
+				 Label="Placeholder"
+				 Value="Value"
+				 ValueChanged="DefaultOnValueChanged"
+				 Placeholder="@localizer[Controller]"
+				 SearchFunc="@(SearchFunc ?? DefaultSearchFunc)"
+				 ToStringFunc="@(ToStringFunc ?? DefaultToStringFunc)" />
+
+@code {
+	[Parameter]
+	public string Controller { get; set; } = string.Empty;
+
+	[Parameter]
+	public TModel Value { get; set; }
+
+	[Parameter]
+	public string Placeholder { get; set; } = string.Empty;
+
+	[Parameter]
+	public bool Disabled { get; set; } = false;
+
+	[Parameter]
+	public string AddClass { get; set; } = string.Empty;
+
+	[Parameter]
+	public string AddStyle { get; set; } = string.Empty;
+
+	[Parameter]
+	public EventCallback<TModel> OnValueChanged { get; set; }
+
+	[Parameter]
+	public Func<string, CancellationToken, Task<IEnumerable<TModel>>>? SearchFunc { get; set; }
+
+	[Parameter]
+	public Func<TModel, string>? ToStringFunc { get; set; }
+
+	protected async Task<IEnumerable<TModel>> DefaultSearchFunc(string value, CancellationToken token)
+	{
+		return await _httpHelper.GetDataFromAPI<IEnumerable<TModel>>($"api/{Controller}/FilteringData?f={value}");
+	}
+
+	protected string DefaultToStringFunc(TModel item)
+	{
+		return item?.Name ?? string.Empty;
+	}
+
+	protected async Task DefaultOnValueChanged(TModel item)
+	{
+		Value = item;
+		if (OnValueChanged.HasDelegate)
+		{
+			await OnValueChanged.InvokeAsync(item);
+		}
+	}
+}

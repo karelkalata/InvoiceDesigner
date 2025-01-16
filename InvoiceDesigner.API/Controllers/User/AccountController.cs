@@ -40,8 +40,6 @@ namespace InvoiceDesigner.API.Controllers.User
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> UpdateAsync([FromBody] UserEditDto userEditDto)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
 			try
 			{
 				var result = await _service.UpdateAsync(UserId, userEditDto);

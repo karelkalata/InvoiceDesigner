@@ -354,4 +354,25 @@
   <data name="BankReceipts" xml:space="preserve">
     <value>Bank Receipts</value>
   </data>
+  <data name="ExportAccountingData" xml:space="preserve">
+    <value>Export Accounting Data</value>
+  </data>
+  <data name="ExportAccountingDataText" xml:space="preserve">
+    <value>This section is still in development, but if you can help with the required format, everything will be implemented much faster.</value>
+  </data>
+  <data name="BalanceSheet" xml:space="preserve">
+    <value>Balance Sheet</value>
+  </data>
+  <data name="DateEnd" xml:space="preserve">
+    <value>Date End</value>
+  </data>
+  <data name="DateStart" xml:space="preserve">
+    <value>Date Start</value>
+  </data>
+  <data name="TrialBalance" xml:space="preserve">
+    <value>Trial Balance</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Reports</value>
+  </data>
 </root>

@@ -496,6 +496,9 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("TypeChartOfAccount")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
                     b.ToTable("ChartOfAccounts");
@@ -510,7 +513,8 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                             Code = 1200,
                             IsArchived = false,
                             IsDeleted = false,
-                            Name = "Accounts Receivable"
+                            Name = "Accounts Receivable",
+                            TypeChartOfAccount = 0
                         },
                         new
                         {
@@ -521,7 +525,8 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                             Code = 1030,
                             IsArchived = false,
                             IsDeleted = false,
-                            Name = "Bank: Operating"
+                            Name = "Bank: Operating",
+                            TypeChartOfAccount = 0
                         },
                         new
                         {
@@ -532,7 +537,8 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                             Code = 2200,
                             IsArchived = false,
                             IsDeleted = false,
-                            Name = "Sales Tax"
+                            Name = "Sales Tax",
+                            TypeChartOfAccount = 1
                         },
                         new
                         {
@@ -543,7 +549,8 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                             Code = 4000,
                             IsArchived = false,
                             IsDeleted = false,
-                            Name = "Sales"
+                            Name = "Sales",
+                            TypeChartOfAccount = 2
                         });
                 });
 
@@ -679,7 +686,7 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                         {
                             Id = 3,
                             AccountingDocument = 1,
-                            AmountType = 1,
+                            AmountType = 0,
                             Credit = 1,
                             Debit = 2,
                             EntryMode = 1,

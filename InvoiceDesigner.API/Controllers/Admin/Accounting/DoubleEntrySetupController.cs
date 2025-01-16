@@ -24,8 +24,6 @@ namespace InvoiceDesigner.API.Controllers.Admin.Accounting
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponsePaged<DoubleEntrySetupEditDto>))]
 		public async Task<IActionResult> Index([FromQuery] QueryPagedDoubleEntrySetup queryPaged)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
 			try
 			{
 				var result = await _serviceDoubleEntrySetup.GetPagedAsync(queryPaged);
@@ -45,9 +43,6 @@ namespace InvoiceDesigner.API.Controllers.Admin.Accounting
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> CreateAsync([FromBody] DoubleEntrySetupEditDto createDto)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
-
 			try
 			{
 				var result = await _serviceDoubleEntrySetup.CreateAsync(createDto);
@@ -67,9 +62,6 @@ namespace InvoiceDesigner.API.Controllers.Admin.Accounting
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> UpdateAsync([FromBody] DoubleEntrySetupEditDto editedDto)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
-
 			try
 			{
 				var result = await _serviceDoubleEntrySetup.UpdateAsync(editedDto);

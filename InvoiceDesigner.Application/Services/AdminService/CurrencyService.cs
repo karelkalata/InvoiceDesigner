@@ -76,6 +76,11 @@ namespace InvoiceDesigner.Application.Services.AdminService
 
 		public async Task<Currency> GetByIdAsync(int id) => await ValidateExistsEntityAsync(id);
 
+		public async Task<string> GetNameByIdAsync(int id)
+		{
+			var existsEntity = await ValidateExistsEntityAsync(id);
+			return existsEntity.Name;
+		}
 
 		public async Task<ResponseRedirect> UpdateAsync(int userId, CurrencyEditDto editedCurrency)
 		{
@@ -159,5 +164,6 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			existingCurrency.Name = dto.Name.ToUpper();
 			existingCurrency.Description = dto.Description.Trim();
 		}
+
 	}
 }

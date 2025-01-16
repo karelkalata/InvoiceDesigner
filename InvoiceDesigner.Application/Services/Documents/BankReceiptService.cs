@@ -59,12 +59,13 @@ namespace InvoiceDesigner.Application.Services.Documents
 			entity.Number = await _repoBankReceipt.GetNextNumberForCompanyAsync(entity.CompanyId);
 
 			MapDtoToEntity(entity, editedDto);
+			await _repoBankReceipt.CreateAsync(entity);
 			await _serviceAccounting.CreateEntriesAsync(entity, EAccountingDocument.BankReceipt, entity.Status);
 
 			return new ResponseRedirect
 			{
 				RedirectUrl = string.Empty,
-				entityId = await _repoBankReceipt.CreateAsync(entity)
+				entityId = entity.Id
 			};
 		}
 
@@ -108,6 +109,7 @@ namespace InvoiceDesigner.Application.Services.Documents
 		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(QueryDeleteEntity queryDeleteEntity)
 		{
 			var entity = await ValidateExistsEntityAsync(queryDeleteEntity.UserId, queryDeleteEntity.IsAdmin, queryDeleteEntity.EntityId);
+			await _serviceAccounting.CreateEntriesAsync(entity, EAccountingDocument.BankReceipt, EStatus.Canceled);
 
 			if (!queryDeleteEntity.MarkAsDeleted)
 			{
@@ -120,7 +122,6 @@ namespace InvoiceDesigner.Application.Services.Documents
 			{
 				entity.IsDeleted = true;
 				await _repoBankReceipt.UpdateAsync(entity);
-				await _serviceAccounting.CreateEntriesAsync(entity, EAccountingDocument.BankReceipt, EStatus.Canceled);
 
 				return new ResponseBoolean
 				{
@@ -154,8 +155,8 @@ namespace InvoiceDesigner.Application.Services.Documents
 			return new BankReceipt
 			{
 				InvoiceId = existsInvoice.Id,
+				DateTime = DateTime.UtcNow,
 				Invoice = existsInvoice,
-				DateTime = DateTime.Now,
 				CompanyId = existsInvoice.CompanyId,
 				Company = existsInvoice.Company,
 				BankId = existsInvoice.BankId,

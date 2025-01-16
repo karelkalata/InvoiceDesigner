@@ -135,18 +135,5 @@ namespace InvoiceDesigner.Application.Services
 			existsCustomer.TaxId = dto.TaxId.Trim();
 			existsCustomer.VatId = dto.VatId.Trim();
 		}
-
-		private Func<IQueryable<Customer>, IOrderedQueryable<Customer>> GetOrdering(string sortLabel)
-		{
-			var sortingOptions = new Dictionary<string, Func<IQueryable<Customer>, IOrderedQueryable<Customer>>>
-			{
-				{ "Id_desc", q => q.OrderByDescending(e => e.Id) },
-				{ "Name", q => q.OrderBy(e => e.Name) },
-				{ "Name_desc", q => q.OrderByDescending(e => e.Name) }
-			};
-
-			return sortingOptions.TryGetValue(sortLabel, out var orderFunc) ? orderFunc : q => q.OrderBy(e => e.Id);
-		}
 	}
-
 }

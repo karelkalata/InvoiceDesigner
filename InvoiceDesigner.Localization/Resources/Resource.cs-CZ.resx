@@ -354,4 +354,25 @@
   <data name="BankReceipts" xml:space="preserve">
     <value>Bankovní příjmy</value>
   </data>
+  <data name="ExportAccountingData" xml:space="preserve">
+    <value>Export účetních dat</value>
+  </data>
+  <data name="ExportAccountingDataText" xml:space="preserve">
+    <value>Tato sekce je stále ve vývoji, ale pokud nám pomůžete s požadovaným formátem, vše bude implementováno mnohem rychleji.</value>
+  </data>
+  <data name="BalanceSheet" xml:space="preserve">
+    <value>Rozvaha</value>
+  </data>
+  <data name="DateEnd" xml:space="preserve">
+    <value>Datum Ukončení</value>
+  </data>
+  <data name="DateStart" xml:space="preserve">
+    <value>Datum Zahájení</value>
+  </data>
+  <data name="TrialBalance" xml:space="preserve">
+    <value>Zkušební Bilance</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Zprávy</value>
+  </data>
 </root>

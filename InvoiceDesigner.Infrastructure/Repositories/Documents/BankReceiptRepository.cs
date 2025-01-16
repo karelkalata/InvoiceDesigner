@@ -24,8 +24,9 @@ namespace InvoiceDesigner.Infrastructure.Repositories.Documents
 												.AsNoTracking()
 												.Where(invoice => userAuthorizedCompanies.Contains(invoice.Company))
 												.Include(a => a.Company)
-												.Include(b => b.Currency)
-												.Include(c => c.Customer);
+												.Include(a => a.Bank)
+												.Include(a => a.Currency)
+												.Include(a => a.Customer);
 
 			if (!queryPaged.ShowDeleted)
 			{

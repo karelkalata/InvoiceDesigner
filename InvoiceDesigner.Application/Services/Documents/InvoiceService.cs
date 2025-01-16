@@ -18,7 +18,7 @@ namespace InvoiceDesigner.Application.Services.Documents
 	{
 		private readonly IInvoiceRepository _repository;
 		private readonly IMapper _mapper;
-		private readonly ICompanyService _companyService;
+		private readonly ICompanyService _serviceCompany;
 		private readonly ICurrencyService _currencyService;
 		private readonly IProductService _productService;
 		private readonly IBankService _bankService;
@@ -36,7 +36,7 @@ namespace InvoiceDesigner.Application.Services.Documents
 		{
 			_repository = repository;
 			_mapper = mapper;
-			_companyService = companyService;
+			_serviceCompany = companyService;
 			_currencyService = currencyService;
 			_productService = productService;
 			_bankService = bankService;
@@ -48,7 +48,7 @@ namespace InvoiceDesigner.Application.Services.Documents
 		{
 			InfoForNewInvoiceDto result = new();
 
-			var companies = _companyService.GetAllAutocompleteDto(userId, isAdmin);
+			var companies = _serviceCompany.GetAllAutocompleteDto(userId, isAdmin);
 			var currencies = _currencyService.GetAutocompleteDto();
 
 			await Task.WhenAll(companies, currencies);
@@ -65,7 +65,7 @@ namespace InvoiceDesigner.Application.Services.Documents
 			queryPaged.PageSize = Math.Max(queryPaged.PageSize, 1);
 			queryPaged.Page = Math.Max(queryPaged.Page, 1);
 
-			var userAuthorizedCompanies = await _companyService.GetAuthorizedCompaniesAsync(queryPaged.UserId, queryPaged.IsAdmin);
+			var userAuthorizedCompanies = await _serviceCompany.GetAuthorizedCompaniesAsync(queryPaged.UserId, queryPaged.IsAdmin);
 
 			var invoices = _repository.GetAsync(queryPaged, GetOrdering(queryPaged.SortLabel), userAuthorizedCompanies);
 			var totalCount = _repository.GetCountAsync(queryPaged, userAuthorizedCompanies);
@@ -83,7 +83,7 @@ namespace InvoiceDesigner.Application.Services.Documents
 		{
 			var (currency, company, bank, customer) = await ValidateInputAsync(invoiceDto);
 
-			var userAuthorizedCompanies = await _companyService.GetAuthorizedCompaniesAsync(userId, isAdmin);
+			var userAuthorizedCompanies = await _serviceCompany.GetAuthorizedCompaniesAsync(userId, isAdmin);
 			if (!userAuthorizedCompanies.Any(c => c.Id == company.Id))
 				throw new InvalidOperationException("Access Denied");
 
@@ -107,7 +107,7 @@ namespace InvoiceDesigner.Application.Services.Documents
 
 		public async Task<Invoice?> GetByIdAsync(int userId, bool isAdmin, int id)
 		{
-			var userAuthorizedCompanies = await _companyService.GetAuthorizedCompaniesAsync(userId, isAdmin);
+			var userAuthorizedCompanies = await _serviceCompany.GetAuthorizedCompaniesAsync(userId, isAdmin);
 			return await _repository.GetByIdAsync(id, userAuthorizedCompanies);
 		}
 
@@ -182,7 +182,7 @@ namespace InvoiceDesigner.Application.Services.Documents
 
 		private async Task<Invoice> ValidateExistsEntityAsync(int userId, bool isAdmin, int id)
 		{
-			var userAuthorizedCompanies = await _companyService.GetAuthorizedCompaniesAsync(userId, isAdmin);
+			var userAuthorizedCompanies = await _serviceCompany.GetAuthorizedCompaniesAsync(userId, isAdmin);
 			var existsInvoice = await _repository.GetByIdAsync(id, userAuthorizedCompanies)
 							?? throw new InvalidOperationException("Invoice not found");
 
@@ -191,7 +191,7 @@ namespace InvoiceDesigner.Application.Services.Documents
 
 		private async Task<(Currency, Company, Bank, Customer)> ValidateInputAsync(InvoiceEditDto invoiceDto)
 		{
-			var company = await _companyService.GetByIdAsync(invoiceDto.Company.Id)
+			var company = await _serviceCompany.GetByIdAsync(invoiceDto.Company.Id)
 							?? throw new InvalidOperationException($"Company: {invoiceDto.Company.Id} not found.");
 
 			var currency = await _currencyService.GetByIdAsync(invoiceDto.Currency.Id)
@@ -219,8 +219,8 @@ namespace InvoiceDesigner.Application.Services.Documents
 			existsInvoice.PONumber = dto.PONumber;
 			existsInvoice.Vat = dto.Vat;
 			existsInvoice.EnabledVat = dto.EnabledVat;
-			existsInvoice.DateTime = dto.DateTime ?? DateTime.Now;
-			existsInvoice.DueDate = dto.DueDate ?? DateTime.Now.AddDays(company.PaymentTerms);
+			existsInvoice.DateTime = dto.DateTime ?? DateTime.UtcNow;
+			existsInvoice.DueDate = dto.DueDate ?? DateTime.UtcNow.AddDays(company.PaymentTerms);
 			existsInvoice.Status = dto.Status;
 			existsInvoice.CustomerId = customer.Id;
 			existsInvoice.Customer = customer;

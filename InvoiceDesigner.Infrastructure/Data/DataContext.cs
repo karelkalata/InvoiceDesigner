@@ -1,4 +1,5 @@
-﻿using InvoiceDesigner.Domain.Shared.Models;
+﻿using InvoiceDesigner.Domain.Shared.Enums;
+using InvoiceDesigner.Domain.Shared.Models;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Domain.Shared.Models.Documents;
 using InvoiceDesigner.Domain.Shared.Models.ModelsAccounting;
@@ -426,6 +427,8 @@ namespace InvoiceDesigner.Infrastructure.Data
 			modelBuilder.Entity<DoubleEntry>(doubleEntry =>
 			{
 				doubleEntry.HasKey(e => e.Id);
+				doubleEntry.HasIndex(e => e.Debit);
+				doubleEntry.HasIndex(e => e.Credit);
 
 				doubleEntry.HasOne(e => e.CreditAccount)
 					.WithMany()
@@ -463,6 +466,29 @@ namespace InvoiceDesigner.Infrastructure.Data
 		{
 			var json = File.ReadAllText(filePath);
 			return JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
+		}
+
+
+		public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+		{
+			var deletedInvoices = ChangeTracker.Entries<Invoice>()
+				.Where(e => e.State == EntityState.Deleted)
+				.ToList();
+
+			foreach (var entry in deletedInvoices)
+			{
+				var invoiceId = entry.Entity.Id;
+
+				var bankReceipt = await BankReceipts.FirstOrDefaultAsync(br => br.InvoiceId == invoiceId, cancellationToken);
+				if (bankReceipt != null)
+				{
+					var doubleEntries = Accounting.Where(de => de.AccountingDocument == EAccountingDocument.BankReceipt && de.DocumentId == bankReceipt.Id);
+					Accounting.RemoveRange(doubleEntries);
+					BankReceipts.Remove(bankReceipt);
+				}
+			}
+
+			return await base.SaveChangesAsync(cancellationToken);
 		}
 	}
 }

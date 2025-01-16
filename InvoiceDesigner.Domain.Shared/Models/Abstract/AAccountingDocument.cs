@@ -11,7 +11,7 @@ namespace InvoiceDesigner.Domain.Shared.Models.Abstract
 
 		public int Number { get; set; }
 
-		public DateTime DateTime { get; set; }
+		public DateTime DateTime { get; set; } = DateTime.UtcNow;
 
 		public int CompanyId { get; set; }
 

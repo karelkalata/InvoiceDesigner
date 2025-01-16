@@ -354,4 +354,25 @@
   <data name="BankReceipts" xml:space="preserve">
     <value>Банковские квитанции</value>
   </data>
+  <data name="ExportAccountingData" xml:space="preserve">
+    <value>Экспорт бухгалтерских данных</value>
+  </data>
+  <data name="ExportAccountingDataText" xml:space="preserve">
+    <value>Этот раздел все еще в разработке, но если вы можете помочь с нужным форматом, все будет реализовано гораздо быстрее.</value>
+  </data>
+  <data name="BalanceSheet" xml:space="preserve">
+    <value>Баланс</value>
+  </data>
+  <data name="DateEnd" xml:space="preserve">
+    <value>Дата окончания</value>
+  </data>
+  <data name="DateStart" xml:space="preserve">
+    <value>Дата начала</value>
+  </data>
+  <data name="TrialBalance" xml:space="preserve">
+    <value>Оборотная ведомость</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Отчеты</value>
+  </data>
 </root>

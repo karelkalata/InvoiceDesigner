@@ -1,34 +1,60 @@
-1.2.0  
-	Accounting Engine:  
-        - Implemented a double-entry bookkeeping engine based on a customizable chart of accounts, following GAAP principles.  
-        - Added editable templates for double-entry bookkeeping, allowing predefined debit and credit entries for each type of accounting document.  
-        - Accounting documents now use these templates to automatically generate journal entries.  
-        - Introduced a new document type: Bank Receipt. 
-	Remove User Activity Logging
-1.1.1
-	Add Localization: en, cz, de, es, fr, it, pl, pt, ru
-1.1.0
-	User Activity Logging: 
-		Added functionality to track user actions, including document creation, editing, archiving, and other actions, with timestamps for all changes.
-1.0.1
-	Introduced UserCurrenciesController to restrict currency access for regular users.
-	Refactored UserService into separate services for Admin and User roles to enhance security.
-	Minor bug fixes.
-1.0.0 Release
-	All functionality is realized
-0.3.1-alpha
-	Implemented soft delete functionality for Invoices.
-	Implemented archiving functionality for invoices.
-	Added status visualization property for Invoices.
-0.2.2-alpha
-    Implemented soft delete functionality for Products, Currencies, and Customers. 
-	(Items marked as deleted are hidden from the interface by default but remain in the database for further review or permanent deletion.)
-0.2.1-alpha
-	Added Authorization and Authentication (JWT token)
-	Implemented User Access Control for Companies
-	Refactored Company and Bank management
-	Refactored Print Form Designer
-		Added default print form
-		Added new CSS styles:
-			font-style: normal/italic
-			font-weight: normal/bold
+##1.2.1
+*	**New Features:***
+	*	Implemented a new Trial Balance report that provides a summary of account balances, grouped by account code, name, and currency.
+	*	The report supports filtering by date range and company.
+
+*	**Improvements:**
+	*	Date/Time Locale Dependency Removed:
+	*	Transmitted data is now converted to the ISO 8601 format (`yyyy-MM-ddTHH:mm:ssZ`) for both JSON and query string parameters, ensuring correct processing across different locales.
+	*    Implemented a custom JSON converter (`DateTimeConverter`) to handle the format of date and time properties globally.
+	*	Fixed model binding issues related to date formats in query parameters.
+
+*	**Enhanced Date Handling:**
+	*   Set `DateStart` to the beginning of the day (00:00:00) and `DateEnd` to the end of the day (23:59:59) in the service layer, regardless of the time provided in the request.
+	
+*	**Performance Optimizations:**
+	*   Implemented `AsNoTracking()` for read-only queries.
+	*   Implemented in-memory caching for currency names (`_cachedCurrencyName`) to reduce database load.
+
+*	**Bug Fixes:**
+	*   Fixed issues related to pattern matching with nullable `DateTime?` types.
+	*   Fixed potential `NullReferenceException` in `QueryStringExtensions`
+	*   Fixed incorrect calculation of pagination in the service layer
+
+##1.2.0  
+*	**Accounting Engine:**
+	*	Implemented a double-entry bookkeeping engine based on a customizable chart of accounts, following GAAP principles.  
+	*	Added editable templates for double-entry bookkeeping, allowing predefined debit and credit entries for each type of accounting document.  
+	*	Accounting documents now use these templates to automatically generate journal entries.  
+	*	Introduced a new document type: Bank Receipt. 
+	*	Remove User Activity Logging
+
+##1.1.1
+*	Add Localization: en, cz, de, es, fr, it, pl, pt, ru
+
+##1.1.0
+*	**User Activity Logging:**
+	*	Added functionality to track user actions, including document creation, editing, archiving, and other actions, with timestamps for all changes.
+
+##1.0.1
+*	Introduced UserCurrenciesController to restrict currency access for regular users.
+*	Refactored UserService into separate services for Admin and User roles to enhance security.
+*	Minor bug fixes.
+
+##1.0.0 Release
+*	**All functionality is realized**
+
+##0.3.1-alpha
+*	Implemented soft delete functionality for Invoices.
+*	Implemented archiving functionality for invoices.
+*	Added status visualization property for Invoices.
+
+##0.2.2-alpha
+*	Implemented soft delete functionality for Products, Currencies, and Customers. 
+*	(Items marked as deleted are hidden from the interface by default but remain in the database for further review or permanent deletion.)
+
+##0.2.1-alpha
+*	Added Authorization and Authentication (JWT token)
+*	Implemented User Access Control for Companies
+*	Refactored Company and Bank management
+*	Refactored Print Form Designer

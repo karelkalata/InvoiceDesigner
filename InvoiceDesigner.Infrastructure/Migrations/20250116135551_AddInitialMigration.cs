@@ -20,6 +20,7 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Code = table.Column<int>(type: "INTEGER", nullable: false),
+                    TypeChartOfAccount = table.Column<int>(type: "INTEGER", nullable: false),
                     Asset1 = table.Column<int>(type: "INTEGER", nullable: false),
                     Asset2 = table.Column<int>(type: "INTEGER", nullable: false),
                     Asset3 = table.Column<int>(type: "INTEGER", nullable: false),
@@ -523,13 +524,13 @@ namespace InvoiceDesigner.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "ChartOfAccounts",
-                columns: new[] { "Id", "Asset1", "Asset2", "Asset3", "Code", "IsArchived", "IsDeleted", "Name" },
+                columns: new[] { "Id", "Asset1", "Asset2", "Asset3", "Code", "IsArchived", "IsDeleted", "Name", "TypeChartOfAccount" },
                 values: new object[,]
                 {
-                    { 1, 2, 0, 0, 1200, false, false, "Accounts Receivable" },
-                    { 2, 1, 0, 0, 1030, false, false, "Bank: Operating" },
-                    { 3, 0, 0, 0, 2200, false, false, "Sales Tax" },
-                    { 4, 3, 0, 0, 4000, false, false, "Sales" }
+                    { 1, 2, 0, 0, 1200, false, false, "Accounts Receivable", 0 },
+                    { 2, 1, 0, 0, 1030, false, false, "Bank: Operating", 0 },
+                    { 3, 0, 0, 0, 2200, false, false, "Sales Tax", 1 },
+                    { 4, 3, 0, 0, 4000, false, false, "Sales", 2 }
                 });
 
             migrationBuilder.InsertData(
@@ -559,7 +560,7 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                 {
                     { 1, 0, 1, 4, 1, 0, false, false, "" },
                     { 2, 0, 2, 3, 1, 1, false, false, "" },
-                    { 3, 1, 1, 1, 2, 1, false, false, "" }
+                    { 3, 1, 0, 1, 2, 1, false, false, "" }
                 });
 
             migrationBuilder.InsertData(

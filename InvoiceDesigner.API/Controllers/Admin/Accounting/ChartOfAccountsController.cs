@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace InvoiceDesigner.API.Controllers.Admin.Accounting
 {
-	[Authorize(Policy = UserPolicy.IsAdmin)]
+
 	[Route("api/Admin/Accounting/[controller]")]
 	public class ChartOfAccountsController : RESTController
 	{
@@ -21,11 +21,10 @@ namespace InvoiceDesigner.API.Controllers.Admin.Accounting
 		}
 
 		[HttpGet]
+		[Authorize(Policy = UserPolicy.IsAdmin)]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponsePaged<ChartOfAccountsDto>))]
 		public async Task<IActionResult> Index([FromQuery] QueryPaged queryPaged)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
 			try
 			{
 				var result = await _serviceChartOfAccounts.GetPagedAsync(queryPaged);
@@ -41,13 +40,11 @@ namespace InvoiceDesigner.API.Controllers.Admin.Accounting
 		}
 
 		[HttpPost]
+		[Authorize(Policy = UserPolicy.IsAdmin)]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseRedirect))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> CreateAsync([FromBody] ChartOfAccountsDto createDto)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
-
 			try
 			{
 				var result = await _serviceChartOfAccounts.CreateAsync(createDto);
@@ -63,13 +60,11 @@ namespace InvoiceDesigner.API.Controllers.Admin.Accounting
 		}
 
 		[HttpPut]
+		[Authorize(Policy = UserPolicy.IsAdmin)]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseRedirect))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> UpdateAsync([FromBody] ChartOfAccountsDto editedDto)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
-
 			try
 			{
 				var result = await _serviceChartOfAccounts.UpdateAsync(editedDto);
@@ -85,6 +80,7 @@ namespace InvoiceDesigner.API.Controllers.Admin.Accounting
 		}
 
 		[HttpDelete("{id:int}")]
+		[Authorize(Policy = UserPolicy.IsAdmin)]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseBoolean))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> DeleteOrMarkAsDeletedAsync(int id)
@@ -103,7 +99,9 @@ namespace InvoiceDesigner.API.Controllers.Admin.Accounting
 			}
 		}
 
+
 		[HttpGet("FilteringData")]
+		[Authorize]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IReadOnlyCollection<ChartOfAccountsAutocompleteDto>))]
 		public async Task<IActionResult> FilteringData(string f = "")
 		{

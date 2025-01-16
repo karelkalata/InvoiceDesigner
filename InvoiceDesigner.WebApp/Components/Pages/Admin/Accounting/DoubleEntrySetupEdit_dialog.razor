@@ -11,30 +11,30 @@
 			</MudItem>
 			<MudItem xs="9">
 				<MudAutocomplete T="ChartOfAccountsAutocompleteDto" Required Dense Clearable
-				@bind-Value="editedDto.DebitAccount"
-				SearchFunc="@((value, token) => FilteringDataWithApi<ChartOfAccountsAutocompleteDto>(value, token))"
-				ToStringFunc="@(c => $"{c?.Code} - {c?.Name}" ?? "")"
-				For="(() => originalDto.DebitAccount)" />
+								 @bind-Value="editedDto.DebitAccount"
+								 SearchFunc="@((value, token) => FilteringDataWithApi<ChartOfAccountsAutocompleteDto>(value, token))"
+								 ToStringFunc="@(c => $"{c?.Code} - {c?.Name}" ?? "")"
+								 For="(() => originalDto.DebitAccount)" />
 			</MudItem>
 			<MudItem xs="3">
 				Credit:
 			</MudItem>
 			<MudItem xs="9">
 				<MudAutocomplete T="ChartOfAccountsAutocompleteDto" Required Dense Clearable
-				@bind-Value="editedDto.CreditAccount"
-				SearchFunc="@((value, token) => FilteringDataWithApi<ChartOfAccountsAutocompleteDto>(value, token))"
-				ToStringFunc="@(c => $"{c?.Code} - {c?.Name}" ?? "")"
-				For="(() => originalDto.CreditAccount)" />
+								 @bind-Value="editedDto.CreditAccount"
+								 SearchFunc="@((value, token) => FilteringDataWithApi<ChartOfAccountsAutocompleteDto>(value, token))"
+								 ToStringFunc="@(c => $"{c?.Code} - {c?.Name}" ?? "")"
+								 For="(() => originalDto.CreditAccount)" />
 			</MudItem>
 			<MudItem xs="3">
 				@localizer["Amount"]:
 			</MudItem>
 			<MudItem xs="9">
 				<MudSelect T="EAmountType" Dense Required
-				Value="editedDto.AmountType"
-				Disabled="@(editedDto.EntryMode == EEntryMode.SplitByItem)"
-				Typo="Typo.inherit"
-				Variant="Variant.Outlined">
+						   @bind-Value="editedDto.AmountType"
+						   Disabled="@(editedDto.EntryMode == EEntryMode.SplitByItem)"
+						   Typo="Typo.inherit"
+						   Variant="Variant.Outlined">
 					@foreach (var value in Enum.GetValues(typeof(EAmountType)).Cast<EAmountType>())
 					{
 						<MudSelectItem value="@value">@value</MudSelectItem>
@@ -49,10 +49,10 @@
 			</MudItem>
 			<MudItem xs="9">
 				<MudSelect T="EEntryMode" Dense Required
-				Value="editedDto.EntryMode"
-				ValueChanged="OnChangedEntryMode"
-				Typo="Typo.inherit"
-				Variant="Variant.Outlined">
+						   Value="editedDto.EntryMode"
+						   ValueChanged="OnChangedEntryMode"
+						   Typo="Typo.inherit"
+						   Variant="Variant.Outlined">
 					@foreach (var value in Enum.GetValues(typeof(EEntryMode)).Cast<EEntryMode>())
 					{
 						<MudSelectItem value="@value">@value</MudSelectItem>
