@@ -72,6 +72,7 @@ namespace InvoiceDesigner.Application.Services.Reports
 			var reportItemsTasks = groupedEntries.Select(async item => new ReportTrialBalance
 			{
 				Name = $"{item.AccountCode} - {item.AccountName}",
+				TypeChartOfAccount = item.AccountType,
 				CurrencyName = await GetCurrencyName(item.CurrencyId),
 				Balance = HelperReports.CalculateAccountBalance(item.AccountType, item.TotalDebit, item.TotalCredit)
 			}).ToList();
@@ -81,7 +82,7 @@ namespace InvoiceDesigner.Application.Services.Reports
 			return new ResponsePaged<ReportTrialBalance>
 			{
 				Items = reportItems.ToList(),
-				TotalCount = reportItems.Count(),
+				TotalCount = reportItems.Length,
 			};
 		}
 

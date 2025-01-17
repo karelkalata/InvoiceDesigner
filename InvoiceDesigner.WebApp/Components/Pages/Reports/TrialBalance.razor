@@ -41,7 +41,7 @@
 			<MudTh>@localizer["Currency"]</MudTh>
 		</HeaderContent>
 		<RowTemplate>
-			<MudTd>@context.Name</MudTd>
+			<MudTd>@context.Name (@context.TypeChartOfAccount)</MudTd>
 			<MudTd DataLabel="Balance">@context.Balance.ToString("N2")</MudTd>
 			<MudTd Style="width:50px">@context.CurrencyName</MudTd>
 		</RowTemplate>

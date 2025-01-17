@@ -5,10 +5,10 @@ New Features:
 Improvements:
 	- Date/Time Locale Dependency Removed:
 	- Transmitted data is now converted to the ISO 8601 format (`yyyy-MM-ddTHH:mm:ssZ`) for both JSON and query string parameters, ensuring correct processing across different locales.
-	- Implemented a custom JSON converter (`DateTimeConverter`) to handle the format of date and time properties globally.
+	- Implemented a custom JSON converter (DateTimeConverter) to handle the format of date and time properties globally.
 	- Fixed model binding issues related to date formats in query parameters.
 Enhanced Date Handling:
-	-Set `DateStart` to the beginning of the day (00:00:00) and `DateEnd` to the end of the day (23:59:59) in the service layer, regardless of the time provided in the request.
+	- Set `DateStart` to the beginning of the day (00:00:00) and `DateEnd` to the end of the day (23:59:59) in the service layer, regardless of the time provided in the request.
 Performance Optimizations:
 	- Implemented `AsNoTracking()` for read-only queries.
 	- Implemented in-memory caching for currency names (`_cachedCurrencyName`) to reduce database load.
