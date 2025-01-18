@@ -18,6 +18,8 @@ With Invoice Designer, customizing your invoice print form is super easy. You ca
 - Editable templates for double-entry bookkeeping of each accounting document.
 - Double-entry bookkeeping system with configurable data export to third-party accounting systems.
 - Tax management capabilities.
+### Reports
+- Trial Balance
 ### Security and Access Management
 - Advanced user access control for managing permissions.
 ### Connectivity
@@ -44,6 +46,11 @@ With Invoice Designer, customizing your invoice print form is super easy. You ca
 </p>
 <p align="center">
   <img src="screenshot7.png"  />
+</p>
+
+- Trial Balance: A report that shows the final balances of all general ledger accounts over a specific period. These balances reflect the cumulative impact of transactions based on the account type (e.g., assets, liabilities, revenue, expenses, equity)
+<p align="center">
+  <img src="screenshot8.png"  />
 </p>
 
 ## Development Environment
