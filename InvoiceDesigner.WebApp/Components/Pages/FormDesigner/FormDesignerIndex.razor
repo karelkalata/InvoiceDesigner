@@ -41,7 +41,9 @@
 </style>
 @if (!_loaded)
 {
-	<MudText Align="Align.Center">Loading...</MudText>
+	<MudOverlay Visible="true">
+		<MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+	</MudOverlay>
 }
 else
 {

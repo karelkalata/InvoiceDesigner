@@ -3,7 +3,9 @@
 
 @if (_currencyEditDto == null)
 {
-	<MudText Align="Align.Center">@localizer["Loading"]</MudText>
+	<MudOverlay Visible="true">
+		<MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+	</MudOverlay>
 }
 else
 {

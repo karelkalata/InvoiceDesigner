@@ -11,7 +11,9 @@
 <MudContainer>
 	@if (_adminUserEditDto == null)
 	{
-		<MudText Align="Align.Center">Loading...</MudText>
+		<MudOverlay Visible="true">
+			<MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+		</MudOverlay>
 	}
 	else
 	{
