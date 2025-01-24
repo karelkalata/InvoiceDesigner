@@ -74,7 +74,6 @@ namespace InvoiceDesigner.Application.Services.Accounting
 			};
 		}
 
-
 		public async Task<ResponseBoolean> DeleteAsync(int id)
 		{
 			var existsEntity = await ValidateExistsEntityAsync(id);
@@ -106,7 +105,7 @@ namespace InvoiceDesigner.Application.Services.Accounting
 		public async Task<ChartOfAccounts> ValidateExistsEntityAsync(int id)
 		{
 			return await _repoChartOfAccounts.GetByIdAsync(id)
-				?? throw new InvalidOperationException($"A record with ID {id} not found in ChartOfAccounts");
+				?? throw new InvalidOperationException($"A record with ID {id} not found in ChartOfAccountsId");
 		}
 
 		private async Task MapDtoToEntity(ChartOfAccounts existsEntity, ChartOfAccountsDto dto)
@@ -131,5 +130,7 @@ namespace InvoiceDesigner.Application.Services.Accounting
 			existsEntity.Asset2 = dto.Asset2;
 			existsEntity.Asset3 = dto.Asset3;
 		}
+
+
 	}
 }

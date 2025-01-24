@@ -8,20 +8,12 @@ namespace InvoiceDesigner.Application.Interfaces
 	public interface ICustomerService
 	{
 		Task<ResponsePaged<CustomerViewDto>> GetPagedEntitiesAsync(QueryPaged queryPaged);
-
 		Task<ResponseRedirect> CreateAsync(int userId, CustomerEditDto newEntity);
-
 		Task<Customer> GetByIdAsync(int id);
-
 		Task<CustomerEditDto> GetEditDtoByIdAsync(int id);
-
 		Task<ResponseRedirect> UpdateAsync(int userId, CustomerEditDto editedEntity);
-
 		Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(QueryDeleteEntity queryDeleteEntity);
-
 		Task<int> GetCountAsync();
-
 		Task<IReadOnlyCollection<CustomerAutocompleteDto>> FilteringData(string f);
-
 	}
 }

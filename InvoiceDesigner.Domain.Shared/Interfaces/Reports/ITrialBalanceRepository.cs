@@ -1,4 +1,4 @@
-﻿using InvoiceDesigner.Domain.Shared.DTOs.Reports;
+﻿using InvoiceDesigner.Domain.Shared.DTOs.Reports.TrialBalance;
 using InvoiceDesigner.Domain.Shared.QueryParameters.Report;
 
 namespace InvoiceDesigner.Domain.Shared.Interfaces.Reports

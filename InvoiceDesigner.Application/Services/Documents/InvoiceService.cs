@@ -201,7 +201,7 @@ namespace InvoiceDesigner.Application.Services.Documents
 							?? throw new InvalidOperationException($"Bank: {invoiceDto.Bank.Id} not found.");
 
 			var customer = await _customerService.GetByIdAsync(invoiceDto.Customer.Id)
-							?? throw new InvalidOperationException($"Customer: {invoiceDto.Customer.Id} not found.");
+							?? throw new InvalidOperationException($"CustomerId: {invoiceDto.Customer.Id} not found.");
 
 			return (currency, company, bank, customer);
 		}

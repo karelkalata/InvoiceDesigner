@@ -1,34 +1,36 @@
-﻿@page "/Reports/TrialBalance"
+﻿@page "/Reports/CustomerDebit"
 @using InvoiceDesigner.Domain.Shared.DTOs.Company
-@using InvoiceDesigner.Domain.Shared.DTOs.Reports
-@using InvoiceDesigner.Domain.Shared.DTOs.Reports.TrialBalance
+@using InvoiceDesigner.Domain.Shared.DTOs.Customer
+@using InvoiceDesigner.Domain.Shared.DTOs.Reports.CustomerDebit
 @using InvoiceDesigner.Domain.Shared.Extensions
+@using InvoiceDesigner.Domain.Shared.Interfaces.Abstract
 @using InvoiceDesigner.Domain.Shared.QueryParameters.Report
 @using InvoiceDesigner.Domain.Shared.Responses
-@using InvoiceDesigner.WebApp.Components.Pages.Helpers
 
 <MudContainer Class="p-2">
 	<MudTable ServerData="ServerReload" @ref="_table" Dense Hover RowsPerPage="100">
 		<ToolBarContent>
 			<MudGrid>
-				<MudItem xs="3" Class="d-inline-flex">
-					<MudDatePicker @bind-Date="_queryParameters.DateStart" Class="m-2"
-								   Label="@localizer["DateStart"]" />
-					<MudDatePicker @bind-Date="_queryParameters.DateEnd" Class="m-2"
-								   Label="@localizer["DateEnd"]" />
-				</MudItem>
-				<MudItem xs="8">
+				<MudItem xs="6">
 					<MudSelect T="string" Class="m-2"
-							   Label="@localizer["Company"]"
-							   MultiSelection="true"
-							   @bind-Value="_selectedCompanyString"
-							   @bind-SelectedValues="_selectedCompany">
+					Label="@localizer["Company"]"
+					MultiSelection="true"
+					@bind-Value="_selectedCompanyString"
+					@bind-SelectedValues="_selectedCompany">
 						@foreach (var company in listCompany)
 						{
 							<MudSelectItem T="string" Value="@company">@company</MudSelectItem>
 						}
 
 					</MudSelect>
+				</MudItem>
+				<MudItem xs="5">
+					<MudAutocomplete T="CustomerAutocompleteDto" Dense Clearable Class="m-2"
+					Value="_selectedCustomer"
+					ValueChanged="SelectCustomer"
+					Label="@localizer["Customer"]"
+					SearchFunc="@((value, token) => FilteringDataWithApi<CustomerAutocompleteDto>(value, "Customers", token))"
+					ToStringFunc="@(c => c?.Name ?? "")" />
 				</MudItem>
 				<MudItem xs="1" Class="d-inline-flex">
 					<MudIconButton Icon="@Icons.Material.Filled.RestartAlt" OnClick="GetReports" Size="Size.Medium" Color="Color.Success" Class="m-2" />
@@ -37,13 +39,13 @@
 			<MudSpacer />
 		</ToolBarContent>
 		<HeaderContent>
-			<MudTh>@localizer["ChartOfAccounts"]</MudTh>
+			<MudTh>@localizer["Customer"]</MudTh>
 			<MudTh>@localizer["Amount"]</MudTh>
 			<MudTh>@localizer["Currency"]</MudTh>
 		</HeaderContent>
 		<RowTemplate>
-			<MudTd>@context.Name (@context.TypeChartOfAccount)</MudTd>
-			<MudTd DataLabel="Balance">@context.Balance.ToString("N2")</MudTd>
+			<MudTd>@context.CustomerName</MudTd>
+			<MudTd DataLabel="Balance">@context.Amount.ToString("N2")</MudTd>
 			<MudTd Style="width:50px">@context.CurrencyName</MudTd>
 		</RowTemplate>
 		<NoRecordsContent>
@@ -58,21 +60,19 @@
 	</MudTable>
 
 </MudContainer>
+
 @code {
-	private static string _controller = "Reports/TrialBalance";
+	private static string _controller = "Reports/CustomerDebit";
 
 	private List<CompanyAutocompleteDto> _companyAutocompleteDto = new List<CompanyAutocompleteDto>();
 	private string _selectedCompanyString { get; set; } = "";
+	private CustomerAutocompleteDto _selectedCustomer { get; set; } = null!;
 	private IEnumerable<string> _selectedCompany { get; set; } = new List<string>();
 	private string[] listCompany = [];
 
-	private MudTable<ReportTrialBalance> _table = new();
-	private ResponsePaged<ReportTrialBalance>? _pagedResult;
-	private QueryTrialBalance _queryParameters = new QueryTrialBalance
-		{
-			DateStart = DateTime.UtcNow.AddMonths(-1),
-			DateEnd = DateTime.UtcNow
-		};
+	private MudTable<ReportCustomerDebit> _table = new();
+	private ResponsePaged<ReportCustomerDebit>? _pagedResult;
+	private QueryCustomerDebit _queryParameters = new QueryCustomerDebit();
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -80,7 +80,7 @@
 		listCompany = _companyAutocompleteDto.Select(c => c.Name).ToArray();
 	}
 
-	private async Task<TableData<ReportTrialBalance>> ServerReload(TableState state, CancellationToken token)
+	private async Task<TableData<ReportCustomerDebit>> ServerReload(TableState state, CancellationToken token)
 	{
 		if (_selectedCompany.Count() > 0)
 		{
@@ -95,16 +95,27 @@
 
 			string queryString = _queryParameters.ToQueryString();
 
-			_pagedResult = await _httpHelper.GetDataFromAPI<ResponsePaged<ReportTrialBalance>>($"api/{_controller}?{queryString}");
+			_pagedResult = await _httpHelper.GetDataFromAPI<ResponsePaged<ReportCustomerDebit>>($"api/{_controller}?{queryString}");
 
 			if (_pagedResult != null)
-				return new TableData<ReportTrialBalance>()
+				return new TableData<ReportCustomerDebit>()
 					{
 						TotalItems = _pagedResult.TotalCount,
 						Items = _pagedResult.Items
 					};
 		}
 		return new();
+	}
+
+	private async Task<IEnumerable<T>> FilteringDataWithApi<T>(string value, string apiUrl, CancellationToken token) where T : IHasIdAndName
+	{
+		return await _httpHelper.GetDataFromAPI<IEnumerable<T>>($"api/{apiUrl}/FilteringData?f={value}");
+	}
+
+	private void SelectCustomer(CustomerAutocompleteDto dto)
+	{
+		_selectedCustomer = dto;
+		_queryParameters.CustomerId = dto.Id;
 	}
 
 	private async Task GetReports()

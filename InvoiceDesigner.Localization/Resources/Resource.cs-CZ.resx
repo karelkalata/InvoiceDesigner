@@ -375,4 +375,7 @@
   <data name="Reports" xml:space="preserve">
     <value>Zprávy</value>
   </data>
+  <data name="CustomerDebit" xml:space="preserve">
+    <value>Pohledávka zákazníka</value>
+  </data>
 </root>

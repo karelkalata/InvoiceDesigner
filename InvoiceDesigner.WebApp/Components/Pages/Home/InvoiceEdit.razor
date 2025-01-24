@@ -155,7 +155,7 @@
 								<MudItem xs="12">
 									<MudAutocomplete T="CustomerAutocompleteDto" Required Dense Clearable
 													 @bind-Value="_invoiceEditDto.Customer"
-													 Label="@localizer["Customer"]"
+													 Label="@localizer["CustomerId"]"
 													 SearchFunc="@((value, token) => FilteringDataWithApi<CustomerAutocompleteDto>(value, "Customers", token))"
 													 ToStringFunc="@(c => c?.Name ?? "")"
 													 For="(() => _invoiceEditDto.Customer)" />

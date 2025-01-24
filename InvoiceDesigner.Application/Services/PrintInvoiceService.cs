@@ -329,7 +329,7 @@ namespace InvoiceDesigner.Application.Services
 						case "Company":
 							newStr = GetPropertyValue(_invoicePrintDto.Company, propertiesName);
 							break;
-						case "Customer":
+						case "CustomerId":
 							newStr = GetPropertyValue(_invoicePrintDto.Customer, propertiesName);
 							break;
 						case "Currency":

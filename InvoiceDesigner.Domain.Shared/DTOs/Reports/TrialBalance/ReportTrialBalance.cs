@@ -1,6 +1,6 @@
 ﻿using InvoiceDesigner.Domain.Shared.Enums;
 
-namespace InvoiceDesigner.Domain.Shared.DTOs.Reports
+namespace InvoiceDesigner.Domain.Shared.DTOs.Reports.TrialBalance
 {
 	public class ReportTrialBalance
 	{

@@ -1,7 +1,7 @@
 ﻿using InvoiceDesigner.Application.Helpers.Accounting;
 using InvoiceDesigner.Application.Interfaces.Admin;
 using InvoiceDesigner.Application.Interfaces.Reports;
-using InvoiceDesigner.Domain.Shared.DTOs.Reports;
+using InvoiceDesigner.Domain.Shared.DTOs.Reports.TrialBalance;
 using InvoiceDesigner.Domain.Shared.Interfaces.Reports;
 using InvoiceDesigner.Domain.Shared.QueryParameters.Report;
 using InvoiceDesigner.Domain.Shared.Responses;

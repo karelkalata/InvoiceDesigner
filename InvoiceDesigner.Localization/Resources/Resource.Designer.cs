@@ -322,6 +322,15 @@ namespace InvoiceDesigner.Localization.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Customer Debit.
+        /// </summary>
+        public static string CustomerDebit {
+            get {
+                return ResourceManager.GetString("CustomerDebit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Customers.
         /// </summary>
         public static string Customers {

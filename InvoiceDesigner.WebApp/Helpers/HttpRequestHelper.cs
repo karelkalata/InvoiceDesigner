@@ -248,6 +248,9 @@ namespace InvoiceDesigner.WebApp.Helpers
 					case System.Net.HttpStatusCode.Unauthorized:
 						_navigationManager?.NavigateTo("/Login", true);
 						break;
+					default:
+						await ShowError(response);
+						break;
 				}
 			}
 			catch (Exception ex)

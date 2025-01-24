@@ -375,4 +375,7 @@
   <data name="Reports" xml:space="preserve">
     <value>Relatórios</value>
   </data>
+  <data name="CustomerDebit" xml:space="preserve">
+    <value>Dívida do Cliente</value>
+  </data>
 </root>

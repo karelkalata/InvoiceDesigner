@@ -126,7 +126,7 @@ namespace InvoiceDesigner.Application.Services
 		private async Task<Customer> ValidateExistsEntityAsync(int id)
 		{
 			return await _repoCustomer.GetByIdAsync(id)
-				?? throw new InvalidOperationException("Customer not found");
+				?? throw new InvalidOperationException("CustomerId not found");
 		}
 
 		private void MapCustomer(Customer existsCustomer, CustomerEditDto dto)

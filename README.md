@@ -20,6 +20,7 @@ With Invoice Designer, customizing your invoice print form is super easy. You ca
 - Tax management capabilities.
 ### Reports
 - Trial Balance
+- Customer Debit
 ### Security and Access Management
 - Advanced user access control for managing permissions.
 ### Connectivity

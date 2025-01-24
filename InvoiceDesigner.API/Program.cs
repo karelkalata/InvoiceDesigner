@@ -145,6 +145,9 @@ builder.Services.AddScoped<IAccountingService, AccountingService>();
 #region Reports Accointing
 builder.Services.AddScoped<ITrialBalanceRepository, TrialBalanceRepository>();
 builder.Services.AddScoped<ITrialBalanceService, TrialBalanceService>();
+
+builder.Services.AddScoped<ICustomerDebitRepository, CustomerDebitRepository>();
+builder.Services.AddScoped<ICustomerDebitService, CustomerDebitService>();
 #endregion
 
 

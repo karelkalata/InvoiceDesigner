@@ -1,3 +1,5 @@
+1.2.2
+	Added Customer Debit Report
 1.2.1
 New Features:
 	- Implemented a new Trial Balance report that provides a summary of account balances, grouped by account code, name, and currency.
