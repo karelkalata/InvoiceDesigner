@@ -39,17 +39,35 @@
 			<MudTh>@localizer["Currency"]</MudTh>
 			<MudTh>@localizer["Status"]</MudTh>
 			<MudTh></MudTh>
+
 		</HeaderContent>
 		<RowTemplate>
-			<MudTd DataLabel="Id">@context.Number</MudTd>
+			<MudTd DataLabel="Id">
+					<MudText>@context.Number</MudText>
+			</MudTd>
 			<MudTd DataLabel="Date">@context.DateTime.ToString("dd.MM.yyyy")</MudTd>
 			<MudTd DataLabel="Comapny">@context.CompanyName</MudTd>
 			<MudTd DataLabel="Custome">@context.CustomerName</MudTd>
-			<MudTd DataLabel="Amount">@context.Amount.ToString("N2")</MudTd>
+			<MudTd DataLabel="Amount">
+
+					<MudText>@context.Amount.ToString("N2")</MudText>
+			
+				
+				</MudTd>
 			<MudTd DataLabel="Currency">@context.CurrencyName</MudTd>
-			<MudTd DataLabel="Status">@context.Status</MudTd>
+			<MudTd DataLabel="Status">
+				<MudSelect T="EStatus" Dense
+						   Class="d-flex ma-0"
+						   Value="@context.Status"
+						   ValueChanged="((e) => OnInvoiceChangeProperty(context.Id, context.IsDeleted, context.IsArchived, e))">
+					<MudSelectItem Value="@EStatus.Drafted">@EStatus.Drafted</MudSelectItem>
+					<MudSelectItem Value="@EStatus.Approved">@EStatus.Approved</MudSelectItem>
+					<MudSelectItem Value="@EStatus.Canceled">@EStatus.Canceled</MudSelectItem>
+				</MudSelect>
+			</MudTd>
 
 			<MudTd Class="pa-0">
+				<div style="display: flex;">
 				<MudMenu Icon="@Icons.Material.Filled.MoreVert" Dense Size="Size.Small">
 
 					<MudNavLink Href="@($"/Invoices/{context.Id}")" Class="d-flex flex-nowrap">
@@ -69,7 +87,7 @@
 
 					<MudPaper Elevation="3">
 						<MudNavGroup Title="Action">
-							<MudNavLink OnClick="() => OnInvoiceChangeProperty(context.Id, !context.IsArchived, context.IsDeleted, context.Status)" Class="d-flex flex-nowrap">
+							<MudNavLink OnClick="() => OnInvoiceChangeProperty(context.Id, context.IsDeleted, !context.IsArchived, context.Status)" Class="d-flex flex-nowrap">
 								<MudIcon Icon="@(context.IsArchived ? Icons.Material.Outlined.Unarchive : Icons.Material.Filled.Archive)" Class="me-2" />
 								Archive/Unarchive
 							</MudNavLink>
@@ -81,6 +99,19 @@
 					</MudPaper>
 
 				</MudMenu>
+					@if (context.IsDeleted)
+					{
+						<MudBadge Icon="@Icons.Material.Filled.DeleteForever" Color="Color.Error" Overlap="true" Bordered="true">
+							<MudText Style="padding-left: 10px;"></MudText>
+						</MudBadge>
+					}
+					else if (context.IsArchived)
+					{
+						<MudBadge Icon="@Icons.Material.Filled.Archive" Overlap="true" Bordered="true">
+							<MudText Style="padding-left: 10px;"></MudText>
+						</MudBadge>
+					}
+				</div>
 			</MudTd>
 		</RowTemplate>
 		<NoRecordsContent>
@@ -191,4 +222,6 @@
 		var result = await dialog.Result;
 
 	}
+
+
 }

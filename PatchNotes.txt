@@ -1,3 +1,9 @@
+1.2.3
+New Features:
+	- Added visualization for documents marked for deletion or archived in the invoice ledger.
+	- Enabled changing the document status directly in the invoice ledger without opening the document.
+Bug Fixes:
+	- If a document is marked for deletion, all related accounting entries are now automatically removed, as they should not exist for deleted documents. Additionally, a deleted document can no longer be assigned a different status.
 1.2.2
 	Added Customer Debit Report
 1.2.1

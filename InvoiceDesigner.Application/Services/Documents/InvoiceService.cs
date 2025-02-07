@@ -168,7 +168,13 @@ namespace InvoiceDesigner.Application.Services.Documents
 		public async Task<ResponseBoolean> OnChangeProperty(QueryOnChangeProperty queryStatus)
 		{
 			var existsEntity = await ValidateExistsEntityAsync(queryStatus.UserId, queryStatus.IsAdmin, queryStatus.EntityId);
-			existsEntity.Status = queryStatus.Status;
+
+			// If the document has the status delete - then cancel all double entries in the ledger
+			if (queryStatus.IsDeleted) 
+				existsEntity.Status = EStatus.Canceled;
+			else
+				existsEntity.Status = queryStatus.Status;
+
 			existsEntity.IsArchived = queryStatus.IsArchived;
 			existsEntity.IsDeleted = queryStatus.IsDeleted;
 
