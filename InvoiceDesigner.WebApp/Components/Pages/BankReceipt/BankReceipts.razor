@@ -11,12 +11,12 @@
 			<MudText Typo="Typo.h6">@localizer[@_controller]</MudText>
 			<MudSpacer />
 			<MudTextField T="string"
-			ValueChanged="@(s=>OnSearch(s))"
-			Placeholder="@localizer["Search"]"
-			Adornment="Adornment.Start"
-			AdornmentIcon="@Icons.Material.Filled.Search"
-			IconSize="Size.Medium"
-			Class="mt-0" />
+						  ValueChanged="@(s=>OnSearch(s))"
+						  Placeholder="@localizer["Search"]"
+						  Adornment="Adornment.Start"
+						  AdornmentIcon="@Icons.Material.Filled.Search"
+						  IconSize="Size.Medium"
+						  Class="mt-0" />
 			<MudSpacer />
 
 			<MudMenu Icon="@Icons.Material.Filled.Settings" Size="Size.Medium" Style="margin-left: auto;" Dense>
@@ -47,35 +47,54 @@
 			<MudTd DataLabel="Custome">@context.CustomerName</MudTd>
 			<MudTd DataLabel="Amount">@context.Amount.ToString("N2")</MudTd>
 			<MudTd DataLabel="Currency">@context.CurrencyName</MudTd>
-			<MudTd DataLabel="Status">@context.Status</MudTd>
+			<MudTd DataLabel="Status">
+				<MudSelect T="EStatus" Dense
+						   Class="d-flex ma-0"
+						   Value="@context.Status"
+						   ValueChanged="((e) => OnChangeProperty(context.Id, context.IsDeleted, context.IsArchived, e))">
+					<MudSelectItem Value="@EStatus.Drafted">@EStatus.Drafted</MudSelectItem>
+					<MudSelectItem Value="@EStatus.Approved">@EStatus.Approved</MudSelectItem>
+					<MudSelectItem Value="@EStatus.Canceled">@EStatus.Canceled</MudSelectItem>
+				</MudSelect>
+			</MudTd>
 
 			<MudTd Class="pa-0">
-				<MudMenu Icon="@Icons.Material.Filled.MoreVert" Dense Size="Size.Small">
-
-					<MudNavLink OnClick="(() => OpenBankReceipt(context.Id))" Class="d-flex flex-nowrap">
-						<MudIcon Icon="@Icons.Material.Filled.Edit" Class="me-2" />
-						@localizer["Edit"] @localizer["BankReceipt"] @context.Number
-					</MudNavLink>
-
-					<MudNavLink OnClick="() => OnChangeProperty(context.Id, context.IsDeleted, true, EStatus.Canceled)" Class="d-flex flex-nowrap">
-						<MudIcon Icon="@Icons.Material.Filled.Cancel" Class="me-2" />
-						@localizer["CancelAndArchiveDocument"]
-					</MudNavLink>
-
-					<MudPaper Elevation="3">
-						<MudNavGroup Title="Action">
-							<MudNavLink OnClick="() => OnChangeProperty(context.Id, !context.IsArchived, context.IsDeleted, context.Status)" Class="d-flex flex-nowrap">
-								<MudIcon Icon="@(context.IsArchived ? Icons.Material.Outlined.Unarchive : Icons.Material.Filled.Archive)" Class="me-2" />
-								Archive/Unarchive
-							</MudNavLink>
-							<MudNavLink OnClick="() => RedirectToDeleteRow(context.Id)" Class="d-flex flex-nowrap">
-								<MudIcon Icon="@(context.IsDeleted ? Icons.Material.Filled.DeleteForever : Icons.Material.Filled.Delete)" Class="me-2" />
-								@localizer["Delete"]
-							</MudNavLink>
-						</MudNavGroup>
-					</MudPaper>
-
-				</MudMenu>
+				<div style="display: flex;">
+					<MudMenu Icon="@Icons.Material.Filled.MoreVert" Dense Size="Size.Small">
+						<MudNavLink OnClick="(() => OpenBankReceipt(context.Id))" Class="d-flex flex-nowrap">
+							<MudIcon Icon="@Icons.Material.Filled.Edit" Class="me-2" />
+							@localizer["Edit"] @localizer["BankReceipt"] @context.Number
+						</MudNavLink>
+						<MudNavLink OnClick="() => OnChangeProperty(context.Id, context.IsDeleted, true, EStatus.Canceled)" Class="d-flex flex-nowrap">
+							<MudIcon Icon="@Icons.Material.Filled.Cancel" Class="me-2" />
+							@localizer["CancelAndArchiveDocument"]
+						</MudNavLink>
+						<MudPaper Elevation="3">
+							<MudNavGroup Title="Action">
+								<MudNavLink OnClick="() => OnChangeProperty(context.Id, context.IsDeleted, !context.IsArchived,  context.Status)" Class="d-flex flex-nowrap">
+									<MudIcon Icon="@(context.IsArchived ? Icons.Material.Outlined.Unarchive : Icons.Material.Filled.Archive)" Class="me-2" />
+									Archive/Unarchive
+								</MudNavLink>
+								<MudNavLink OnClick="() => RedirectToDeleteRow(context.Id)" Class="d-flex flex-nowrap">
+									<MudIcon Icon="@(context.IsDeleted ? Icons.Material.Filled.DeleteForever : Icons.Material.Filled.Delete)" Class="me-2" />
+									@localizer["Delete"]
+								</MudNavLink>
+							</MudNavGroup>
+						</MudPaper>
+					</MudMenu>
+					@if (context.IsDeleted)
+					{
+						<MudBadge Icon="@Icons.Material.Filled.DeleteForever" Color="Color.Error" Overlap="true" Bordered="true">
+							<MudText Style="padding-left: 10px;"></MudText>
+						</MudBadge>
+					}
+					else if (context.IsArchived)
+					{
+						<MudBadge Icon="@Icons.Material.Filled.Archive" Overlap="true" Bordered="true">
+							<MudText Style="padding-left: 10px;"></MudText>
+						</MudBadge>
+					}
+				</div>
 			</MudTd>
 		</RowTemplate>
 		<NoRecordsContent>

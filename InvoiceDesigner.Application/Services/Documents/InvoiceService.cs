@@ -218,23 +218,28 @@ namespace InvoiceDesigner.Application.Services.Documents
 			return enabledVat ? total + total / 100 * vat : total;
 		}
 
-		private async Task MapDtoToEntity(Invoice existsInvoice, InvoiceEditDto dto, Company company, Currency currency, Bank bank, Customer customer)
+		private async Task MapDtoToEntity(Invoice existsEntity, InvoiceEditDto dto, Company company, Currency currency, Bank bank, Customer customer)
 		{
-			existsInvoice.CompanyId = company.Id;
-			existsInvoice.Company = company;
-			existsInvoice.PONumber = dto.PONumber;
-			existsInvoice.Vat = dto.Vat;
-			existsInvoice.EnabledVat = dto.EnabledVat;
-			existsInvoice.DateTime = dto.DateTime ?? DateTime.UtcNow;
-			existsInvoice.DueDate = dto.DueDate ?? DateTime.UtcNow.AddDays(company.PaymentTerms);
-			existsInvoice.Status = dto.Status;
-			existsInvoice.CustomerId = customer.Id;
-			existsInvoice.Customer = customer;
-			existsInvoice.CurrencyId = currency.Id;
-			existsInvoice.Currency = currency;
-			existsInvoice.BankId = bank.Id;
-			existsInvoice.Bank = bank;
+			existsEntity.CompanyId = company.Id;
+			existsEntity.Company = company;
+			existsEntity.PONumber = dto.PONumber;
+			existsEntity.Vat = dto.Vat;
+			existsEntity.EnabledVat = dto.EnabledVat;
+			existsEntity.DateTime = dto.DateTime ?? DateTime.UtcNow;
+			existsEntity.DueDate = dto.DueDate ?? DateTime.UtcNow.AddDays(company.PaymentTerms);
+			
+			existsEntity.CustomerId = customer.Id;
+			existsEntity.Customer = customer;
+			existsEntity.CurrencyId = currency.Id;
+			existsEntity.Currency = currency;
+			existsEntity.BankId = bank.Id;
+			existsEntity.Bank = bank;
 
+			// If the document has the status delete - then cancel all double entries in the ledger
+			if (existsEntity.IsDeleted)
+				existsEntity.Status = EStatus.Canceled;
+			else
+				existsEntity.Status = dto.Status;
 
 			List<InvoiceItem> invoiceItem = new();
 			foreach (var item in dto.InvoiceItems)
@@ -249,8 +254,8 @@ namespace InvoiceDesigner.Application.Services.Documents
 				});
 			}
 
-			existsInvoice.InvoiceItems = invoiceItem;
-			existsInvoice.Amount = CalculateTotalAmount(existsInvoice.InvoiceItems, existsInvoice.EnabledVat, existsInvoice.Vat);
+			existsEntity.InvoiceItems = invoiceItem;
+			existsEntity.Amount = CalculateTotalAmount(existsEntity.InvoiceItems, existsEntity.EnabledVat, existsEntity.Vat);
 		}
 
 		private static Func<IQueryable<Invoice>, IOrderedQueryable<Invoice>> GetOrdering(string sortLabel)

@@ -8,6 +8,7 @@ using InvoiceDesigner.Domain.Shared.Interfaces.Documents;
 using InvoiceDesigner.Domain.Shared.Models.Documents;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Domain.Shared.Responses;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace InvoiceDesigner.Application.Services.Documents
 {
@@ -71,10 +72,11 @@ namespace InvoiceDesigner.Application.Services.Documents
 
 		public async Task<ResponseRedirect> UpdateAsync(int userId, bool isAdmin, BankReceiptCreateDto editedDto)
 		{
-			var entity = await ValidateExistsEntityAsync(userId, isAdmin, editedDto.Id);
-			MapDtoToEntity(entity, editedDto);
-			var entityId = await _repoBankReceipt.UpdateAsync(entity);
-			await _serviceAccounting.CreateEntriesAsync(entity, EAccountingDocument.BankReceipt, entity.Status);
+			var existsEntity = await ValidateExistsEntityAsync(userId, isAdmin, editedDto.Id);
+			MapDtoToEntity(existsEntity, editedDto);
+
+			var entityId = await _repoBankReceipt.UpdateAsync(existsEntity);
+			await _serviceAccounting.CreateEntriesAsync(existsEntity, EAccountingDocument.BankReceipt, existsEntity.Status);
 
 			return new ResponseRedirect
 			{
@@ -132,13 +134,18 @@ namespace InvoiceDesigner.Application.Services.Documents
 
 		public async Task<ResponseBoolean> OnChangeProperty(QueryOnChangeProperty query)
 		{
-			var entity = await ValidateExistsEntityAsync(query.UserId, query.IsAdmin, query.EntityId);
-			entity.Status = query.Status;
-			entity.IsArchived = query.IsArchived;
-			entity.IsDeleted = query.IsDeleted;
+			var existsEntity = await ValidateExistsEntityAsync(query.UserId, query.IsAdmin, query.EntityId);
+			// If the document has the status delete - then cancel all double entries in the ledger
+			if (query.IsDeleted)
+				existsEntity.Status = EStatus.Canceled;
+			else
+				existsEntity.Status = query.Status;
 
-			await _repoBankReceipt.UpdateAsync(entity);
-			await _serviceAccounting.CreateEntriesAsync(entity, EAccountingDocument.BankReceipt, entity.Status);
+			existsEntity.IsArchived = query.IsArchived;
+			existsEntity.IsDeleted = query.IsDeleted;
+
+			await _repoBankReceipt.UpdateAsync(existsEntity);
+			await _serviceAccounting.CreateEntriesAsync(existsEntity, EAccountingDocument.BankReceipt, existsEntity.Status);
 			return new ResponseBoolean
 			{
 				Result = true
@@ -173,7 +180,13 @@ namespace InvoiceDesigner.Application.Services.Documents
 		{
 			entity.DateTime = editedDto.DateTime ?? DateTime.UtcNow;
 			entity.IsArchived = editedDto.IsArchived;
-			entity.Status = editedDto.Status;
+
+			// If the document has the status delete - then cancel all double entries in the ledger
+			if (entity.IsDeleted)
+				entity.Status = EStatus.Canceled;
+			else
+				entity.Status = editedDto.Status;
+
 		}
 
 		private async Task<BankReceipt> ValidateExistsEntityAsync(int userId, bool isAdmin, int entityId)
