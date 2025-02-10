@@ -1,3 +1,8 @@
+1.2.4
+New Features:
+	- Added the ability to set custom page sizes when creating a new print PDF template (A4, A5, A6, A7, A8, A9, A10).
+	- Implemented support for selecting page orientation.
+	- Added Dynamic Height support to prevent unnecessary line breaks when printing on receipt paper.
 1.2.3
 New Features:
 	- Added visualization for deleted or archived documents in the ledger.

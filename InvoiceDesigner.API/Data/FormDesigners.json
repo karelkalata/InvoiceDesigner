@@ -1,7 +1,11 @@
 [
-  {
-    "Id": 1,
-    "AccountingDocument": 0,
-    "Name": "default"
-  }
+    {
+        "AccountingDocument": 0,
+        "DynamicHeight": false,
+        "Id": 1,
+        "Name": "default",
+        "PageMargin": 5,
+        "PageOrientation": 0,
+        "PageSizes": 0
+    }
 ]

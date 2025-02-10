@@ -63,7 +63,7 @@ else
 								<MudGrid>
 									<MudItem xs="12" Class="d-flex align-items-center">
 										<MudIconButton Variant="Variant.Filled" Class="ma-1"
-													   OnClick="OpenInputName"
+													   OnClick="OpenNewFormDesignerDialog"
 													   Size="Size.Small"
 													   Icon="@Icons.Material.Filled.Add"
 													   Color="Color.Default">
@@ -131,7 +131,7 @@ else
 									<MudExpansionPanel Text="@localizer["Bank"]">
 										<MudDropZone T="DropItemEditDto" Identifier="_Bank" Class="rounded mud-background-gray pa-1 ma-0 flex-grow-1" />
 									</MudExpansionPanel>
-									<MudExpansionPanel Text="@localizer["CustomerId"]">
+									<MudExpansionPanel Text="@localizer["Customer"]">
 										<MudDropZone T="DropItemEditDto" Identifier="_Customer" Class="rounded mud-background-gray pa-1 ma-0 flex-grow-1" />
 									</MudExpansionPanel>
 									<MudExpansionPanel Text="Other">
@@ -245,9 +245,9 @@ else
 
 	<script>
 		function openPdf(pdfDataUrl) {
-			if (pdfDataUrl) {
-				window.open(pdfDataUrl, '_blank');
-			}
+		if (pdfDataUrl) {
+		window.open(pdfDataUrl, '_blank');
+		}
 		}
 	</script>
 }
@@ -354,33 +354,31 @@ else
 		await LoadForm(_id);
 	}
 
-	private async Task OpenInputName()
+	private async Task OpenNewFormDesignerDialog()
 	{
-		var options = new DialogOptions { CloseOnEscapeKey = true };
+		var newFormDesigner = new FormDesignerEditDto
+			{
+				AccountingDocument = _accountingDocument,
+				PageMargin = 10
+			};
 
-		var dialog = await DialogService.ShowAsync<InputName>($"new PDF for {_accountingDocument}", options);
+		var options = new DialogOptions { CloseOnEscapeKey = true };
+		var parameters = new DialogParameters<NewFormDesigner_dialog>
+		{
+			{ x => x.Dto, newFormDesigner }
+		};
+		var dialog = await DialogService.ShowAsync<NewFormDesigner_dialog>($"new PDF for {_accountingDocument}", parameters, options);
 		var result = await dialog.Result;
 
-		if (result != null && !result.Canceled)
+		if (result != null && !result.Canceled && result.Data is FormDesignerEditDto dto)
 		{
-			var inputName = result.Data?.ToString();
+			_formDesigner = dto;
+			await OnValidSubmit();
 
-			if (!string.IsNullOrEmpty(inputName))
-			{
-				_id = 0;
-				_formDesigner = new FormDesignerEditDto
-					{
-						AccountingDocument = _accountingDocument,
-						Name = inputName
-					};
+			_formDesignersAutocompleteDto = await _httpHelper.GetDataFromAPI<List<FormDesignersAutocompleteDto>>($"api/FormDesigner/GetAllAutocompleteDto");
+			_selectedDesignersAutocompleteDto = _formDesignersAutocompleteDto.Last();
 
-				await OnValidSubmit();
-
-				_formDesignersAutocompleteDto = await _httpHelper.GetDataFromAPI<List<FormDesignersAutocompleteDto>>($"api/FormDesigner/GetAllAutocompleteDto");
-				_selectedDesignersAutocompleteDto = _formDesignersAutocompleteDto.Last();
-
-				await LoadForm(_selectedDesignersAutocompleteDto.Id);
-			}
+			await LoadForm(_selectedDesignersAutocompleteDto.Id);
 		}
 	}
 
@@ -417,7 +415,7 @@ else
 
 		IDialogReference dialog;
 
-		if (dropItem.Value == "{InvoiceDTOs.InvoiceItems}")
+		if (dropItem.Value == "{Invoice.InvoiceItems}")
 		{
 			dialog = await DialogService.ShowAsync<InvoiceItemsProperties_dialog>(string.Empty, parameters);
 		}

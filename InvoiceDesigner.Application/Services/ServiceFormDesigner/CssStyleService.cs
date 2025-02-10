@@ -26,6 +26,7 @@ namespace InvoiceDesigner.Application.Services.ServiceFormDesigner
 			var cssStyle = GetDefaultCssStyles();
 			cssStyle.Add(new CssStyle { Name = ConstsCssProperty.AddCurrencySymbol, Value = ConstsCssProperty.Value_None });
 			cssStyle.Add(new CssStyle { Name = ConstsCssProperty.AddCurrencySymbolFooter, Value = ConstsCssProperty.Value_None });
+			cssStyle.Add(new CssStyle { Name = ConstsCssProperty.FooterLeftMargin, Value = ConstsCssProperty.FooterLeftMargin_Value_75 });
 			return cssStyle;
 		}
 

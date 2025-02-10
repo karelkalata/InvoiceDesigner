@@ -15,8 +15,10 @@
 
 		public const string AddCurrencySymbol = "AddCurrencySymbol";
 		public const string AddCurrencySymbolFooter = "AddCurrencySymbolFooter";
+		public const string FooterLeftMargin = "FooterLeftMargin";
 
 		public const string Value_1 = "1";
+		public const string Value_6px = "6px";
 		public const string Value_8px = "8px";
 		public const string Value_10px = "10px";
 		public const string Value_11px = "11px";
@@ -38,6 +40,10 @@
 		public const string Value_Normal = "normal";
 		public const string Value_Bold = "bold";
 		public const string Value_Italic = "italic";
+
+		public const string FooterLeftMargin_Value_0 = "0 %";
+		public const string FooterLeftMargin_Value_50 = "50 %";
+		public const string FooterLeftMargin_Value_75 = "75 %";
 
 	}
 }

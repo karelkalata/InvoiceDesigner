@@ -4,6 +4,7 @@ using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Application.Interfaces.Documents;
 using InvoiceDesigner.Application.Interfaces.InterfacesFormDesigner;
 using InvoiceDesigner.Domain.Shared.DTOs.InvoiceDTOs;
+using InvoiceDesigner.Domain.Shared.Enums;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models;
 using InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner;
@@ -70,13 +71,21 @@ namespace InvoiceDesigner.Application.Services
 			var fontSizeInt = 12;
 			var fontSizeTableItems = 12;
 			var addTableFooter = false;
+			var pageSize = SetPageSize(formDesigner.PageSizes, formDesigner.PageOrientation);
+			var footerLeftMargin = 0;
+
 
 			Document document = Document.Create(container =>
 			{
 				container.Page(page =>
 				{
-					page.Size(PageSizes.A4.Portrait());
-					page.Margin(1, Unit.Centimetre);
+					page.Size(pageSize);
+
+					if (formDesigner.DynamicHeight)
+						page.ContinuousSize(pageSize.Width);
+
+					page.Margin(formDesigner.PageMargin, Unit.Millimetre);
+
 					page.PageColor(Colors.White);
 					page.DefaultTextStyle(x => x.FontSize(12));
 
@@ -124,6 +133,24 @@ namespace InvoiceDesigner.Application.Services
 												var _addCurrencySymbolFooter = existstDropItem.CssStyle.Where(e => e.Name == ConstsCssProperty.AddCurrencySymbolFooter).FirstOrDefault();
 												if (_addCurrencySymbolFooter != null)
 													addCurrencySymbolFooter = _addCurrencySymbolFooter.Value;
+
+												var _footerLeftMargin = existstDropItem.CssStyle.Where(e => e.Name == ConstsCssProperty.FooterLeftMargin).FirstOrDefault();
+												if (_footerLeftMargin != null)
+												{
+													switch (_footerLeftMargin.Value)
+													{
+														case ConstsCssProperty.FooterLeftMargin_Value_0:
+															footerLeftMargin = 0;
+															break;
+														case ConstsCssProperty.FooterLeftMargin_Value_50:
+															footerLeftMargin = 1;
+															break;
+														case ConstsCssProperty.FooterLeftMargin_Value_75:
+														default:
+															footerLeftMargin = 2;
+															break;
+													}
+												}
 
 												fontSizeTableItems = fontSizeInt;
 
@@ -219,9 +246,9 @@ namespace InvoiceDesigner.Application.Services
 								addTableFooter = false;
 								column.Item().Row(row =>
 								{
-									for (int footerColumn = 0; footerColumn < 3; footerColumn++)
+									for (int footerColumn = 0; footerColumn <= footerLeftMargin; footerColumn++)
 									{
-										if (footerColumn < 2)
+										if (footerColumn < footerLeftMargin )
 										{
 											row.RelativeItem().Column(col =>
 											{
@@ -293,6 +320,30 @@ namespace InvoiceDesigner.Application.Services
 
 		}
 
+		private PageSize SetPageSize(EPageSizes ePageSizes, EPageOrientation ePageOrientation)
+		{
+			switch (ePageSizes)
+			{
+				case EPageSizes.A4:
+					return ePageOrientation == EPageOrientation.Portrait ? PageSizes.A4.Portrait() : PageSizes.A4.Landscape();
+				case EPageSizes.A5:
+					return ePageOrientation == EPageOrientation.Portrait ? PageSizes.A5.Portrait() : PageSizes.A5.Landscape();
+				case EPageSizes.A6:
+					return ePageOrientation == EPageOrientation.Portrait ? PageSizes.A6.Portrait() : PageSizes.A6.Landscape();
+				case EPageSizes.A7:
+					return ePageOrientation == EPageOrientation.Portrait ? PageSizes.A7.Portrait() : PageSizes.A7.Landscape();
+				case EPageSizes.A8:
+					return ePageOrientation == EPageOrientation.Portrait ? PageSizes.A8.Portrait() : PageSizes.A8.Landscape();
+				case EPageSizes.A9:
+					return ePageOrientation == EPageOrientation.Portrait ? PageSizes.A9.Portrait() : PageSizes.A9.Landscape();
+				case EPageSizes.A10:
+					return ePageOrientation == EPageOrientation.Portrait ? PageSizes.A10.Portrait() : PageSizes.A10.Landscape();
+				default:
+					return PageSizes.A4.Portrait();
+
+			}
+		}
+
 		private string CheckAddCurrencySymbol(decimal value, string coorSymbol, string resFormat)
 		{
 			if (coorSymbol == ConstsCssProperty.Value_Left)
@@ -329,7 +380,7 @@ namespace InvoiceDesigner.Application.Services
 						case "Company":
 							newStr = GetPropertyValue(_invoicePrintDto.Company, propertiesName);
 							break;
-						case "CustomerId":
+						case "Customer":
 							newStr = GetPropertyValue(_invoicePrintDto.Customer, propertiesName);
 							break;
 						case "Currency":

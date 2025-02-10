@@ -1,0 +1,68 @@
+﻿@using InvoiceDesigner.Domain.Shared.DTOs.DtoFormDesigners
+@using InvoiceDesigner.Domain.Shared.Enums
+<MudDialog>
+	<DialogContent>
+		<MudGrid Spacing="1">
+			<MudItem xs="12">
+				<MudTextField T="string" Required
+							  @bind-Value="Dto.Name"
+							  Label="@localizer["Name"]"
+							  For="(() => Dto.Name)" />
+			</MudItem>
+
+			<MudItem xs="6">
+				<MudSelect T="EPageOrientation" Dense
+						   Typo="Typo.inherit"
+						   Label="Page Orientation"
+						   @bind-Value="Dto.PageOrientation"
+						   Variant="Variant.Outlined">
+					@foreach (var value in Enum.GetValues(typeof(EPageOrientation)).Cast<EPageOrientation>())
+					{
+						<MudSelectItem value="@value">@value</MudSelectItem>
+					}
+				</MudSelect>
+			</MudItem>
+			<MudItem xs="6">
+				<MudTextField T="int" Class="pa-2"
+							  @bind-Value="Dto.PageMargin"
+							  Label="Page Margin (mm)"
+							  For="(() => Dto.PageMargin)" />
+
+			</MudItem>
+			<MudItem xs="6">
+				<MudSelect T="EPageSizes" Dense
+						   Typo="Typo.inherit"
+						   Label="Page Size"
+						   @bind-Value="Dto.PageSizes"
+						   Variant="Variant.Outlined">
+					@foreach (var value in Enum.GetValues(typeof(EPageSizes)).Cast<EPageSizes>())
+					{
+						<MudSelectItem value="@value">@value</MudSelectItem>
+					}
+				</MudSelect>
+			</MudItem>
+			<MudItem xs="6">
+				<MudCheckBox @bind-Value="Dto.DynamicHeight" Class="pa-2"  Label="Dynamic Height"/>
+			</MudItem>
+
+		</MudGrid>
+
+	</DialogContent>
+	<DialogActions>
+		<MudButton OnClick="Cancel">@localizer["Cancel"]</MudButton>
+		<MudButton Color="Color.Primary" OnClick="Submit">@localizer["Save"]</MudButton>
+	</DialogActions>
+</MudDialog>
+
+
+@code {
+	[CascadingParameter]
+	private MudDialogInstance MudDialog { get; set; } = null!;
+
+	[Parameter]
+	public FormDesignerEditDto Dto { get; set; } = null!;
+
+	private void Submit() => MudDialog.Close(DialogResult.Ok(Dto));
+
+	private void Cancel() => MudDialog.Cancel();
+}

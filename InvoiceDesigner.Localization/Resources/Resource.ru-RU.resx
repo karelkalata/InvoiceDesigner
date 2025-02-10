@@ -346,7 +346,7 @@
     <value>Утвердить</value>
   </data>
   <data name="BankReceipt" xml:space="preserve">
-    <value> Банковская квитанция</value>
+    <value>Банковская квитанция</value>
   </data>
   <data name="New" xml:space="preserve">
     <value>Новый</value>

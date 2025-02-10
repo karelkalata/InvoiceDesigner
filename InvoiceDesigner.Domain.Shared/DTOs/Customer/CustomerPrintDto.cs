@@ -12,7 +12,7 @@ namespace InvoiceDesigner.Domain.Shared.DTOs.Customer
 
 		public string GetSelectorName()
 		{
-			return "CustomerId";
+			return "Customer";
 		}
 		public override string ToString()
 		{

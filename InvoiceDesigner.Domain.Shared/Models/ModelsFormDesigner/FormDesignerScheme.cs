@@ -1,4 +1,6 @@
-﻿namespace InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner
+﻿using InvoiceDesigner.Domain.Shared.Enums;
+
+namespace InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner
 {
 	public class FormDesignerScheme
 	{

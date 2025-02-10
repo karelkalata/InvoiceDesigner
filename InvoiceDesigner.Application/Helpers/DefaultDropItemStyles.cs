@@ -25,6 +25,7 @@ namespace InvoiceDesigner.Application.Helpers
 				new CssStyle { Name = ConstsCssProperty.Height, Value = ConstsCssProperty.Value_25px },
 				new CssStyle { Name = ConstsCssProperty.AddCurrencySymbol, Value = ConstsCssProperty.Value_None},
 				new CssStyle { Name = ConstsCssProperty.AddCurrencySymbolFooter, Value = ConstsCssProperty.Value_None},
+				new CssStyle { Name = ConstsCssProperty.FooterLeftMargin, Value = ConstsCssProperty.FooterLeftMargin_Value_75},
 			};
 		}
 	}

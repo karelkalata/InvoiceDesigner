@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InvoiceDesigner.Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250208080425_AddInitialMigration")]
+    [Migration("20250210143008_AddInitialMigration")]
     partial class AddInitialMigration
     {
         /// <inheritdoc />
@@ -725,687 +725,694 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 5925,
-                            DropItemId = 967,
+                            Id = 2509,
+                            DropItemId = 401,
                             Name = "flex-grow",
                             Value = "1"
                         },
                         new
                         {
-                            Id = 5926,
-                            DropItemId = 967,
+                            Id = 2510,
+                            DropItemId = 401,
                             Name = "text-align",
-                            Value = "center"
+                            Value = "right"
                         },
                         new
                         {
-                            Id = 5927,
-                            DropItemId = 967,
+                            Id = 2511,
+                            DropItemId = 401,
                             Name = "font-size",
                             Value = "16px"
                         },
                         new
                         {
-                            Id = 5928,
-                            DropItemId = 967,
+                            Id = 2512,
+                            DropItemId = 401,
                             Name = "height",
                             Value = "25px"
                         },
                         new
                         {
-                            Id = 5929,
-                            DropItemId = 967,
+                            Id = 2513,
+                            DropItemId = 401,
                             Name = "font-style",
                             Value = "normal"
                         },
                         new
                         {
-                            Id = 5930,
-                            DropItemId = 967,
+                            Id = 2514,
+                            DropItemId = 401,
                             Name = "font-weight",
-                            Value = "bold"
+                            Value = "normal"
                         },
                         new
                         {
-                            Id = 5931,
-                            DropItemId = 968,
+                            Id = 2515,
+                            DropItemId = 402,
                             Name = "flex-grow",
                             Value = "1"
                         },
                         new
                         {
-                            Id = 5932,
-                            DropItemId = 968,
+                            Id = 2516,
+                            DropItemId = 402,
                             Name = "text-align",
                             Value = "right"
                         },
                         new
                         {
-                            Id = 5933,
-                            DropItemId = 968,
+                            Id = 2517,
+                            DropItemId = 402,
                             Name = "font-size",
                             Value = "10px"
                         },
                         new
                         {
-                            Id = 5934,
-                            DropItemId = 968,
+                            Id = 2518,
+                            DropItemId = 402,
                             Name = "height",
                             Value = "25px"
                         },
                         new
                         {
-                            Id = 5935,
-                            DropItemId = 968,
+                            Id = 2519,
+                            DropItemId = 402,
                             Name = "font-style",
                             Value = "normal"
                         },
                         new
                         {
-                            Id = 5936,
-                            DropItemId = 968,
+                            Id = 2520,
+                            DropItemId = 402,
                             Name = "font-weight",
                             Value = "normal"
                         },
                         new
                         {
-                            Id = 5937,
-                            DropItemId = 969,
+                            Id = 2521,
+                            DropItemId = 403,
                             Name = "flex-grow",
                             Value = "1"
                         },
                         new
                         {
-                            Id = 5938,
-                            DropItemId = 969,
+                            Id = 2522,
+                            DropItemId = 403,
                             Name = "text-align",
                             Value = "right"
                         },
                         new
                         {
-                            Id = 5939,
-                            DropItemId = 969,
+                            Id = 2523,
+                            DropItemId = 403,
                             Name = "font-size",
                             Value = "10px"
                         },
                         new
                         {
-                            Id = 5940,
-                            DropItemId = 969,
+                            Id = 2524,
+                            DropItemId = 403,
                             Name = "height",
                             Value = "25px"
                         },
                         new
                         {
-                            Id = 5941,
-                            DropItemId = 969,
+                            Id = 2525,
+                            DropItemId = 403,
                             Name = "font-style",
                             Value = "normal"
                         },
                         new
                         {
-                            Id = 5942,
-                            DropItemId = 969,
+                            Id = 2526,
+                            DropItemId = 403,
                             Name = "font-weight",
                             Value = "normal"
                         },
                         new
                         {
-                            Id = 5943,
-                            DropItemId = 970,
+                            Id = 2527,
+                            DropItemId = 404,
                             Name = "flex-grow",
                             Value = "1"
                         },
                         new
                         {
-                            Id = 5944,
-                            DropItemId = 970,
+                            Id = 2528,
+                            DropItemId = 404,
                             Name = "text-align",
                             Value = "right"
                         },
                         new
                         {
-                            Id = 5945,
-                            DropItemId = 970,
+                            Id = 2529,
+                            DropItemId = 404,
                             Name = "font-size",
                             Value = "10px"
                         },
                         new
                         {
-                            Id = 5946,
-                            DropItemId = 970,
+                            Id = 2530,
+                            DropItemId = 404,
                             Name = "height",
                             Value = "25px"
                         },
                         new
                         {
-                            Id = 5947,
-                            DropItemId = 970,
+                            Id = 2531,
+                            DropItemId = 404,
                             Name = "font-style",
                             Value = "normal"
                         },
                         new
                         {
-                            Id = 5948,
-                            DropItemId = 970,
+                            Id = 2532,
+                            DropItemId = 404,
                             Name = "font-weight",
                             Value = "normal"
                         },
                         new
                         {
-                            Id = 5949,
-                            DropItemId = 971,
+                            Id = 2533,
+                            DropItemId = 405,
                             Name = "flex-grow",
                             Value = "1"
                         },
                         new
                         {
-                            Id = 5950,
-                            DropItemId = 971,
+                            Id = 2534,
+                            DropItemId = 405,
                             Name = "text-align",
                             Value = "left"
                         },
                         new
                         {
-                            Id = 5951,
-                            DropItemId = 971,
+                            Id = 2535,
+                            DropItemId = 405,
                             Name = "font-size",
-                            Value = "10px"
+                            Value = "16px"
                         },
                         new
                         {
-                            Id = 5952,
-                            DropItemId = 971,
+                            Id = 2536,
+                            DropItemId = 405,
                             Name = "height",
                             Value = "25px"
                         },
                         new
                         {
-                            Id = 5953,
-                            DropItemId = 971,
+                            Id = 2537,
+                            DropItemId = 405,
                             Name = "font-style",
-                            Value = "italic"
+                            Value = "normal"
                         },
                         new
                         {
-                            Id = 5954,
-                            DropItemId = 971,
+                            Id = 2538,
+                            DropItemId = 405,
                             Name = "font-weight",
                             Value = "normal"
                         },
                         new
                         {
-                            Id = 5955,
-                            DropItemId = 971,
+                            Id = 2539,
+                            DropItemId = 406,
+                            Name = "flex-grow",
+                            Value = "1"
+                        },
+                        new
+                        {
+                            Id = 2540,
+                            DropItemId = 406,
+                            Name = "text-align",
+                            Value = "left"
+                        },
+                        new
+                        {
+                            Id = 2541,
+                            DropItemId = 406,
+                            Name = "font-size",
+                            Value = "10px"
+                        },
+                        new
+                        {
+                            Id = 2542,
+                            DropItemId = 406,
+                            Name = "height",
+                            Value = "25px"
+                        },
+                        new
+                        {
+                            Id = 2543,
+                            DropItemId = 406,
+                            Name = "font-style",
+                            Value = "normal"
+                        },
+                        new
+                        {
+                            Id = 2544,
+                            DropItemId = 406,
+                            Name = "font-weight",
+                            Value = "normal"
+                        },
+                        new
+                        {
+                            Id = 2545,
+                            DropItemId = 406,
                             Name = "AddCurrencySymbol",
-                            Value = "left"
+                            Value = "none"
                         },
                         new
                         {
-                            Id = 5956,
-                            DropItemId = 971,
+                            Id = 2546,
+                            DropItemId = 406,
                             Name = "AddCurrencySymbolFooter",
                             Value = "right"
                         },
                         new
                         {
-                            Id = 5957,
-                            DropItemId = 972,
+                            Id = 2547,
+                            DropItemId = 406,
+                            Name = "FooterLeftMargin",
+                            Value = "75 %"
+                        },
+                        new
+                        {
+                            Id = 2548,
+                            DropItemId = 407,
                             Name = "flex-grow",
                             Value = "1"
                         },
                         new
                         {
-                            Id = 5958,
-                            DropItemId = 972,
+                            Id = 2549,
+                            DropItemId = 407,
                             Name = "text-align",
                             Value = "left"
                         },
                         new
                         {
-                            Id = 5959,
-                            DropItemId = 972,
-                            Name = "font-size",
-                            Value = "12px"
-                        },
-                        new
-                        {
-                            Id = 5960,
-                            DropItemId = 972,
-                            Name = "height",
-                            Value = "25px"
-                        },
-                        new
-                        {
-                            Id = 5961,
-                            DropItemId = 972,
-                            Name = "font-style",
-                            Value = "normal"
-                        },
-                        new
-                        {
-                            Id = 5962,
-                            DropItemId = 972,
-                            Name = "font-weight",
-                            Value = "normal"
-                        },
-                        new
-                        {
-                            Id = 5963,
-                            DropItemId = 973,
-                            Name = "flex-grow",
-                            Value = "1"
-                        },
-                        new
-                        {
-                            Id = 5964,
-                            DropItemId = 973,
-                            Name = "text-align",
-                            Value = "left"
-                        },
-                        new
-                        {
-                            Id = 5965,
-                            DropItemId = 973,
+                            Id = 2550,
+                            DropItemId = 407,
                             Name = "font-size",
                             Value = "10px"
                         },
                         new
                         {
-                            Id = 5966,
-                            DropItemId = 973,
+                            Id = 2551,
+                            DropItemId = 407,
                             Name = "height",
                             Value = "25px"
                         },
                         new
                         {
-                            Id = 5967,
-                            DropItemId = 973,
+                            Id = 2552,
+                            DropItemId = 407,
                             Name = "font-style",
                             Value = "normal"
                         },
                         new
                         {
-                            Id = 5968,
-                            DropItemId = 973,
+                            Id = 2553,
+                            DropItemId = 407,
                             Name = "font-weight",
                             Value = "normal"
                         },
                         new
                         {
-                            Id = 5969,
-                            DropItemId = 974,
+                            Id = 2554,
+                            DropItemId = 408,
                             Name = "flex-grow",
                             Value = "1"
                         },
                         new
                         {
-                            Id = 5970,
-                            DropItemId = 974,
+                            Id = 2555,
+                            DropItemId = 408,
                             Name = "text-align",
                             Value = "left"
                         },
                         new
                         {
-                            Id = 5971,
-                            DropItemId = 974,
+                            Id = 2556,
+                            DropItemId = 408,
                             Name = "font-size",
-                            Value = "12px"
+                            Value = "10px"
                         },
                         new
                         {
-                            Id = 5972,
-                            DropItemId = 974,
+                            Id = 2557,
+                            DropItemId = 408,
                             Name = "height",
                             Value = "25px"
                         },
                         new
                         {
-                            Id = 5973,
-                            DropItemId = 974,
+                            Id = 2558,
+                            DropItemId = 408,
                             Name = "font-style",
                             Value = "normal"
                         },
                         new
                         {
-                            Id = 5974,
-                            DropItemId = 974,
+                            Id = 2559,
+                            DropItemId = 408,
+                            Name = "font-weight",
+                            Value = "normal"
+                        },
+                        new
+                        {
+                            Id = 2560,
+                            DropItemId = 409,
+                            Name = "flex-grow",
+                            Value = "1"
+                        },
+                        new
+                        {
+                            Id = 2561,
+                            DropItemId = 409,
+                            Name = "text-align",
+                            Value = "left"
+                        },
+                        new
+                        {
+                            Id = 2562,
+                            DropItemId = 409,
+                            Name = "font-size",
+                            Value = "10px"
+                        },
+                        new
+                        {
+                            Id = 2563,
+                            DropItemId = 409,
+                            Name = "height",
+                            Value = "25px"
+                        },
+                        new
+                        {
+                            Id = 2564,
+                            DropItemId = 409,
+                            Name = "font-style",
+                            Value = "normal"
+                        },
+                        new
+                        {
+                            Id = 2565,
+                            DropItemId = 409,
                             Name = "font-weight",
                             Value = "bold"
                         },
                         new
                         {
-                            Id = 5975,
-                            DropItemId = 975,
+                            Id = 2566,
+                            DropItemId = 410,
                             Name = "flex-grow",
                             Value = "1"
                         },
                         new
                         {
-                            Id = 5976,
-                            DropItemId = 975,
+                            Id = 2567,
+                            DropItemId = 410,
                             Name = "text-align",
                             Value = "left"
                         },
                         new
                         {
-                            Id = 5977,
-                            DropItemId = 975,
+                            Id = 2568,
+                            DropItemId = 410,
                             Name = "font-size",
                             Value = "10px"
                         },
                         new
                         {
-                            Id = 5978,
-                            DropItemId = 975,
+                            Id = 2569,
+                            DropItemId = 410,
                             Name = "height",
                             Value = "25px"
                         },
                         new
                         {
-                            Id = 5979,
-                            DropItemId = 975,
+                            Id = 2570,
+                            DropItemId = 410,
                             Name = "font-style",
                             Value = "normal"
                         },
                         new
                         {
-                            Id = 5980,
-                            DropItemId = 975,
+                            Id = 2571,
+                            DropItemId = 410,
                             Name = "font-weight",
                             Value = "normal"
                         },
                         new
                         {
-                            Id = 5981,
-                            DropItemId = 976,
+                            Id = 2572,
+                            DropItemId = 411,
                             Name = "flex-grow",
                             Value = "1"
                         },
                         new
                         {
-                            Id = 5982,
-                            DropItemId = 976,
+                            Id = 2573,
+                            DropItemId = 411,
                             Name = "text-align",
                             Value = "left"
                         },
                         new
                         {
-                            Id = 5983,
-                            DropItemId = 976,
+                            Id = 2574,
+                            DropItemId = 411,
                             Name = "font-size",
                             Value = "10px"
                         },
                         new
                         {
-                            Id = 5984,
-                            DropItemId = 976,
+                            Id = 2575,
+                            DropItemId = 411,
                             Name = "height",
                             Value = "25px"
                         },
                         new
                         {
-                            Id = 5985,
-                            DropItemId = 976,
+                            Id = 2576,
+                            DropItemId = 411,
                             Name = "font-style",
                             Value = "normal"
                         },
                         new
                         {
-                            Id = 5986,
-                            DropItemId = 976,
+                            Id = 2577,
+                            DropItemId = 411,
                             Name = "font-weight",
                             Value = "normal"
                         },
                         new
                         {
-                            Id = 5987,
-                            DropItemId = 977,
+                            Id = 2578,
+                            DropItemId = 412,
                             Name = "flex-grow",
                             Value = "1"
                         },
                         new
                         {
-                            Id = 5988,
-                            DropItemId = 977,
+                            Id = 2579,
+                            DropItemId = 412,
                             Name = "text-align",
                             Value = "left"
                         },
                         new
                         {
-                            Id = 5989,
-                            DropItemId = 977,
+                            Id = 2580,
+                            DropItemId = 412,
                             Name = "font-size",
                             Value = "10px"
                         },
                         new
                         {
-                            Id = 5990,
-                            DropItemId = 977,
+                            Id = 2581,
+                            DropItemId = 412,
                             Name = "height",
                             Value = "25px"
                         },
                         new
                         {
-                            Id = 5991,
-                            DropItemId = 977,
+                            Id = 2582,
+                            DropItemId = 412,
                             Name = "font-style",
                             Value = "normal"
                         },
                         new
                         {
-                            Id = 5992,
-                            DropItemId = 977,
+                            Id = 2583,
+                            DropItemId = 412,
                             Name = "font-weight",
-                            Value = "bold"
+                            Value = "normal"
                         },
                         new
                         {
-                            Id = 5993,
-                            DropItemId = 978,
+                            Id = 2584,
+                            DropItemId = 413,
                             Name = "flex-grow",
                             Value = "1"
                         },
                         new
                         {
-                            Id = 5994,
-                            DropItemId = 978,
+                            Id = 2585,
+                            DropItemId = 413,
+                            Name = "text-align",
+                            Value = "left"
+                        },
+                        new
+                        {
+                            Id = 2586,
+                            DropItemId = 413,
+                            Name = "font-size",
+                            Value = "10px"
+                        },
+                        new
+                        {
+                            Id = 2587,
+                            DropItemId = 413,
+                            Name = "height",
+                            Value = "25px"
+                        },
+                        new
+                        {
+                            Id = 2588,
+                            DropItemId = 413,
+                            Name = "font-style",
+                            Value = "normal"
+                        },
+                        new
+                        {
+                            Id = 2589,
+                            DropItemId = 413,
+                            Name = "font-weight",
+                            Value = "normal"
+                        },
+                        new
+                        {
+                            Id = 2590,
+                            DropItemId = 414,
+                            Name = "flex-grow",
+                            Value = "1"
+                        },
+                        new
+                        {
+                            Id = 2591,
+                            DropItemId = 414,
+                            Name = "text-align",
+                            Value = "left"
+                        },
+                        new
+                        {
+                            Id = 2592,
+                            DropItemId = 414,
+                            Name = "font-size",
+                            Value = "10px"
+                        },
+                        new
+                        {
+                            Id = 2593,
+                            DropItemId = 414,
+                            Name = "height",
+                            Value = "25px"
+                        },
+                        new
+                        {
+                            Id = 2594,
+                            DropItemId = 414,
+                            Name = "font-style",
+                            Value = "normal"
+                        },
+                        new
+                        {
+                            Id = 2595,
+                            DropItemId = 414,
+                            Name = "font-weight",
+                            Value = "normal"
+                        },
+                        new
+                        {
+                            Id = 2596,
+                            DropItemId = 415,
+                            Name = "flex-grow",
+                            Value = "1"
+                        },
+                        new
+                        {
+                            Id = 2597,
+                            DropItemId = 415,
                             Name = "text-align",
                             Value = "center"
                         },
                         new
                         {
-                            Id = 5995,
-                            DropItemId = 978,
+                            Id = 2598,
+                            DropItemId = 415,
                             Name = "font-size",
-                            Value = "10px"
+                            Value = "12px"
                         },
                         new
                         {
-                            Id = 5996,
-                            DropItemId = 978,
+                            Id = 2599,
+                            DropItemId = 415,
                             Name = "height",
                             Value = "25px"
                         },
                         new
                         {
-                            Id = 5997,
-                            DropItemId = 978,
+                            Id = 2600,
+                            DropItemId = 415,
                             Name = "font-style",
                             Value = "italic"
                         },
                         new
                         {
-                            Id = 5998,
-                            DropItemId = 978,
+                            Id = 2601,
+                            DropItemId = 415,
                             Name = "font-weight",
                             Value = "normal"
                         },
                         new
                         {
-                            Id = 5999,
-                            DropItemId = 979,
+                            Id = 2602,
+                            DropItemId = 416,
                             Name = "flex-grow",
                             Value = "1"
                         },
                         new
                         {
-                            Id = 6000,
-                            DropItemId = 979,
+                            Id = 2603,
+                            DropItemId = 416,
                             Name = "text-align",
                             Value = "left"
                         },
                         new
                         {
-                            Id = 6001,
-                            DropItemId = 979,
+                            Id = 2604,
+                            DropItemId = 416,
                             Name = "font-size",
-                            Value = "12px"
+                            Value = "8px"
                         },
                         new
                         {
-                            Id = 6002,
-                            DropItemId = 979,
+                            Id = 2605,
+                            DropItemId = 416,
                             Name = "height",
                             Value = "25px"
                         },
                         new
                         {
-                            Id = 6003,
-                            DropItemId = 979,
-                            Name = "font-style",
-                            Value = "normal"
-                        },
-                        new
-                        {
-                            Id = 6004,
-                            DropItemId = 979,
-                            Name = "font-weight",
-                            Value = "normal"
-                        },
-                        new
-                        {
-                            Id = 6005,
-                            DropItemId = 980,
-                            Name = "flex-grow",
-                            Value = "1"
-                        },
-                        new
-                        {
-                            Id = 6006,
-                            DropItemId = 980,
-                            Name = "text-align",
-                            Value = "left"
-                        },
-                        new
-                        {
-                            Id = 6007,
-                            DropItemId = 980,
-                            Name = "font-size",
-                            Value = "12px"
-                        },
-                        new
-                        {
-                            Id = 6008,
-                            DropItemId = 980,
-                            Name = "height",
-                            Value = "25px"
-                        },
-                        new
-                        {
-                            Id = 6009,
-                            DropItemId = 980,
-                            Name = "font-style",
-                            Value = "normal"
-                        },
-                        new
-                        {
-                            Id = 6010,
-                            DropItemId = 980,
-                            Name = "font-weight",
-                            Value = "bold"
-                        },
-                        new
-                        {
-                            Id = 6011,
-                            DropItemId = 981,
-                            Name = "flex-grow",
-                            Value = "1"
-                        },
-                        new
-                        {
-                            Id = 6012,
-                            DropItemId = 981,
-                            Name = "text-align",
-                            Value = "left"
-                        },
-                        new
-                        {
-                            Id = 6013,
-                            DropItemId = 981,
-                            Name = "font-size",
-                            Value = "12px"
-                        },
-                        new
-                        {
-                            Id = 6014,
-                            DropItemId = 981,
-                            Name = "height",
-                            Value = "25px"
-                        },
-                        new
-                        {
-                            Id = 6015,
-                            DropItemId = 981,
-                            Name = "font-style",
-                            Value = "normal"
-                        },
-                        new
-                        {
-                            Id = 6016,
-                            DropItemId = 981,
-                            Name = "font-weight",
-                            Value = "bold"
-                        },
-                        new
-                        {
-                            Id = 6017,
-                            DropItemId = 982,
-                            Name = "flex-grow",
-                            Value = "1"
-                        },
-                        new
-                        {
-                            Id = 6018,
-                            DropItemId = 982,
-                            Name = "text-align",
-                            Value = "left"
-                        },
-                        new
-                        {
-                            Id = 6019,
-                            DropItemId = 982,
-                            Name = "font-size",
-                            Value = "10px"
-                        },
-                        new
-                        {
-                            Id = 6020,
-                            DropItemId = 982,
-                            Name = "height",
-                            Value = "25px"
-                        },
-                        new
-                        {
-                            Id = 6021,
-                            DropItemId = 982,
+                            Id = 2606,
+                            DropItemId = 416,
                             Name = "font-style",
                             Value = "italic"
                         },
                         new
                         {
-                            Id = 6022,
-                            DropItemId = 982,
+                            Id = 2607,
+                            DropItemId = 416,
                             Name = "font-weight",
                             Value = "normal"
                         });
@@ -1445,43 +1452,52 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 967,
+                            Id = 401,
+                            FormDesignerSchemeId = 1,
+                            Selector = "coor_0_1",
+                            StartSelector = "_Invoice",
+                            UniqueId = "{Invoice.Number}",
+                            Value = "INVOICE # {Invoice.Number}"
+                        },
+                        new
+                        {
+                            Id = 402,
+                            FormDesignerSchemeId = 1,
+                            Selector = "coor_4_1",
+                            StartSelector = "_Invoice",
+                            UniqueId = "{Invoice.PONumber}",
+                            Value = "P.O. #  {Invoice.PONumber}"
+                        },
+                        new
+                        {
+                            Id = 403,
+                            FormDesignerSchemeId = 1,
+                            Selector = "coor_2_1",
+                            StartSelector = "_Invoice",
+                            UniqueId = "{Invoice.DateTime}",
+                            Value = "DATE: {Invoice.DateTime}"
+                        },
+                        new
+                        {
+                            Id = 404,
+                            FormDesignerSchemeId = 1,
+                            Selector = "coor_3_1",
+                            StartSelector = "_Invoice",
+                            UniqueId = "{Invoice.DueDate}",
+                            Value = "DUE DATE: {Invoice.DueDate}"
+                        },
+                        new
+                        {
+                            Id = 405,
                             FormDesignerSchemeId = 1,
                             Selector = "coor_0_0",
                             StartSelector = "_Invoice",
-                            UniqueId = "{Invoice.Number}",
-                            Value = "Invoice #{Invoice.Number}"
+                            UniqueId = "{Invoice.Company}",
+                            Value = "{Invoice.Company}"
                         },
                         new
                         {
-                            Id = 968,
-                            FormDesignerSchemeId = 1,
-                            Selector = "coor_1_2",
-                            StartSelector = "_Invoice",
-                            UniqueId = "{Invoice.DateTime}",
-                            Value = "Issue Date: {Invoice.DateTime}"
-                        },
-                        new
-                        {
-                            Id = 969,
-                            FormDesignerSchemeId = 1,
-                            Selector = "coor_2_2",
-                            StartSelector = "_Invoice",
-                            UniqueId = "{Invoice.DueDate}",
-                            Value = "Due Date: {Invoice.DueDate}"
-                        },
-                        new
-                        {
-                            Id = 970,
-                            FormDesignerSchemeId = 1,
-                            Selector = "coor_3_2",
-                            StartSelector = "_Invoice",
-                            UniqueId = "{Invoice.PONumber}",
-                            Value = "PO: {Invoice.PONumber}"
-                        },
-                        new
-                        {
-                            Id = 971,
+                            Id = 406,
                             FormDesignerSchemeId = 1,
                             Selector = "coor_11_0",
                             StartSelector = "_Invoice",
@@ -1490,88 +1506,70 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 972,
+                            Id = 407,
                             FormDesignerSchemeId = 1,
-                            Selector = "coor_5_2",
+                            Selector = "coor_2_0",
+                            StartSelector = "_Company",
+                            UniqueId = "{Company.TaxId}",
+                            Value = "Tax Id: {Company.TaxId}"
+                        },
+                        new
+                        {
+                            Id = 408,
+                            FormDesignerSchemeId = 1,
+                            Selector = "coor_3_0",
+                            StartSelector = "_Company",
+                            UniqueId = "{Company.VatId}",
+                            Value = "Vat Id: {Company.VatId}"
+                        },
+                        new
+                        {
+                            Id = 409,
+                            FormDesignerSchemeId = 1,
+                            Selector = "coor_5_1",
+                            StartSelector = "_Other",
+                            UniqueId = "7dae4134-bba4-49f1-bc47-d19a2f845ed6",
+                            Value = "TO "
+                        },
+                        new
+                        {
+                            Id = 410,
+                            FormDesignerSchemeId = 1,
+                            Selector = "coor_6_1",
                             StartSelector = "_Customer",
                             UniqueId = "{Customer.Name}",
                             Value = "{Customer.Name}"
                         },
                         new
                         {
-                            Id = 973,
+                            Id = 411,
                             FormDesignerSchemeId = 1,
-                            Selector = "coor_6_2",
+                            Selector = "coor_7_1",
                             StartSelector = "_Customer",
                             UniqueId = "{Customer.TaxId}",
-                            Value = "Tax ID: {Customer.TaxId}"
+                            Value = "Tax Id: {Customer.TaxId}"
                         },
                         new
                         {
-                            Id = 974,
-                            FormDesignerSchemeId = 1,
-                            Selector = "coor_2_0",
-                            StartSelector = "_Company",
-                            UniqueId = "{Company.Name}",
-                            Value = "{Company.Name}"
-                        },
-                        new
-                        {
-                            Id = 975,
-                            FormDesignerSchemeId = 1,
-                            Selector = "coor_3_0",
-                            StartSelector = "_Company",
-                            UniqueId = "{Company.TaxId}",
-                            Value = "Tax ID: {Company.TaxId}"
-                        },
-                        new
-                        {
-                            Id = 976,
-                            FormDesignerSchemeId = 1,
-                            Selector = "coor_4_0",
-                            StartSelector = "_Company",
-                            UniqueId = "{Company.VatId}",
-                            Value = "Vat ID: {Company.VatId}"
-                        },
-                        new
-                        {
-                            Id = 977,
-                            FormDesignerSchemeId = 1,
-                            Selector = "coor_4_2",
-                            StartSelector = "_Other",
-                            UniqueId = "c09e7e7f-1700-4eb7-b83e-4e9b0be08e66",
-                            Value = "Bill  To:"
-                        },
-                        new
-                        {
-                            Id = 978,
-                            FormDesignerSchemeId = 1,
-                            Selector = "coor_15_0",
-                            StartSelector = "_Other",
-                            UniqueId = "ebd7a5ce-37fc-4d21-9651-38390fb4fd69",
-                            Value = "Karel Kalata"
-                        },
-                        new
-                        {
-                            Id = 979,
+                            Id = 412,
                             FormDesignerSchemeId = 1,
                             Selector = "coor_5_0",
                             StartSelector = "_Bank",
                             UniqueId = "{Bank.Name}",
-                            Value = "Bank: {Bank.Name}"
+                            Value = "{Bank.Name}"
                         },
                         new
                         {
-                            Id = 980,
+                            Id = 413,
                             FormDesignerSchemeId = 1,
                             Selector = "coor_6_0",
                             StartSelector = "_Bank",
                             UniqueId = "{Bank.BIC}",
-                            Value = "BIC/SWIFT: {Bank.BIC}"
+                            Value = "{Bank.BIC}"
                         },
                         new
                         {
-                            Id = 981,
+                            Id = 414,
                             FormDesignerSchemeId = 1,
                             Selector = "coor_7_0",
                             StartSelector = "_Bank",
@@ -1580,11 +1578,20 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 982,
+                            Id = 415,
+                            FormDesignerSchemeId = 1,
+                            Selector = "coor_13_0",
+                            StartSelector = "_Other",
+                            UniqueId = "5a0e0a8c-f374-4099-8295-9b3471af899c",
+                            Value = "Karel Kalata"
+                        },
+                        new
+                        {
+                            Id = 416,
                             FormDesignerSchemeId = 1,
                             Selector = "coor_9_0",
                             StartSelector = "_Other",
-                            UniqueId = "ec235007-1e77-4be7-9e87-c7552fb9776a",
+                            UniqueId = "25695f53-d1c5-46a0-b921-1a392fc1aba7",
                             Value = "If you have any questions, please contact us at {Company.Phone} or {Company.Email}"
                         });
                 });
@@ -1598,9 +1605,21 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.Property<int>("AccountingDocument")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("DynamicHeight")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("PageMargin")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PageOrientation")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PageSizes")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -1611,7 +1630,11 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                         {
                             Id = 1,
                             AccountingDocument = 0,
-                            Name = "default"
+                            DynamicHeight = false,
+                            Name = "default",
+                            PageMargin = 5,
+                            PageOrientation = 0,
+                            PageSizes = 0
                         });
                 });
 
@@ -1639,224 +1662,224 @@ namespace InvoiceDesigner.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 2465,
-                            Column = 0,
+                            Id = 1377,
+                            Column = 1,
                             FormDesignerId = 1,
                             Row = 0
                         },
                         new
                         {
-                            Id = 2466,
-                            Column = 2,
+                            Id = 1378,
+                            Column = 1,
                             FormDesignerId = 1,
                             Row = 1
                         },
                         new
                         {
-                            Id = 2467,
-                            Column = 2,
+                            Id = 1379,
+                            Column = 1,
                             FormDesignerId = 1,
                             Row = 2
                         },
                         new
                         {
-                            Id = 2468,
-                            Column = 2,
+                            Id = 1380,
+                            Column = 1,
                             FormDesignerId = 1,
                             Row = 3
                         },
                         new
                         {
-                            Id = 2469,
-                            Column = 2,
+                            Id = 1381,
+                            Column = 1,
                             FormDesignerId = 1,
                             Row = 4
                         },
                         new
                         {
-                            Id = 2470,
-                            Column = 2,
+                            Id = 1382,
+                            Column = 1,
                             FormDesignerId = 1,
                             Row = 5
                         },
                         new
                         {
-                            Id = 2471,
-                            Column = 2,
+                            Id = 1383,
+                            Column = 1,
                             FormDesignerId = 1,
                             Row = 6
                         },
                         new
                         {
-                            Id = 2472,
-                            Column = 2,
+                            Id = 1384,
+                            Column = 1,
                             FormDesignerId = 1,
                             Row = 7
                         },
                         new
                         {
-                            Id = 2473,
+                            Id = 1385,
                             Column = 0,
                             FormDesignerId = 1,
                             Row = 8
                         },
                         new
                         {
-                            Id = 2474,
+                            Id = 1386,
                             Column = 0,
                             FormDesignerId = 1,
                             Row = 9
                         },
                         new
                         {
-                            Id = 2475,
+                            Id = 1387,
                             Column = 0,
                             FormDesignerId = 1,
                             Row = 10
                         },
                         new
                         {
-                            Id = 2476,
+                            Id = 1388,
                             Column = 0,
                             FormDesignerId = 1,
                             Row = 11
                         },
                         new
                         {
-                            Id = 2477,
+                            Id = 1389,
                             Column = 0,
                             FormDesignerId = 1,
                             Row = 12
                         },
                         new
                         {
-                            Id = 2478,
-                            Column = 0,
+                            Id = 1390,
+                            Column = 1,
                             FormDesignerId = 1,
                             Row = 13
                         },
                         new
                         {
-                            Id = 2479,
+                            Id = 1391,
                             Column = 0,
                             FormDesignerId = 1,
                             Row = 14
                         },
                         new
                         {
-                            Id = 2480,
-                            Column = 1,
+                            Id = 1392,
+                            Column = 0,
                             FormDesignerId = 1,
                             Row = 15
                         },
                         new
                         {
-                            Id = 2481,
+                            Id = 1393,
                             Column = 0,
                             FormDesignerId = 1,
                             Row = 16
                         },
                         new
                         {
-                            Id = 2482,
+                            Id = 1394,
                             Column = 0,
                             FormDesignerId = 1,
                             Row = 17
                         },
                         new
                         {
-                            Id = 2483,
+                            Id = 1395,
                             Column = 0,
                             FormDesignerId = 1,
                             Row = 18
                         },
                         new
                         {
-                            Id = 2484,
+                            Id = 1396,
                             Column = 0,
                             FormDesignerId = 1,
                             Row = 19
                         },
                         new
                         {
-                            Id = 2485,
+                            Id = 1397,
                             Column = 0,
                             FormDesignerId = 1,
                             Row = 20
                         },
                         new
                         {
-                            Id = 2486,
+                            Id = 1398,
                             Column = 0,
                             FormDesignerId = 1,
                             Row = 21
                         },
                         new
                         {
-                            Id = 2487,
+                            Id = 1399,
                             Column = 0,
                             FormDesignerId = 1,
                             Row = 22
                         },
                         new
                         {
-                            Id = 2488,
+                            Id = 1400,
                             Column = 0,
                             FormDesignerId = 1,
                             Row = 23
                         },
                         new
                         {
-                            Id = 2489,
+                            Id = 1401,
                             Column = 0,
                             FormDesignerId = 1,
                             Row = 24
                         },
                         new
                         {
-                            Id = 2490,
+                            Id = 1402,
                             Column = 0,
                             FormDesignerId = 1,
                             Row = 25
                         },
                         new
                         {
-                            Id = 2491,
+                            Id = 1403,
                             Column = 0,
                             FormDesignerId = 1,
                             Row = 26
                         },
                         new
                         {
-                            Id = 2492,
+                            Id = 1404,
                             Column = 0,
                             FormDesignerId = 1,
                             Row = 27
                         },
                         new
                         {
-                            Id = 2493,
+                            Id = 1405,
                             Column = 0,
                             FormDesignerId = 1,
                             Row = 28
                         },
                         new
                         {
-                            Id = 2494,
+                            Id = 1406,
                             Column = 0,
                             FormDesignerId = 1,
                             Row = 29
                         },
                         new
                         {
-                            Id = 2495,
+                            Id = 1407,
                             Column = 0,
                             FormDesignerId = 1,
                             Row = 30
                         },
                         new
                         {
-                            Id = 2496,
+                            Id = 1408,
                             Column = 0,
                             FormDesignerId = 1,
                             Row = 31

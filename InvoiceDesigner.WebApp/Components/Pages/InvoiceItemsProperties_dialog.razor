@@ -4,12 +4,12 @@
 	<DialogContent>
 		<MudGrid>
 			<MudItem xs="12">
-				<MudSelect T="string"
-						   Label="Font Size Items"
-						   Value="_selectedFontSize"
-						   ValueChanged="OnMudSelectChanged"
-						   Variant="Variant.Outlined"
-						   Dense="true">
+				<MudSelect T="string" Dense
+				Label="Font Size Items"
+				@bind-Value="_selectedFontSize"
+				Variant="Variant.Outlined">
+					<MudSelectItem Value="@ConstsCssProperty.Value_6px">@ConstsCssProperty.Value_6px</MudSelectItem>
+					<MudSelectItem Value="@ConstsCssProperty.Value_8px">@ConstsCssProperty.Value_8px</MudSelectItem>
 					<MudSelectItem Value="@ConstsCssProperty.Value_10px">@ConstsCssProperty.Value_10px</MudSelectItem>
 					<MudSelectItem Value="@ConstsCssProperty.Value_12px">@ConstsCssProperty.Value_12px</MudSelectItem>
 					<MudSelectItem Value="@ConstsCssProperty.Value_14px">@ConstsCssProperty.Value_14px</MudSelectItem>
@@ -22,11 +22,9 @@
 				<MudText>Add currency symbol to item prices?</MudText>
 			</MudItem>
 			<MudItem xs="4">
-				<MudSelect T="string"
-						   Value="_addCurrencySymbol"
-						   ValueChanged="OnAddCurrencySymbolSelectChanged"
-						   Variant="Variant.Outlined"
-						   Dense="true">
+				<MudSelect T="string" Dense
+				@bind-Value="_addCurrencySymbol"
+				Variant="Variant.Outlined">
 					<MudSelectItem Value="@ConstsCssProperty.Value_None">@ConstsCssProperty.Value_None</MudSelectItem>
 					<MudSelectItem Value="@ConstsCssProperty.Value_Left">@ConstsCssProperty.Value_Left</MudSelectItem>
 					<MudSelectItem Value="@ConstsCssProperty.Value_Right">@ConstsCssProperty.Value_Right</MudSelectItem>
@@ -36,14 +34,25 @@
 				<MudText>Add currency symbol to footer?</MudText>
 			</MudItem>
 			<MudItem xs="4">
-				<MudSelect T="string"
-						   Value="_addCurrencySymbolFooter"
-						   ValueChanged="OnAddCurrencySymbolFooterSelectChanged"
-						   Variant="Variant.Outlined"
-						   Dense="true">
+				<MudSelect T="string" Dense
+				@bind-Value="_addCurrencySymbolFooter"
+				Variant="Variant.Outlined">
 					<MudSelectItem Value="@ConstsCssProperty.Value_None">@ConstsCssProperty.Value_None</MudSelectItem>
 					<MudSelectItem Value="@ConstsCssProperty.Value_Left">@ConstsCssProperty.Value_Left</MudSelectItem>
 					<MudSelectItem Value="@ConstsCssProperty.Value_Right">@ConstsCssProperty.Value_Right</MudSelectItem>
+				</MudSelect>
+			</MudItem>
+
+			<MudItem xs="8">
+				<MudText>Left margin percentage for table footer rendering</MudText>
+			</MudItem>
+			<MudItem xs="4">
+				<MudSelect T="string" Dense
+				@bind-Value="_footerLeftMargin"
+				Variant="Variant.Outlined">
+					<MudSelectItem Value="@ConstsCssProperty.FooterLeftMargin_Value_0">@ConstsCssProperty.FooterLeftMargin_Value_0</MudSelectItem>
+					<MudSelectItem Value="@ConstsCssProperty.FooterLeftMargin_Value_50">@ConstsCssProperty.FooterLeftMargin_Value_50</MudSelectItem>
+					<MudSelectItem Value="@ConstsCssProperty.FooterLeftMargin_Value_75">@ConstsCssProperty.FooterLeftMargin_Value_75</MudSelectItem>
 				</MudSelect>
 			</MudItem>
 		</MudGrid>
@@ -64,6 +73,7 @@
 	public string _selectedFontSize = string.Empty;
 	public string _addCurrencySymbol = ConstsCssProperty.Value_None;
 	public string _addCurrencySymbolFooter = ConstsCssProperty.Value_None;
+	public string _footerLeftMargin = ConstsCssProperty.FooterLeftMargin_Value_75;
 
 	private void Cancel() => MudDialog.Cancel();
 
@@ -84,23 +94,11 @@
 			if (addCurrencySymbolFooter != null)
 				_addCurrencySymbolFooter = addCurrencySymbolFooter.Value;
 
+			var footerLeftMargin = dropItemEditDto.CssStyleEditDto.FirstOrDefault(e => e.Name == ConstsCssProperty.FooterLeftMargin);
+			if (footerLeftMargin != null)
+				_footerLeftMargin = footerLeftMargin.Value;
 		}
 
-	}
-
-	private void OnAddCurrencySymbolFooterSelectChanged(string newValue)
-	{
-		_addCurrencySymbolFooter = newValue;
-	}
-
-	private void OnAddCurrencySymbolSelectChanged(string newValue)
-	{
-		_addCurrencySymbol = newValue;
-	}
-	
-	private void OnMudSelectChanged(string newValue)
-	{
-		_selectedFontSize = newValue;
 	}
 
 	private void Submit()
@@ -116,6 +114,19 @@
 		var addCurrencySymbolFooter = dropItemEditDto.CssStyleEditDto.FirstOrDefault(e => e.Name == ConstsCssProperty.AddCurrencySymbolFooter);
 		if (addCurrencySymbolFooter != null)
 			addCurrencySymbolFooter.Value = _addCurrencySymbolFooter;
+
+		var footerLeftMargin = dropItemEditDto.CssStyleEditDto.FirstOrDefault(e => e.Name == ConstsCssProperty.FooterLeftMargin);
+		if (footerLeftMargin != null){
+			footerLeftMargin.Value = _footerLeftMargin;
+		}
+		else
+		{
+			dropItemEditDto.CssStyleEditDto.Add(new CssStyleEditDto
+				{
+					Name = ConstsCssProperty.FooterLeftMargin,
+					Value = _footerLeftMargin
+				});
+		}
 
 
 		MudDialog.Close(DialogResult.Ok(dropItemEditDto));

@@ -373,10 +373,10 @@ namespace InvoiceDesigner.Infrastructure.Data
 					.HasForeignKey(e => e.DropItemId)
 					.OnDelete(DeleteBehavior.Cascade);
 			});
-
+			
 			var FormDesignerEntities = ReadJsonFile<FormDesigner>(Path.Combine(dataDirectory, "FormDesigners.json"));
 			modelBuilder.Entity<FormDesigner>().HasData(FormDesignerEntities);
-
+		 
 			var FormDesignerSchemeEntities = ReadJsonFile<FormDesignerScheme>(Path.Combine(dataDirectory, "FormDesignerSchemes.json"));
 			modelBuilder.Entity<FormDesignerScheme>().HasData(FormDesignerSchemeEntities);
 
@@ -385,7 +385,7 @@ namespace InvoiceDesigner.Infrastructure.Data
 
 			var DropItemStylesEntities = ReadJsonFile<CssStyle>(Path.Combine(dataDirectory, "DropItemStyles.json"));
 			modelBuilder.Entity<CssStyle>().HasData(DropItemStylesEntities);
-
+		 
 			#endregion
 
 			#region Real Accounting

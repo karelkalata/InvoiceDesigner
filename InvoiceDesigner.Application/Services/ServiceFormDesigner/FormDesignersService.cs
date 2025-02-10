@@ -123,15 +123,24 @@ namespace InvoiceDesigner.Application.Services.ServiceFormDesigner
 		private void ValidateInputAsync(FormDesignerEditDto dto)
 		{
 			if (string.IsNullOrEmpty(dto.Name))
-				throw new InvalidOperationException("Value can't be empty.");
+				throw new InvalidOperationException("Name can't be empty.");
 
 		}
 
-		private void MapFormDesigner(FormDesigner existsFormDesigner, FormDesignerEditDto dto)
+		private void MapFormDesigner(FormDesigner existsEntity, FormDesignerEditDto dto)
 		{
-			existsFormDesigner.Name = dto.Name.Trim();
-			existsFormDesigner.AccountingDocument = dto.AccountingDocument;
-			existsFormDesigner.DropItems = _dropItemsService.MapDropItems(dto.DropItems);
+			existsEntity.Name = dto.Name.Trim();
+			existsEntity.AccountingDocument = dto.AccountingDocument;
+			existsEntity.PageSizes = dto.PageSizes;
+			existsEntity.DynamicHeight = dto.DynamicHeight;
+			existsEntity.PageOrientation = dto.PageOrientation;
+
+			if (dto.PageMargin < 0)
+				dto.PageMargin = 10;
+
+			existsEntity.PageMargin = dto.PageMargin;
+
+			existsEntity.DropItems = _dropItemsService.MapDropItems(dto.DropItems);
 
 			var newSchemes = new List<FormDesignerScheme>();
 
@@ -152,7 +161,7 @@ namespace InvoiceDesigner.Application.Services.ServiceFormDesigner
 				newSchemes.Add(scheme);
 			}
 
-			existsFormDesigner.Schemes = newSchemes;
+			existsEntity.Schemes = newSchemes;
 		}
 
 	}

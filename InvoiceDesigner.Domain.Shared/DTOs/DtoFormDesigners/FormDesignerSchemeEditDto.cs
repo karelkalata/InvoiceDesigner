@@ -1,4 +1,6 @@
-﻿namespace InvoiceDesigner.Domain.Shared.DTOs.DtoFormDesigners
+﻿using InvoiceDesigner.Domain.Shared.Enums;
+
+namespace InvoiceDesigner.Domain.Shared.DTOs.DtoFormDesigners
 {
 	public class FormDesignerSchemeEditDto
 	{
