@@ -39,6 +39,7 @@
 			opacity: 1.0
 		}
 </style>
+
 @if (!_loaded)
 {
 	<MudOverlay Visible="true">
@@ -89,7 +90,6 @@ else
 									<MudItem xs="12">
 										<MudSelect T="EAccountingDocument" Dense
 												   Typo="Typo.inherit"
-												   Label="Document"
 												   Value="_accountingDocument"
 												   ValueChanged="OnAccountingDocumentChanged"
 												   Variant="Variant.Outlined">
@@ -350,8 +350,11 @@ else
 	private async Task OnFormDesignersAutocompleteDtoChanged(FormDesignersAutocompleteDto formDesignersAutocompleteDto)
 	{
 		_selectedDesignersAutocompleteDto = formDesignersAutocompleteDto;
-		_id = formDesignersAutocompleteDto.Id;
-		await LoadForm(_id);
+		if (_selectedDesignersAutocompleteDto != null)
+		{
+			_id = formDesignersAutocompleteDto.Id;
+			await LoadForm(_id);
+		}
 	}
 
 	private async Task OpenNewFormDesignerDialog()

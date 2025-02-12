@@ -11,14 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InvoiceDesigner.Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250210143008_AddInitialMigration")]
+    [Migration("20250212154452_AddInitialMigration")]
     partial class AddInitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.10");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.2");
 
             modelBuilder.Entity("InvoiceDesigner.Domain.Shared.Models.Directories.Bank", b =>
                 {

@@ -6,10 +6,10 @@
 
 @inherits LayoutComponentBase
 
-<MudThemeProvider />
-<MudPopoverProvider />
-<MudSnackbarProvider />
-<MudDialogProvider />
+<MudThemeProvider @rendermode="InteractiveServer" />
+<MudPopoverProvider @rendermode="InteractiveServer" />
+<MudDialogProvider @rendermode="InteractiveServer" />
+<MudSnackbarProvider @rendermode="InteractiveServer" />
 
 <MudLayout>
 	<MudAppBar Dense>
