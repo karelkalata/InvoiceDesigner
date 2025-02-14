@@ -1,4 +1,4 @@
-﻿using InvoiceDesigner.API.Helpers;
+using InvoiceDesigner.API.Helpers;
 using InvoiceDesigner.Application.Authorization;
 using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Application.Interfaces.Admin;
@@ -33,6 +33,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddServiceDefaults();
 
 builder.Services.AddControllers();
 
@@ -158,6 +160,8 @@ builder.Logging.AddDebug();
 builder.Logging.SetMinimumLevel(LogLevel.Information);
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

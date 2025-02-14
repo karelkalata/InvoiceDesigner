@@ -1,4 +1,4 @@
-﻿using Blazored.LocalStorage;
+using Blazored.LocalStorage;
 using InvoiceDesigner.Localization;
 using InvoiceDesigner.Localization.Resources;
 using InvoiceDesigner.WebApp.Components;
@@ -11,6 +11,8 @@ using MudBlazor;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddServiceDefaults();
 builder.Services.AddLocalization();
 builder.Services.AddRazorComponents()
 	.AddInteractiveServerComponents();
@@ -61,6 +63,8 @@ builder.Services.AddScoped<HttpRequestHelper>(sp =>
 #endregion
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 
 

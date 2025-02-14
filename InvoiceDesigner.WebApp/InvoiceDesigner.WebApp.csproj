@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\InvoiceDesigner.Domain.Shared\InvoiceDesigner.Domain.Shared.csproj" />
     <ProjectReference Include="..\InvoiceDesigner.Localization\InvoiceDesigner.Localization.csproj" />
+    <ProjectReference Include="..\InvoiceDesigner.ServiceDefaults\InvoiceDesigner.ServiceDefaults.csproj" />
   </ItemGroup>
 
 </Project>
