@@ -3,6 +3,11 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+#VS Workspace 
+*.code-workspace
+# JetBrains Rider
+.idea
+
 # User-specific files
 *.rsuser
 *.suo

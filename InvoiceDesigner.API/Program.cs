@@ -159,11 +159,25 @@ builder.Logging.AddDebug();
 
 builder.Logging.SetMinimumLevel(LogLevel.Information);
 
+// Add HTTPS redirection and configure HSTS
+builder.Services.AddHttpsRedirection(options =>
+{
+    options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+    options.HttpsPort = 7048;
+});
+
+builder.Services.AddHsts(options =>
+{
+    options.Preload = true;
+    options.IncludeSubDomains = true;
+    options.MaxAge = TimeSpan.FromDays(365);
+});
+
 var app = builder.Build();
 
-app.MapDefaultEndpoints();
-
 app.UseHttpsRedirection();
+app.UseHsts();
+app.MapDefaultEndpoints();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

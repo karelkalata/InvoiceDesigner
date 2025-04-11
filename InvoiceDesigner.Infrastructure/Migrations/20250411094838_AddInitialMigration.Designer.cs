@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InvoiceDesigner.Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250212154452_AddInitialMigration")]
+    [Migration("20250411094838_AddInitialMigration")]
     partial class AddInitialMigration
     {
         /// <inheritdoc />
