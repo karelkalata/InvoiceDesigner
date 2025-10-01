@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
+using InvoiceDesigner.Application.DTOs.InvoiceDTOs;
 using InvoiceDesigner.Application.Helpers;
 using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Application.Interfaces.Documents;
 using InvoiceDesigner.Application.Interfaces.InterfacesFormDesigner;
-using InvoiceDesigner.Domain.Shared.DTOs.InvoiceDTOs;
+using InvoiceDesigner.Application.Responses;
 using InvoiceDesigner.Domain.Shared.Enums;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models;
 using InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner;
-using InvoiceDesigner.Domain.Shared.Responses;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -236,7 +236,8 @@ namespace InvoiceDesigner.Application.Services
 												});
 											}
 										});
-									};
+									}
+									;
 								}
 
 							});
@@ -248,7 +249,7 @@ namespace InvoiceDesigner.Application.Services
 								{
 									for (int footerColumn = 0; footerColumn <= footerLeftMargin; footerColumn++)
 									{
-										if (footerColumn < footerLeftMargin )
+										if (footerColumn < footerLeftMargin)
 										{
 											row.RelativeItem().Column(col =>
 											{
@@ -294,7 +295,8 @@ namespace InvoiceDesigner.Application.Services
 																		.BorderBottom(1)
 																		.BorderColor(Colors.Grey.Lighten2)
 																		.PaddingVertical(2);
-													};
+													}
+													;
 												});
 											});
 										}

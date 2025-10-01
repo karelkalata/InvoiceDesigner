@@ -1,7 +1,7 @@
 ﻿using InvoiceDesigner.API.Controllers.Abstract;
+using InvoiceDesigner.Application.DTOs.User;
 using InvoiceDesigner.Application.Interfaces.InterfacesUser;
-using InvoiceDesigner.Domain.Shared.DTOs.User;
-using InvoiceDesigner.Domain.Shared.Responses;
+using InvoiceDesigner.Application.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InvoiceDesigner.API.Controllers.User

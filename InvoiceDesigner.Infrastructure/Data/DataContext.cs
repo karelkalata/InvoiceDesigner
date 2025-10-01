@@ -1,8 +1,6 @@
-﻿using InvoiceDesigner.Domain.Shared.Enums;
-using InvoiceDesigner.Domain.Shared.Models;
+﻿using InvoiceDesigner.Domain.Shared.Models;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Domain.Shared.Models.Documents;
-using InvoiceDesigner.Domain.Shared.Models.ModelsAccounting;
 using InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -31,16 +29,10 @@ namespace InvoiceDesigner.Infrastructure.Data
 		#endregion
 
 		#region Documents
-		public DbSet<BankReceipt> BankReceipts { get; set; } = null!;
 		public DbSet<Invoice> Invoices { get; set; } = null!;
 		public DbSet<InvoiceItem> InvoiceItems { get; set; } = null!;
 		#endregion
 
-		#region Real Accounting
-		public DbSet<ChartOfAccounts> ChartOfAccounts { get; set; } = null!;
-		public DbSet<DoubleEntrySetup> DoubleEntriesSetup { get; set; } = null!;
-		public DbSet<DoubleEntry> Accounting { get; set; } = null!;
-		#endregion
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -62,11 +54,6 @@ namespace InvoiceDesigner.Infrastructure.Data
 			var DropItemStylesEntities = ReadJsonFile<CssStyle>(Path.Combine(dataDirectory, "DropItemStyles.json"));
 			modelBuilder.Entity<CssStyle>().HasData(DropItemStylesEntities);
 
-			var ChartOfAccountsData = ReadJsonFile<ChartOfAccounts>(Path.Combine(dataDirectory, "ChartOfAccountsData.json"));
-			modelBuilder.Entity<ChartOfAccounts>().HasData(ChartOfAccountsData);
-
-			var DoubleEntriesSetupData = ReadJsonFile<DoubleEntrySetup>(Path.Combine(dataDirectory, "DoubleEntriesSetupData.json"));
-			modelBuilder.Entity<DoubleEntrySetup>().HasData(DoubleEntriesSetupData);
 
 		}
 
@@ -77,27 +64,5 @@ namespace InvoiceDesigner.Infrastructure.Data
 			return JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
 		}
 
-
-		public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-		{
-			var deletedInvoices = ChangeTracker.Entries<Invoice>()
-				.Where(e => e.State == EntityState.Deleted)
-				.ToList();
-
-			foreach (var entry in deletedInvoices)
-			{
-				var invoiceId = entry.Entity.Id;
-
-				var bankReceipt = await BankReceipts.FirstOrDefaultAsync(br => br.InvoiceId == invoiceId, cancellationToken);
-				if (bankReceipt != null)
-				{
-					var doubleEntries = Accounting.Where(de => de.AccountingDocument == EAccountingDocument.BankReceipt && de.DocumentId == bankReceipt.Id);
-					Accounting.RemoveRange(doubleEntries);
-					BankReceipts.Remove(bankReceipt);
-				}
-			}
-
-			return await base.SaveChangesAsync(cancellationToken);
-		}
 	}
 }

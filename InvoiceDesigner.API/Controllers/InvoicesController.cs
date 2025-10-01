@@ -1,9 +1,11 @@
 ﻿using InvoiceDesigner.API.Controllers.Abstract;
+using InvoiceDesigner.Application.Commands;
+using InvoiceDesigner.Application.DTOs;
+using InvoiceDesigner.Application.DTOs.InvoiceDTOs;
 using InvoiceDesigner.Application.Interfaces.Documents;
-using InvoiceDesigner.Domain.Shared.DTOs;
-using InvoiceDesigner.Domain.Shared.DTOs.InvoiceDTOs;
+using InvoiceDesigner.Application.QueryParameters;
+using InvoiceDesigner.Application.Responses;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
-using InvoiceDesigner.Domain.Shared.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InvoiceDesigner.API.Controllers
@@ -79,23 +81,19 @@ namespace InvoiceDesigner.API.Controllers
 		[HttpGet("InvoiceChangeProperty")]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseBoolean))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> InvoiceChangeProperty([FromQuery] QueryOnChangeProperty query)
+		public async Task<IActionResult> InvoiceChangeProperty([FromQuery] QueryChangeProperty queryChangeProperty)
 		{
-			try
+			var changePropertyCommand = new ChangePropertyCommand
 			{
-				query.UserId = UserId;
-				query.IsAdmin = IsAdmin;
-
-				var result = await _service.OnChangeProperty(query);
-				return Ok(result);
-			}
-			catch (InvalidOperationException ex)
-			{
-				return BadRequest(new
-				{
-					message = ex.Message
-				});
-			}
+				UserId = UserId,
+				IsAdmin = IsAdmin,
+				EntityId = queryChangeProperty.EntityId,
+				IsDeleted = queryChangeProperty.IsDeleted,
+				IsArchived = queryChangeProperty.IsArchived,
+				Status = queryChangeProperty.Status,
+			};
+			var result = await _service.OnChangeProperty(changePropertyCommand);
+			return Ok(result);
 		}
 
 		[HttpPut]

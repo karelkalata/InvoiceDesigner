@@ -1,9 +1,9 @@
 ﻿using InvoiceDesigner.API.Controllers.Abstract;
+using InvoiceDesigner.Application.DTOs.DtoFormDesigners;
 using InvoiceDesigner.Application.Interfaces.InterfacesFormDesigner;
-using InvoiceDesigner.Domain.Shared.DTOs.DtoFormDesigners;
+using InvoiceDesigner.Application.Responses;
 using InvoiceDesigner.Domain.Shared.Enums;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
-using InvoiceDesigner.Domain.Shared.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InvoiceDesigner.API.Controllers

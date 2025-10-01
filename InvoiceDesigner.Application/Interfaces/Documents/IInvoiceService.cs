@@ -1,8 +1,9 @@
-﻿using InvoiceDesigner.Domain.Shared.DTOs;
-using InvoiceDesigner.Domain.Shared.DTOs.InvoiceDTOs;
+﻿using InvoiceDesigner.Application.Commands;
+using InvoiceDesigner.Application.DTOs;
+using InvoiceDesigner.Application.DTOs.InvoiceDTOs;
+using InvoiceDesigner.Application.Responses;
 using InvoiceDesigner.Domain.Shared.Models.Documents;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
-using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Interfaces.Documents
 {
@@ -16,6 +17,6 @@ namespace InvoiceDesigner.Application.Interfaces.Documents
 		Task<ResponseRedirect> UpdateAsync(int userId, bool isAdmin, InvoiceEditDto invoiceDto);
 		Task<ResponseBoolean> DeleteAsync(int userId, bool isAdmin, int id);
 		Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(int userId, bool isAdmin, int id, int modeDelete);
-		Task<ResponseBoolean> OnChangeProperty(QueryOnChangeProperty queryStatus);
+		Task<ResponseBoolean> OnChangeProperty(ChangePropertyCommand changePropertyCommand);
 	}
 }

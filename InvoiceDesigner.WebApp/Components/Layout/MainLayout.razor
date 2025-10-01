@@ -35,23 +35,6 @@
 							</MudNavLink>
 						</ChildContent>
 					</MudMenu>
-
-					<MudMenu Class="menu-width" Dense>
-						<ActivatorContent>
-							<MudChip T="string" Icon="@Icons.Material.Filled.AccountBalanceWallet" Color="Color.Info">@localizer["Accounting"]</MudChip>
-						</ActivatorContent>
-						<ChildContent>
-							<MudNavLink Icon="@Icons.Material.Filled.TableView" Href="/Admin/Accounting/ChartOfAccountsIndex" Match="NavLinkMatch.Prefix">
-								@localizer["ChartOfAccounts"]
-							</MudNavLink>
-							<MudNavLink Icon="@Icons.Material.Filled.UnfoldMoreDouble" Href="/Admin/Accounting/DoubleEntrySetupIndex" Match="NavLinkMatch.Prefix">
-								@localizer["DoubleEntrySetup"]
-							</MudNavLink>
-							<MudNavLink Icon="@Icons.Material.Filled.ImportExport" Href="/Admin/Export/ExportAccountingData" Match="NavLinkMatch.Prefix">
-								@localizer["ExportAccountingData"]
-							</MudNavLink>
-						</ChildContent>
-					</MudMenu>
 				}
 				<MudMenu Class="menu-width" Dense>
 					<ActivatorContent>
@@ -82,13 +65,8 @@
 				<MudNavMenu Bordered="true">
 					<MudText Typo="Typo.h6" Class="px-4 pt-2">Invoice Designer</MudText>
 					<MudNavLink Icon="@Icons.Material.Filled.House" Href="/" Match="NavLinkMatch.All">Invoices</MudNavLink>
-					<MudNavLink Icon="@Icons.Material.Filled.Receipt" Href="/BankReceipts" Match="NavLinkMatch.Prefix">@localizer["BankReceipts"]</MudNavLink>
 					<MudNavLink Icon="@Icons.Material.Filled.Group" Href="/Customers" Match="NavLinkMatch.Prefix">@localizer["Customers"]</MudNavLink>
 					<MudNavLink Icon="@Icons.Material.Filled.ListAlt" Href="/Products" Match="NavLinkMatch.Prefix">@localizer["Products"]</MudNavLink>
-					<MudNavGroup Title="@localizer["Reports"]">
-						<MudNavLink Icon="@Icons.Material.Filled.AutoStories" Href="/Reports/TrialBalance" Match="NavLinkMatch.Prefix">@localizer["TrialBalance"]</MudNavLink>
-						<MudNavLink Icon="@Icons.Material.Filled.CreditScore" Href="/Reports/CustomerDebit" Match="NavLinkMatch.Prefix">@localizer["CustomerDebit"]</MudNavLink>
-					</MudNavGroup>
 					<MudNavLink Icon="@Icons.Material.Filled.DesignServices" Href="/FormDesigner" Match="NavLinkMatch.Prefix">Form Designer</MudNavLink>
 				</MudNavMenu>
 			</Authorized>

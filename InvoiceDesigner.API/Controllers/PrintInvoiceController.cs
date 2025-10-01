@@ -1,6 +1,6 @@
 ﻿using InvoiceDesigner.API.Controllers.Abstract;
 using InvoiceDesigner.Application.Interfaces;
-using InvoiceDesigner.Domain.Shared.Responses;
+using InvoiceDesigner.Application.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QuestPDF.Infrastructure;

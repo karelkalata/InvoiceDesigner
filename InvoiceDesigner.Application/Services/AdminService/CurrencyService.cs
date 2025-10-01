@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
+using InvoiceDesigner.Application.Commands;
+using InvoiceDesigner.Application.DTOs.Currency;
 using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Application.Interfaces.Admin;
-using InvoiceDesigner.Domain.Shared.DTOs.Currency;
+using InvoiceDesigner.Application.Responses;
 using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
-using InvoiceDesigner.Domain.Shared.Responses;
+using InvoiceDesigner.Domain.Shared.Records;
 
 namespace InvoiceDesigner.Application.Services.AdminService
 {
@@ -37,12 +39,12 @@ namespace InvoiceDesigner.Application.Services.AdminService
 
 			var currenciesTask = _repoCurrency.GetEntitiesAsync(queryPaged, queryPaged.SortLabel);
 
-			var queryGetCount = new QueryGetCount
+			var recordGetCount = new GetCountFilter
 			{
 				ShowDeleted = queryPaged.ShowDeleted,
 				ShowArchived = queryPaged.ShowArchived
 			};
-			var totalCountTask = _repoCurrency.GetCountAsync(queryGetCount);
+			var totalCountTask = _repoCurrency.GetCountAsync(recordGetCount);
 
 			await Task.WhenAll(currenciesTask, totalCountTask);
 
@@ -95,17 +97,17 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			};
 		}
 
-		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(QueryDeleteEntity queryDeleteEntity)
+		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(DeleteEntityCommand deleteEntityCommand)
 		{
-			var existsEntity = await ValidateExistsEntityAsync(queryDeleteEntity.EntityId);
+			var existsEntity = await ValidateExistsEntityAsync(deleteEntityCommand.EntityId);
 
-			if (!queryDeleteEntity.MarkAsDeleted)
+			if (!deleteEntityCommand.MarkAsDeleted)
 			{
 
-				if (await _invoiceServiceHelper.IsCurrencyUsedInInvoices(queryDeleteEntity.EntityId))
+				if (await _invoiceServiceHelper.IsCurrencyUsedInInvoices(deleteEntityCommand.EntityId))
 					throw new InvalidOperationException($"{existsEntity.Name} is in use in Invoices and cannot be deleted.");
 
-				if (await _companyServiceHelper.IsCurrencyUsedInCompany(queryDeleteEntity.EntityId))
+				if (await _companyServiceHelper.IsCurrencyUsedInCompany(deleteEntityCommand.EntityId))
 					throw new InvalidOperationException($"{existsEntity.Name} is in use in Company and cannot be deleted.");
 
 				return new ResponseBoolean
@@ -127,7 +129,7 @@ namespace InvoiceDesigner.Application.Services.AdminService
 
 		public Task<int> GetCountAsync()
 		{
-			return _repoCurrency.GetCountAsync(new QueryGetCount());
+			return _repoCurrency.GetCountAsync(new GetCountFilter());
 		}
 
 		public async Task<IReadOnlyCollection<CurrencyAutocompleteDto>> GetAutocompleteDto()

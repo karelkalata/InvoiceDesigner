@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
+using InvoiceDesigner.Application.DTOs.DtoFormDesigners;
 using InvoiceDesigner.Application.Interfaces.InterfacesFormDesigner;
-using InvoiceDesigner.Domain.Shared.DTOs.DtoFormDesigners;
+using InvoiceDesigner.Application.Responses;
 using InvoiceDesigner.Domain.Shared.Enums;
 using InvoiceDesigner.Domain.Shared.Helpers;
 using InvoiceDesigner.Domain.Shared.Interfaces;
 using InvoiceDesigner.Domain.Shared.Models.ModelsFormDesigner;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
-using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Services.ServiceFormDesigner
 {

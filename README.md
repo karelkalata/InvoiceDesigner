@@ -12,15 +12,6 @@ With Invoice Designer, customizing your invoice print form is super easy. You ca
 - Fully customizable PDF invoice templates using a drag-and-drop system.
 ### Multicomponent and Multi-Currency Support
 - Support for managing unlimited companies, each operating with different currencies.
-### Accounting Integration
-- Built on a comprehensive accounting platform following GAAP principles.
-- Editable chart of accounts for complete customization.
-- Editable templates for double-entry bookkeeping of each accounting document.
-- Double-entry bookkeeping system with configurable data export to third-party accounting systems.
-- Tax management capabilities.
-### Reports
-- Trial Balance
-- Customer Debit
 ### Security and Access Management
 - Advanced user access control for managing permissions.
 ### Connectivity
@@ -40,18 +31,7 @@ With Invoice Designer, customizing your invoice print form is super easy. You ca
   <img src="screenshot3.png"  />
 </p>
 <p align="center">
-  <img src="screenshot5.png"  />
-</p>
-<p align="center">
-  <img src="screenshot6.png"  />
-</p>
-<p align="center">
   <img src="screenshot7.png"  />
-</p>
-
-- Trial Balance: A report that shows the final balances of all general ledger accounts over a specific period. These balances reflect the cumulative impact of transactions based on the account type (e.g., assets, liabilities, revenue, expenses, equity)
-<p align="center">
-  <img src="screenshot8.png"  />
 </p>
 
 ## Development Environment
@@ -86,12 +66,6 @@ dotnet ef migrations add AddInitialMigration --startup-project InvoiceDesigner.A
 dotnet ef database update --project InvoiceDesigner.Infrastructure --startup-project InvoiceDesigner.Api
 
 ``` 
-Set multiple startup projects 
-
-<p align="center">
-  <img src="screenshot4.png"  />
-</p>
-
 - default login
   - user: admin
   - pass: admin

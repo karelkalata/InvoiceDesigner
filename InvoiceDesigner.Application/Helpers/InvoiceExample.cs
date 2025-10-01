@@ -1,10 +1,10 @@
-﻿using InvoiceDesigner.Application.Helpers.Currency;
-using InvoiceDesigner.Domain.Shared.DTOs.Bank;
-using InvoiceDesigner.Domain.Shared.DTOs.Company;
-using InvoiceDesigner.Domain.Shared.DTOs.Currency;
-using InvoiceDesigner.Domain.Shared.DTOs.Customer;
-using InvoiceDesigner.Domain.Shared.DTOs.InvoiceDTOs;
-using InvoiceDesigner.Domain.Shared.DTOs.InvoiceItem;
+﻿using InvoiceDesigner.Application.DTOs.Bank;
+using InvoiceDesigner.Application.DTOs.Company;
+using InvoiceDesigner.Application.DTOs.Currency;
+using InvoiceDesigner.Application.DTOs.Customer;
+using InvoiceDesigner.Application.DTOs.InvoiceDTOs;
+using InvoiceDesigner.Application.DTOs.InvoiceItem;
+using InvoiceDesigner.Application.Helpers.Currency;
 
 namespace InvoiceDesigner.Application.Helpers
 {

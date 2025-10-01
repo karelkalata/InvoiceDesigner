@@ -1,13 +1,15 @@
 ﻿using AutoMapper;
 using InvoiceDesigner.Application.Authorization;
+using InvoiceDesigner.Application.Commands;
+using InvoiceDesigner.Application.DTOs.Company;
+using InvoiceDesigner.Application.DTOs.User;
 using InvoiceDesigner.Application.Interfaces.Admin;
 using InvoiceDesigner.Application.Interfaces.AdminInterfaces;
-using InvoiceDesigner.Domain.Shared.DTOs.Company;
-using InvoiceDesigner.Domain.Shared.DTOs.User;
+using InvoiceDesigner.Application.Responses;
 using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
-using InvoiceDesigner.Domain.Shared.Responses;
+using InvoiceDesigner.Domain.Shared.Records;
 using InvoiceDesigner.Localization;
 
 namespace InvoiceDesigner.Application.Services.AdminService
@@ -35,12 +37,12 @@ namespace InvoiceDesigner.Application.Services.AdminService
 
 			var usersTask = _repoUser.GetEntitiesAsync(queryPaged, queryPaged.SortLabel);
 
-			var queryGetCount = new QueryGetCount
+			var recordGetCount = new GetCountFilter
 			{
 				ShowArchived = queryPaged.ShowArchived,
 				ShowDeleted = queryPaged.ShowDeleted,
 			};
-			var totalCountTask = _repoUser.GetCountAsync(queryGetCount);
+			var totalCountTask = _repoUser.GetCountAsync(recordGetCount);
 
 			await Task.WhenAll(usersTask, totalCountTask);
 
@@ -86,11 +88,11 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			};
 		}
 
-		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(QueryDeleteEntity queryDeleteEntity)
+		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(DeleteEntityCommand deleteEntityCommand)
 		{
-			var existsEntity = await ValidateExistsEntityAsync(queryDeleteEntity.EntityId);
+			var existsEntity = await ValidateExistsEntityAsync(deleteEntityCommand.EntityId);
 
-			if (!queryDeleteEntity.MarkAsDeleted)
+			if (!deleteEntityCommand.MarkAsDeleted)
 			{
 				return new ResponseBoolean
 				{

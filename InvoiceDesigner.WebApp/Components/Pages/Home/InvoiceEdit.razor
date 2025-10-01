@@ -1,17 +1,17 @@
 ﻿@page "/Invoices/{id:int}"
-@using InvoiceDesigner.Domain.Shared.DTOs
-@using InvoiceDesigner.Domain.Shared.DTOs.DtoFormDesigners
-@using InvoiceDesigner.Domain.Shared.DTOs.InvoiceItem
-@using InvoiceDesigner.Domain.Shared.DTOs.Bank
-@using InvoiceDesigner.Domain.Shared.DTOs.Company
-@using InvoiceDesigner.Domain.Shared.DTOs.Currency
-@using InvoiceDesigner.Domain.Shared.DTOs.Customer
-@using InvoiceDesigner.Domain.Shared.DTOs.InvoiceDTOs
-@using InvoiceDesigner.Domain.Shared.DTOs.Product
+@using InvoiceDesigner.Application.DTOs
+@using InvoiceDesigner.Application.DTOs.DtoFormDesigners
+
+@using InvoiceDesigner.Application.DTOs.InvoiceItem
+@using InvoiceDesigner.Application.DTOs.Bank
+@using InvoiceDesigner.Application.DTOs.Company
+@using InvoiceDesigner.Application.DTOs.Currency
+@using InvoiceDesigner.Application.DTOs.Customer
+@using InvoiceDesigner.Application.DTOs.Product
+@using InvoiceDesigner.Application.DTOs.InvoiceDTOs
+@using InvoiceDesigner.Application.Responses
 @using InvoiceDesigner.Domain.Shared.Enums
-@using InvoiceDesigner.Domain.Shared.Helpers
 @using InvoiceDesigner.Domain.Shared.Interfaces.Abstract
-@using InvoiceDesigner.Domain.Shared.Responses
 @inject IJSRuntime JS
 
 <MudContainer Class="pa-5">
@@ -266,7 +266,7 @@
 <script>
 	function openPdf(pdfDataUrl) {
 	if (pdfDataUrl) {
-	window.open(pdfDataUrl, '_blank');
+		window.open(pdfDataUrl, '_blank');
 	}
 	}
 </script>
@@ -342,13 +342,13 @@
 			}
 
 			_invoiceEditDto = new()
-				{
-					Company = defaultCompany,
-					Vat = defaultCompany.DefaultVat,
-					Currency = defaultCompany.Currency,
-					DateTime = DateTime.UtcNow,
-					DueDate = DateTime.UtcNow.AddDays(defaultCompany.PaymentTerms)
-				};
+			{
+				Company = defaultCompany,
+				Vat = defaultCompany.DefaultVat,
+				Currency = defaultCompany.Currency,
+				DateTime = DateTime.UtcNow,
+				DueDate = DateTime.UtcNow.AddDays(defaultCompany.PaymentTerms)
+			};
 
 			_banksAutocomplete = _invoiceEditDto.Company.Banks.ToList();
 

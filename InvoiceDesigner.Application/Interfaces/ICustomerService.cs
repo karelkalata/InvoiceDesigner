@@ -1,7 +1,8 @@
-﻿using InvoiceDesigner.Domain.Shared.DTOs.Customer;
+﻿using InvoiceDesigner.Application.Commands;
+using InvoiceDesigner.Application.DTOs.Customer;
+using InvoiceDesigner.Application.Responses;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
-using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Interfaces
 {
@@ -12,7 +13,7 @@ namespace InvoiceDesigner.Application.Interfaces
 		Task<Customer> GetByIdAsync(int id);
 		Task<CustomerEditDto> GetEditDtoByIdAsync(int id);
 		Task<ResponseRedirect> UpdateAsync(int userId, CustomerEditDto editedEntity);
-		Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(QueryDeleteEntity queryDeleteEntity);
+		Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(DeleteEntityCommand deleteEntityCommand);
 		Task<int> GetCountAsync();
 		Task<IReadOnlyCollection<CustomerAutocompleteDto>> FilteringData(string f);
 	}

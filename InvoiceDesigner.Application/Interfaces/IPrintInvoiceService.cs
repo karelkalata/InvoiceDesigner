@@ -1,4 +1,4 @@
-﻿using InvoiceDesigner.Domain.Shared.Responses;
+﻿using InvoiceDesigner.Application.Responses;
 
 namespace InvoiceDesigner.Application.Interfaces
 {

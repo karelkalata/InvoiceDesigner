@@ -1,4 +1,4 @@
-﻿using InvoiceDesigner.Domain.Shared.DTOs.Bank;
+﻿using InvoiceDesigner.Application.DTOs.Bank;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
 
 namespace InvoiceDesigner.Application.Interfaces.Admin

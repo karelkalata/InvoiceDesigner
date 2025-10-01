@@ -1,5 +1,5 @@
-﻿using InvoiceDesigner.Domain.Shared.DTOs.User;
-using InvoiceDesigner.Domain.Shared.Responses;
+﻿using InvoiceDesigner.Application.DTOs.User;
+using InvoiceDesigner.Application.Responses;
 
 namespace InvoiceDesigner.Application.Interfaces.InterfacesUser
 {

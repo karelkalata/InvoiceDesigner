@@ -1,8 +1,8 @@
 ﻿using InvoiceDesigner.Application.Authorization;
+using InvoiceDesigner.Application.DTOs.User;
 using InvoiceDesigner.Application.Interfaces.InterfacesUser;
-using InvoiceDesigner.Domain.Shared.DTOs.User;
+using InvoiceDesigner.Application.Responses;
 using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
-using InvoiceDesigner.Domain.Shared.Responses;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

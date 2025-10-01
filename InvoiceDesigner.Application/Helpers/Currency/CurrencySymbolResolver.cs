@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using InvoiceDesigner.Application.DTOs.Currency;
 using InvoiceDesigner.Application.Helpers.Currency;
-using InvoiceDesigner.Domain.Shared.DTOs.Currency;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
 
 namespace InvoiceDesigner.Application.Mapper

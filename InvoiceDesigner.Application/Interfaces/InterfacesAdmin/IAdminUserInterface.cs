@@ -1,6 +1,7 @@
-﻿using InvoiceDesigner.Domain.Shared.DTOs.User;
+﻿using InvoiceDesigner.Application.Commands;
+using InvoiceDesigner.Application.DTOs.User;
+using InvoiceDesigner.Application.Responses;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
-using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Interfaces.AdminInterfaces
 {
@@ -14,7 +15,7 @@ namespace InvoiceDesigner.Application.Interfaces.AdminInterfaces
 
 		Task<ResponseRedirect> UpdateAsync(int userId, AdminUserEditDto dto);
 
-		Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(QueryDeleteEntity queryDeleteEntity);
+		Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(DeleteEntityCommand deleteEntityCommand);
 
 		Task<ResponseBoolean> CheckLoginName(string loginName);
 	}

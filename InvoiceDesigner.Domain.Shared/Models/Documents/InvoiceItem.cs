@@ -1,16 +1,17 @@
-﻿using InvoiceDesigner.Domain.Shared.Models.Abstract;
-using InvoiceDesigner.Domain.Shared.Models.Directories;
+﻿using InvoiceDesigner.Domain.Shared.Models.Directories;
 
 namespace InvoiceDesigner.Domain.Shared.Models.Documents
 {
-	public class InvoiceItem : AAccountingItem
+	public class InvoiceItem
 	{
+		public int Id { get; init; }
+		public int ItemId { get; set; }
+		public decimal Price { get; set; } = decimal.Zero;
+		public decimal Quantity { get; set; } = decimal.Zero;
 		public Product Item { get; set; } = null!;
-
 		public int InvoiceId { get; set; }
 		public Invoice Invoice { get; set; } = null!;
-
-		public override decimal GetAmountWithoutTax()
+		public decimal GetAmountWithoutTax()
 		{
 			return Price * Quantity;
 		}

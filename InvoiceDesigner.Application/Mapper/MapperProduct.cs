@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using InvoiceDesigner.Domain.Shared.DTOs.Product;
+using InvoiceDesigner.Application.DTOs.Product;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
 
 namespace InvoiceDesigner.Application.Mapper

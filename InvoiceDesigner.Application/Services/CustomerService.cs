@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using InvoiceDesigner.Application.Commands;
+using InvoiceDesigner.Application.DTOs.Customer;
 using InvoiceDesigner.Application.Interfaces;
-using InvoiceDesigner.Domain.Shared.DTOs.Customer;
+using InvoiceDesigner.Application.Responses;
 using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
-using InvoiceDesigner.Domain.Shared.Responses;
+using InvoiceDesigner.Domain.Shared.Records;
 
 namespace InvoiceDesigner.Application.Services
 {
@@ -30,12 +32,12 @@ namespace InvoiceDesigner.Application.Services
 
 			var clientsTask = _repoCustomer.GetEntitiesAsync(queryPaged, queryPaged.SortLabel);
 
-			var queryGetCount = new QueryGetCount
+			var recordGetCount = new GetCountFilter
 			{
 				ShowArchived = queryPaged.ShowArchived,
 				ShowDeleted = queryPaged.ShowDeleted
 			};
-			var totalCountTask = _repoCustomer.GetCountAsync(queryGetCount);
+			var totalCountTask = _repoCustomer.GetCountAsync(recordGetCount);
 
 			await Task.WhenAll(clientsTask, totalCountTask);
 
@@ -85,11 +87,11 @@ namespace InvoiceDesigner.Application.Services
 			};
 		}
 
-		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(QueryDeleteEntity queryDeleteEntity)
+		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(DeleteEntityCommand deleteEntityCommand)
 		{
-			var existsEntity = await ValidateExistsEntityAsync(queryDeleteEntity.EntityId);
+			var existsEntity = await ValidateExistsEntityAsync(deleteEntityCommand.EntityId);
 
-			if (!queryDeleteEntity.MarkAsDeleted)
+			if (!deleteEntityCommand.MarkAsDeleted)
 			{
 				return new ResponseBoolean
 				{
@@ -108,7 +110,7 @@ namespace InvoiceDesigner.Application.Services
 			}
 		}
 
-		public Task<int> GetCountAsync() => _repoCustomer.GetCountAsync(new QueryGetCount());
+		public Task<int> GetCountAsync() => _repoCustomer.GetCountAsync(new GetCountFilter());
 
 		public async Task<IReadOnlyCollection<CustomerAutocompleteDto>> FilteringData(string searchText)
 		{

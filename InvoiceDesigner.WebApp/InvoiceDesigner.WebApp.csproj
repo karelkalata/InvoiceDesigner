@@ -7,15 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="9.0.2" />
-    <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.2" />
-    <PackageReference Include="MudBlazor" Version="8.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.8" />
+    <PackageReference Include="MudBlazor" Version="8.11.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\InvoiceDesigner.Domain.Shared\InvoiceDesigner.Domain.Shared.csproj" />
     <ProjectReference Include="..\InvoiceDesigner.Localization\InvoiceDesigner.Localization.csproj" />
-    <ProjectReference Include="..\InvoiceDesigner.ServiceDefaults\InvoiceDesigner.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\InvoiceDesigner.Application\InvoiceDesigner.Application.csproj" />
+    
   </ItemGroup>
 
 </Project>

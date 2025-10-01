@@ -1,7 +1,8 @@
-﻿using InvoiceDesigner.Domain.Shared.DTOs.Currency;
+﻿using InvoiceDesigner.Application.Commands;
+using InvoiceDesigner.Application.DTOs.Currency;
+using InvoiceDesigner.Application.Responses;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
-using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Interfaces.Admin
 {
@@ -13,7 +14,7 @@ namespace InvoiceDesigner.Application.Interfaces.Admin
 		Task<Currency> GetByIdAsync(int id);
 		Task<string> GetNameByIdAsync(int id);
 		Task<ResponseRedirect> UpdateAsync(int userId, CurrencyEditDto currencyEditDto);
-		Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(QueryDeleteEntity queryDeleteEntity);
+		Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(DeleteEntityCommand deleteEntityCommand);
 		Task<int> GetCountAsync();
 		Task<IReadOnlyCollection<CurrencyAutocompleteDto>> GetAutocompleteDto();
 		Task<IReadOnlyCollection<CurrencyAutocompleteDto>> FilteringData(string f);

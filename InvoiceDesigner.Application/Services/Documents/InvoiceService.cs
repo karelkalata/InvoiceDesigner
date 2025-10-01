@@ -1,16 +1,16 @@
 ﻿using AutoMapper;
+using InvoiceDesigner.Application.Commands;
+using InvoiceDesigner.Application.DTOs;
+using InvoiceDesigner.Application.DTOs.InvoiceDTOs;
 using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Application.Interfaces.Admin;
 using InvoiceDesigner.Application.Interfaces.Documents;
-using InvoiceDesigner.Application.Interfaces.InterfacesAccounting;
-using InvoiceDesigner.Domain.Shared.DTOs;
-using InvoiceDesigner.Domain.Shared.DTOs.InvoiceDTOs;
+using InvoiceDesigner.Application.Responses;
 using InvoiceDesigner.Domain.Shared.Enums;
 using InvoiceDesigner.Domain.Shared.Interfaces.Documents;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Domain.Shared.Models.Documents;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
-using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Services.Documents
 {
@@ -23,7 +23,6 @@ namespace InvoiceDesigner.Application.Services.Documents
 		private readonly IProductService _productService;
 		private readonly IBankService _bankService;
 		private readonly ICustomerService _customerService;
-		private readonly IAccountingService _serviceAccounting;
 
 		public InvoiceService(IInvoiceRepository repository,
 								IMapper mapper,
@@ -31,8 +30,7 @@ namespace InvoiceDesigner.Application.Services.Documents
 								ICurrencyService currencyService,
 								IProductService productService,
 								IBankService bankService,
-								ICustomerService customerService,
-								IAccountingService accountingService)
+								ICustomerService customerService)
 		{
 			_repository = repository;
 			_mapper = mapper;
@@ -41,7 +39,6 @@ namespace InvoiceDesigner.Application.Services.Documents
 			_productService = productService;
 			_bankService = bankService;
 			_customerService = customerService;
-			_serviceAccounting = accountingService;
 		}
 
 		public async Task<InfoForNewInvoiceDto> GetInfoForNewInvoice(int userId, bool isAdmin, int invoiceId)
@@ -96,8 +93,6 @@ namespace InvoiceDesigner.Application.Services.Documents
 
 			var entityId = await _repository.CreateAsync(existsInvoice);
 
-			await _serviceAccounting.CreateEntriesAsync(existsInvoice, EAccountingDocument.Invoice, existsInvoice.Status);
-
 			return new ResponseRedirect
 			{
 				RedirectUrl = string.Empty,
@@ -126,8 +121,6 @@ namespace InvoiceDesigner.Application.Services.Documents
 
 			var entityId = await _repository.UpdateAsync(existsEntity);
 
-			await _serviceAccounting.CreateEntriesAsync(existsEntity, EAccountingDocument.Invoice, existsEntity.Status);
-
 			return new ResponseRedirect
 			{
 				RedirectUrl = string.Empty,
@@ -138,7 +131,6 @@ namespace InvoiceDesigner.Application.Services.Documents
 		public async Task<ResponseBoolean> DeleteAsync(int userId, bool isAdmin, int id)
 		{
 			var existsEntity = await ValidateExistsEntityAsync(userId, isAdmin, id);
-			await _serviceAccounting.CreateEntriesAsync(existsEntity, EAccountingDocument.Invoice, EStatus.Canceled);
 
 			return new ResponseBoolean
 			{
@@ -154,7 +146,6 @@ namespace InvoiceDesigner.Application.Services.Documents
 			{
 				existsEntity.IsDeleted = true;
 				await _repository.UpdateAsync(existsEntity);
-				await _serviceAccounting.CreateEntriesAsync(existsEntity, EAccountingDocument.Invoice, EStatus.Canceled);
 
 				return new ResponseBoolean
 				{
@@ -165,21 +156,20 @@ namespace InvoiceDesigner.Application.Services.Documents
 			return await DeleteAsync(userId, isAdmin, id);
 		}
 
-		public async Task<ResponseBoolean> OnChangeProperty(QueryOnChangeProperty queryStatus)
+		public async Task<ResponseBoolean> OnChangeProperty(ChangePropertyCommand changePropertyCommand)
 		{
-			var existsEntity = await ValidateExistsEntityAsync(queryStatus.UserId, queryStatus.IsAdmin, queryStatus.EntityId);
+			var existsEntity = await ValidateExistsEntityAsync(changePropertyCommand.UserId, changePropertyCommand.IsAdmin, changePropertyCommand.EntityId);
 
 			// If the document has the status delete - then cancel all double entries in the ledger
-			if (queryStatus.IsDeleted) 
+			if (changePropertyCommand.IsDeleted)
 				existsEntity.Status = EStatus.Canceled;
 			else
-				existsEntity.Status = queryStatus.Status;
+				existsEntity.Status = changePropertyCommand.Status;
 
-			existsEntity.IsArchived = queryStatus.IsArchived;
-			existsEntity.IsDeleted = queryStatus.IsDeleted;
+			existsEntity.IsArchived = changePropertyCommand.IsArchived;
+			existsEntity.IsDeleted = changePropertyCommand.IsDeleted;
 
 			await _repository.UpdateAsync(existsEntity);
-			await _serviceAccounting.CreateEntriesAsync(existsEntity, EAccountingDocument.Invoice, existsEntity.Status);
 			return new ResponseBoolean
 			{
 				Result = true
@@ -227,7 +217,7 @@ namespace InvoiceDesigner.Application.Services.Documents
 			existsEntity.EnabledVat = dto.EnabledVat;
 			existsEntity.DateTime = dto.DateTime ?? DateTime.UtcNow;
 			existsEntity.DueDate = dto.DueDate ?? DateTime.UtcNow.AddDays(company.PaymentTerms);
-			
+
 			existsEntity.CustomerId = customer.Id;
 			existsEntity.Customer = customer;
 			existsEntity.CurrencyId = currency.Id;

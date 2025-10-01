@@ -12,12 +12,13 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InvoiceDesigner.Infrastructure", "InvoiceDesigner.Infrastructure\InvoiceDesigner.Infrastructure.csproj", "{78446D30-6466-475F-886B-3345C7795692}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InvoiceDesigner.WebApp", "InvoiceDesigner.WebApp\InvoiceDesigner.WebApp.csproj", "{4999837D-F337-463A-86E0-269AE443B8BB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7B2E3B52-E5B7-419D-927C-1B12027A0691} = {7B2E3B52-E5B7-419D-927C-1B12027A0691}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvoiceDesigner.Localization", "InvoiceDesigner.Localization\InvoiceDesigner.Localization.csproj", "{59D5C4C3-5387-4CEA-8AF6-EE9E9052D3EF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvoiceDesigner.AppHost", "InvoiceDesigner.AppHost\InvoiceDesigner.AppHost.csproj", "{CD91430A-B861-46BE-A351-9706728055F1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvoiceDesigner.ServiceDefaults", "InvoiceDesigner.ServiceDefaults\InvoiceDesigner.ServiceDefaults.csproj", "{1CC84380-8F27-4D62-8320-3E83A88AFC2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,10 +54,6 @@ Global
 		{CD91430A-B861-46BE-A351-9706728055F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD91430A-B861-46BE-A351-9706728055F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD91430A-B861-46BE-A351-9706728055F1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1CC84380-8F27-4D62-8320-3E83A88AFC2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1CC84380-8F27-4D62-8320-3E83A88AFC2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1CC84380-8F27-4D62-8320-3E83A88AFC2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1CC84380-8F27-4D62-8320-3E83A88AFC2C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

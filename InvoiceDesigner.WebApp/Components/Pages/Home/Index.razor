@@ -1,11 +1,10 @@
 ﻿@page "/Invoices"
-@using InvoiceDesigner.Domain.Shared.DTOs.BankReceiptDTOs
-@using InvoiceDesigner.Domain.Shared.DTOs.InvoiceDTOs
+@using InvoiceDesigner.Application.DTOs.InvoiceDTOs
+@using InvoiceDesigner.Application.DTOs.BankReceiptDTOs
+@using InvoiceDesigner.Application.QueryParameters
+@using InvoiceDesigner.Application.Responses
 @using InvoiceDesigner.Domain.Shared.Enums
-@using InvoiceDesigner.Domain.Shared.Extensions
 @using InvoiceDesigner.Domain.Shared.QueryParameters
-@using InvoiceDesigner.Domain.Shared.Responses
-@using InvoiceDesigner.WebApp.Components.Pages.BankReceipt
 
 <MudContainer>
 	<MudTable ServerData="ServerReload" @ref="_table" Dense Hover RowsPerPage="20">
@@ -23,10 +22,10 @@
 			<MudIconButton Icon="@Icons.Material.Filled.PlaylistAdd" Size="Size.Medium" Href="/Invoices/0" />
 			<MudMenu Icon="@Icons.Material.Filled.Settings" Size="Size.Medium" Style="margin-left: auto;" Dense>
 				<MudMenuItem>
-					<MudCheckBox Dense @bind-Value="_showDeleted" Label="@localizer["ShowDeleted"]" onclick="@(()=>OnCheckedShowDeletedChanged())"></MudCheckBox>
+					<MudCheckBox Dense @bind-Value="_showDeleted" Label="@localizer["ShowDeleted"]" onclick="@(() => OnCheckedShowDeletedChanged())"></MudCheckBox>
 				</MudMenuItem>
 				<MudMenuItem>
-					<MudCheckBox Dense @bind-Value="_showArchived" Label="@localizer["ShowArchived"]" onclick="@(()=>OnCheckedShowArchivedChanged())"></MudCheckBox>
+					<MudCheckBox Dense @bind-Value="_showArchived" Label="@localizer["ShowArchived"]" onclick="@(() => OnCheckedShowArchivedChanged())"></MudCheckBox>
 				</MudMenuItem>
 			</MudMenu>
 		</ToolBarContent>
@@ -43,17 +42,17 @@
 		</HeaderContent>
 		<RowTemplate>
 			<MudTd DataLabel="Id">
-					<MudText>@context.Number</MudText>
+				<MudText>@context.Number</MudText>
 			</MudTd>
 			<MudTd DataLabel="Date">@context.DateTime.ToString("dd.MM.yyyy")</MudTd>
 			<MudTd DataLabel="Comapny">@context.CompanyName</MudTd>
 			<MudTd DataLabel="Custome">@context.CustomerName</MudTd>
 			<MudTd DataLabel="Amount">
 
-					<MudText>@context.Amount.ToString("N2")</MudText>
-			
-				
-				</MudTd>
+				<MudText>@context.Amount.ToString("N2")</MudText>
+
+
+			</MudTd>
 			<MudTd DataLabel="Currency">@context.CurrencyName</MudTd>
 			<MudTd DataLabel="Status">
 				<MudSelect T="EStatus" Dense
@@ -68,37 +67,24 @@
 
 			<MudTd Class="pa-0">
 				<div style="display: flex;">
-				<MudMenu Icon="@Icons.Material.Filled.MoreVert" Dense Size="Size.Small">
+					<MudMenu Icon="@Icons.Material.Filled.MoreVert" Dense Size="Size.Small">
 
-					<MudNavLink Href="@($"/Invoices/{context.Id}")" Class="d-flex flex-nowrap">
-						<MudIcon Icon="@Icons.Material.Filled.Edit" Class="me-2" />
-						@localizer["Edit"] @localizer["Invoice"] @context.Number
-					</MudNavLink>
-					<MudDivider />
-					<MudNavLink OnClick="(() => InputBankReceipt(context))" Class="d-flex flex-nowrap" Disabled="!(context.Status == EStatus.Approved)">
-						<MudIcon Icon="@Icons.Material.Filled.Receipt" Class="me-2" />
-						@localizer["BankReceipt"]
-					</MudNavLink>
-					<MudDivider />
-					<MudNavLink OnClick="() => OnInvoiceChangeProperty(context.Id, context.IsDeleted, true, EStatus.Canceled)" Class="d-flex flex-nowrap">
-						<MudIcon Icon="@Icons.Material.Filled.Cancel" Class="me-2" />
-						@localizer["CancelAndArchiveDocument"]
-					</MudNavLink>
+						<MudNavLink Href="@($"/Invoices/{context.Id}")" Class="d-flex flex-nowrap">
+							<MudIcon Icon="@Icons.Material.Filled.Edit" Class="me-2" />
+							@localizer["Edit"] @localizer["Invoice"] @context.Number
+						</MudNavLink>
+						<MudDivider />
+						<MudNavLink OnClick="() => OnInvoiceChangeProperty(context.Id, context.IsDeleted, !context.IsArchived, context.Status)" Class="d-flex flex-nowrap">
+							<MudIcon Icon="@(context.IsArchived? Icons.Material.Outlined.Unarchive : Icons.Material.Filled.Archive)" Class="me-2" />
+							Archive/Unarchive
+						</MudNavLink>
+						<MudNavLink OnClick="() => RedirectToDeleteRow(context.Id)" Class="d-flex flex-nowrap">
+							<MudIcon Icon="@(context.IsDeleted? Icons.Material.Filled.DeleteForever : Icons.Material.Filled.Delete)" Class="me-2" />
+							@localizer["Delete"]
+						</MudNavLink>
 
-					<MudPaper Elevation="3">
-						<MudNavGroup Title="Action">
-							<MudNavLink OnClick="() => OnInvoiceChangeProperty(context.Id, context.IsDeleted, !context.IsArchived, context.Status)" Class="d-flex flex-nowrap">
-								<MudIcon Icon="@(context.IsArchived ? Icons.Material.Outlined.Unarchive : Icons.Material.Filled.Archive)" Class="me-2" />
-								Archive/Unarchive
-							</MudNavLink>
-							<MudNavLink OnClick="() => RedirectToDeleteRow(context.Id)" Class="d-flex flex-nowrap">
-								<MudIcon Icon="@(context.IsDeleted ? Icons.Material.Filled.DeleteForever : Icons.Material.Filled.Delete)" Class="me-2" />
-								@localizer["Delete"]
-							</MudNavLink>
-						</MudNavGroup>
-					</MudPaper>
 
-				</MudMenu>
+					</MudMenu>
 					@if (context.IsDeleted)
 					{
 						<MudBadge Icon="@Icons.Material.Filled.DeleteForever" Color="Color.Error" Overlap="true" Bordered="true">
@@ -121,7 +107,7 @@
 			<MudText>@localizer["Loading"]</MudText>
 		</LoadingContent>
 		<PagerContent>
-			<MudTablePager PageSizeOptions="new int[] {10, 20, 30, 40, 50}" />
+			<MudTablePager PageSizeOptions="new int[] { 10, 20, 30, 40, 50 }" />
 		</PagerContent>
 	</MudTable>
 
@@ -141,14 +127,14 @@
 	private async Task<TableData<InvoicesViewDto>> ServerReload(TableState state, CancellationToken token)
 	{
 		var queryParameters = new QueryPaged
-			{
-				PageSize = state.PageSize,
-				Page = state.Page + 1,
-				SearchString = _searchString,
-				SortLabel = "Id_desc",
-				ShowDeleted = _showDeleted,
-				ShowArchived = _showArchived
-			};
+		{
+			PageSize = state.PageSize,
+			Page = state.Page + 1,
+			SearchString = _searchString,
+			SortLabel = "Id_desc",
+			ShowDeleted = _showDeleted,
+			ShowArchived = _showArchived
+		};
 
 		string queryString = queryParameters.ToQueryString();
 
@@ -156,10 +142,10 @@
 
 		if (_pagedResult != null)
 			return new TableData<InvoicesViewDto>()
-				{
-					TotalItems = _pagedResult.TotalCount,
-					Items = _pagedResult.Items
-				};
+			{
+				TotalItems = _pagedResult.TotalCount,
+				Items = _pagedResult.Items
+			};
 
 		return new();
 	}
@@ -190,37 +176,18 @@
 
 	private async Task OnInvoiceChangeProperty(int id, bool isDeleted, bool isArchived, EStatus status)
 	{
-		var queryParameters = new QueryOnChangeProperty
-			{
-				EntityId = id,
-				IsDeleted = isDeleted,
-				IsArchived = isArchived,
-				Status = status
-			};
-		string queryString = queryParameters.ToQueryString();
+		var queryChangeProperty = new QueryChangeProperty
+		{
+			EntityId = id,
+			IsDeleted = isDeleted,
+			IsArchived = isArchived,
+			Status = status
+		};
+		string queryString = queryChangeProperty.ToQueryString();
 
 		var result = await _httpHelper.GetDataFromAPI<ResponseBoolean>($"api/Invoices/InvoiceChangeProperty?{queryString}");
 		if (result.Result)
 			await _table.ReloadServerData();
-	}
-
-	private async Task InputBankReceipt(InvoicesViewDto invoicesViewDto)
-	{
-		var parameters = new DialogParameters<BankReceiptEdit_dialog>
-		{
-			{ x => x.InvoiceId, invoicesViewDto.Id  },
-			{ x => x.id, 0 }
-		};
-
-		var options = new DialogOptions
-			{
-				CloseOnEscapeKey = true,
-				CloseButton = true,
-				BackdropClick = false
-			};
-		var dialog = await DialogService.ShowAsync<BankReceiptEdit_dialog>(string.Empty, parameters, options);
-		var result = await dialog.Result;
-
 	}
 
 

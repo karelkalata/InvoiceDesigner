@@ -1,8 +1,9 @@
 ﻿using InvoiceDesigner.API.Controllers.Abstract;
+using InvoiceDesigner.Application.Commands;
+using InvoiceDesigner.Application.DTOs.Product;
 using InvoiceDesigner.Application.Interfaces;
-using InvoiceDesigner.Domain.Shared.DTOs.Product;
+using InvoiceDesigner.Application.Responses;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
-using InvoiceDesigner.Domain.Shared.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InvoiceDesigner.API.Controllers
@@ -102,7 +103,7 @@ namespace InvoiceDesigner.API.Controllers
 		{
 			try
 			{
-				var queryDeleteEntity = new QueryDeleteEntity
+				var deleteEntityCommand = new DeleteEntityCommand
 				{
 					UserId = UserId,
 					IsAdmin = IsAdmin,
@@ -110,7 +111,7 @@ namespace InvoiceDesigner.API.Controllers
 					MarkAsDeleted = modeDelete == 0
 				};
 
-				var result = await _service.DeleteOrMarkAsDeletedAsync(queryDeleteEntity);
+				var result = await _service.DeleteOrMarkAsDeletedAsync(deleteEntityCommand);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)

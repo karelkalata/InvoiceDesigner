@@ -1,7 +1,8 @@
-﻿using InvoiceDesigner.Domain.Shared.DTOs.Company;
+﻿using InvoiceDesigner.Application.Commands;
+using InvoiceDesigner.Application.DTOs.Company;
+using InvoiceDesigner.Application.Responses;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
-using InvoiceDesigner.Domain.Shared.Responses;
 
 namespace InvoiceDesigner.Application.Interfaces.Admin
 {
@@ -17,7 +18,7 @@ namespace InvoiceDesigner.Application.Interfaces.Admin
 
 		Task<ResponseRedirect> UpdateAsync(int userId, CompanyEditDto companyCreateDto);
 
-		Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(QueryDeleteEntity queryDeleteEntity);
+		Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(DeleteEntityCommand deleteEntityCommand);
 
 		Task<int> GetCountAsync();
 

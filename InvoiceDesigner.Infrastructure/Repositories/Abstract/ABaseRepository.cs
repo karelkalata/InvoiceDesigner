@@ -1,5 +1,6 @@
 ﻿using InvoiceDesigner.Domain.Shared.Interfaces.Abstract;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
+using InvoiceDesigner.Domain.Shared.Records;
 using InvoiceDesigner.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -67,16 +68,16 @@ namespace InvoiceDesigner.Infrastructure.Repositories.Abstract
 			return await _context.SaveChangesAsync() > 0;
 		}
 
-		public virtual async Task<int> GetCountAsync(QueryGetCount queryGetCount)
+		public virtual async Task<int> GetCountAsync(GetCountFilter recordGetCount)
 		{
 			IQueryable<T> query = _dbSet;
 
-			if (!queryGetCount.ShowDeleted)
+			if (!recordGetCount.ShowDeleted)
 			{
 				query = query.Where(e => e.IsDeleted == false);
 			}
 
-			if (!queryGetCount.ShowArchived)
+			if (!recordGetCount.ShowArchived)
 			{
 				query = query.Where(e => e.IsArchived == false);
 			}

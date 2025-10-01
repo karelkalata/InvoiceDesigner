@@ -1,5 +1,5 @@
 ﻿using Blazored.LocalStorage;
-using InvoiceDesigner.Domain.Shared.Responses;
+using InvoiceDesigner.Application.Responses;
 using InvoiceDesigner.Localization.Resources;
 using InvoiceDesigner.WebApp.Components.Pages;
 using InvoiceDesigner.WebApp.Components.Pages.Dialogs;

@@ -12,7 +12,6 @@ using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddServiceDefaults();
 builder.Services.AddLocalization();
 builder.Services.AddRazorComponents()
 	.AddInteractiveServerComponents();
@@ -63,10 +62,6 @@ builder.Services.AddScoped<HttpRequestHelper>(sp =>
 #endregion
 
 var app = builder.Build();
-
-app.MapDefaultEndpoints();
-
-
 
 if (!app.Environment.IsDevelopment())
 {

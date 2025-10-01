@@ -1,4 +1,5 @@
 ﻿using InvoiceDesigner.Domain.Shared.QueryParameters;
+using InvoiceDesigner.Domain.Shared.Records;
 
 namespace InvoiceDesigner.Domain.Shared.Interfaces.Abstract
 {
@@ -9,7 +10,7 @@ namespace InvoiceDesigner.Domain.Shared.Interfaces.Abstract
 		Task<T?> GetByIdAsync(int id);
 		Task<bool> DeleteAsync(T entity);
 		Task UpdateAsync(T entity);
-		Task<int> GetCountAsync(QueryGetCount queryGetCount);
+		Task<int> GetCountAsync(GetCountFilter recordGetCount);
 		Func<IQueryable<T>, IOrderedQueryable<T>> GetOrdering(string sortLabel);
 	}
 }

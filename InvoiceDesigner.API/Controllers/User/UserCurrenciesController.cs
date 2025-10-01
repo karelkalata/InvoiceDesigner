@@ -1,6 +1,6 @@
 ﻿using InvoiceDesigner.API.Controllers.Abstract;
+using InvoiceDesigner.Application.DTOs.Currency;
 using InvoiceDesigner.Application.Interfaces.Admin;
-using InvoiceDesigner.Domain.Shared.DTOs.Currency;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InvoiceDesigner.API.Controllers.User

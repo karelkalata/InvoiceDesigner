@@ -1,12 +1,14 @@
 ﻿
 using AutoMapper;
+using InvoiceDesigner.Application.Commands;
+using InvoiceDesigner.Application.DTOs.Product;
 using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Application.Interfaces.Admin;
-using InvoiceDesigner.Domain.Shared.DTOs.Product;
+using InvoiceDesigner.Application.Responses;
 using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Domain.Shared.QueryParameters;
-using InvoiceDesigner.Domain.Shared.Responses;
+using InvoiceDesigner.Domain.Shared.Records;
 
 namespace InvoiceDesigner.Application.Services
 {
@@ -35,12 +37,12 @@ namespace InvoiceDesigner.Application.Services
 
 			var productsTask = _repoProduct.GetEntitiesAsync(queryPaged, queryPaged.SortLabel);
 
-			var queryGetCount = new QueryGetCount
+			var recordGetCount = new GetCountFilter
 			{
 				ShowArchived = queryPaged.ShowArchived,
 				ShowDeleted = queryPaged.ShowDeleted,
 			};
-			var totalCountTask = _repoProduct.GetCountAsync(queryGetCount);
+			var totalCountTask = _repoProduct.GetCountAsync(recordGetCount);
 
 			await Task.WhenAll(productsTask, totalCountTask);
 
@@ -88,13 +90,13 @@ namespace InvoiceDesigner.Application.Services
 			};
 		}
 
-		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(QueryDeleteEntity queryDeleteEntity)
+		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(DeleteEntityCommand deleteEntityCommand)
 		{
-			var existsEntity = await ValidateExistsEntityAsync(queryDeleteEntity.EntityId);
+			var existsEntity = await ValidateExistsEntityAsync(deleteEntityCommand.EntityId);
 
-			if (!queryDeleteEntity.MarkAsDeleted)
+			if (!deleteEntityCommand.MarkAsDeleted)
 			{
-				if (await _invoiceServiceHelper.IsProductUsedInInvoiceItems(queryDeleteEntity.EntityId))
+				if (await _invoiceServiceHelper.IsProductUsedInInvoiceItems(deleteEntityCommand.EntityId))
 					throw new InvalidOperationException($"{existsEntity.Name} is in use in Invoices and cannot be deleted.");
 
 				return new ResponseBoolean
@@ -114,7 +116,7 @@ namespace InvoiceDesigner.Application.Services
 			}
 		}
 
-		public Task<int> GetCountAsync() => _repoProduct.GetCountAsync(new QueryGetCount());
+		public Task<int> GetCountAsync() => _repoProduct.GetCountAsync(new GetCountFilter());
 
 		public async Task<IReadOnlyCollection<ProductAutocompleteDto>> FilteringData(string searchText)
 		{
