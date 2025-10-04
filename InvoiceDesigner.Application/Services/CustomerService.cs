@@ -1,52 +1,33 @@
-﻿using AutoMapper;
-using InvoiceDesigner.Application.Commands;
+﻿using InvoiceDesigner.Application.Commands;
 using InvoiceDesigner.Application.DTOs.Customer;
 using InvoiceDesigner.Application.Interfaces;
+using InvoiceDesigner.Application.Mapper;
 using InvoiceDesigner.Application.Responses;
+using InvoiceDesigner.Application.Services.Abstract;
+using InvoiceDesigner.Domain.Shared.Filters;
 using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
-using InvoiceDesigner.Domain.Shared.QueryParameters;
-using InvoiceDesigner.Domain.Shared.Records;
 
 namespace InvoiceDesigner.Application.Services
 {
-	public class CustomerService : ICustomerService
+	public class CustomerService : ABaseService<Customer>, ICustomerService
 	{
-		private readonly ICustomerRepository _repoCustomer;
-		private readonly IMapper _mapper;
-		private readonly IInvoiceServiceHelper _invoiceServiceHelper;
+		private readonly ICustomerRepository _repository;
 
-		public CustomerService(ICustomerRepository repoCustomer,
-								IMapper mapper,
-								IInvoiceServiceHelper invoiceServiceHelper)
+		public CustomerService(ICustomerRepository repository) : base(repository)
 		{
-			_repoCustomer = repoCustomer;
-			_mapper = mapper;
-			_invoiceServiceHelper = invoiceServiceHelper;
+			_repository = repository;
+
 		}
-
-		public async Task<ResponsePaged<CustomerViewDto>> GetPagedEntitiesAsync(QueryPaged queryPaged)
+		public async Task<ResponsePaged<CustomerViewDto>> GetPagedEntitiesAsync(PagedCommand pagedCommand)
 		{
-			queryPaged.PageSize = Math.Max(queryPaged.PageSize, 1);
-			queryPaged.Page = Math.Max(queryPaged.Page, 1);
-
-			var clientsTask = _repoCustomer.GetEntitiesAsync(queryPaged, queryPaged.SortLabel);
-
-			var recordGetCount = new GetCountFilter
-			{
-				ShowArchived = queryPaged.ShowArchived,
-				ShowDeleted = queryPaged.ShowDeleted
-			};
-			var totalCountTask = _repoCustomer.GetCountAsync(recordGetCount);
-
-			await Task.WhenAll(clientsTask, totalCountTask);
-
-			var clientsViewDto = _mapper.Map<IReadOnlyCollection<CustomerViewDto>>(await clientsTask);
+			var (entities, total) = await GetEntitiesAndCountAsync(pagedCommand);
+			var dtos = CustomerMapper.ToViewDto(entities);
 
 			return new ResponsePaged<CustomerViewDto>
 			{
-				Items = clientsViewDto,
-				TotalCount = await totalCountTask
+				Items = dtos,
+				TotalCount = total
 			};
 		}
 
@@ -55,9 +36,9 @@ namespace InvoiceDesigner.Application.Services
 		{
 			var existsCustomer = new Customer();
 
-			MapCustomer(existsCustomer, newCustomer);
+			MapToCustomer(existsCustomer, newCustomer);
 
-			var entityId = await _repoCustomer.CreateAsync(existsCustomer);
+			await _repository.CreateAsync(existsCustomer);
 
 			return new ResponseRedirect
 			{
@@ -70,16 +51,16 @@ namespace InvoiceDesigner.Application.Services
 		public async Task<CustomerEditDto> GetEditDtoByIdAsync(int id)
 		{
 			var existsEntity = await ValidateExistsEntityAsync(id);
-			return _mapper.Map<CustomerEditDto>(existsEntity);
+			return CustomerMapper.ToEditDto(existsEntity);
 		}
 
 		public async Task<ResponseRedirect> UpdateAsync(int userId, CustomerEditDto editedCustomer)
 		{
 			var existsCustomer = await ValidateExistsEntityAsync(editedCustomer.Id);
 
-			MapCustomer(existsCustomer, editedCustomer);
+			MapToCustomer(existsCustomer, editedCustomer);
 
-			await _repoCustomer.UpdateAsync(existsCustomer);
+			await _repository.UpdateAsync(existsCustomer);
 
 			return new ResponseRedirect
 			{
@@ -87,51 +68,29 @@ namespace InvoiceDesigner.Application.Services
 			};
 		}
 
-		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(DeleteEntityCommand deleteEntityCommand)
-		{
-			var existsEntity = await ValidateExistsEntityAsync(deleteEntityCommand.EntityId);
-
-			if (!deleteEntityCommand.MarkAsDeleted)
-			{
-				return new ResponseBoolean
-				{
-					Result = await _repoCustomer.DeleteAsync(existsEntity)
-				};
-			}
-			else
-			{
-				existsEntity.IsDeleted = true;
-				await _repoCustomer.UpdateAsync(existsEntity);
-
-				return new ResponseBoolean
-				{
-					Result = true
-				};
-			}
-		}
-
-		public Task<int> GetCountAsync() => _repoCustomer.GetCountAsync(new GetCountFilter());
+		public Task<int> GetCountAsync() => _repository.GetCountAsync(new GetCountFilter());
 
 		public async Task<IReadOnlyCollection<CustomerAutocompleteDto>> FilteringData(string searchText)
 		{
-			var queryPaged = new QueryPaged
+			var pagedFilter = new PagedFilter
 			{
 				PageSize = 10,
 				Page = 1,
-				SearchString = searchText
+				SearchString = searchText,
+				SortLabel = "Name",
 			};
 
-			var customers = await _repoCustomer.GetEntitiesAsync(queryPaged, "Name");
-			return _mapper.Map<IReadOnlyCollection<CustomerAutocompleteDto>>(customers);
+			var customers = await _repository.GetEntitiesAsync(pagedFilter);
+			return CustomerMapper.ToAutocompleteDto(customers);
 		}
 
 		private async Task<Customer> ValidateExistsEntityAsync(int id)
 		{
-			return await _repoCustomer.GetByIdAsync(id)
+			return await _repository.GetByIdAsync(new GetByIdFilter { Id = id })
 				?? throw new InvalidOperationException("CustomerId not found");
 		}
 
-		private void MapCustomer(Customer existsCustomer, CustomerEditDto dto)
+		private void MapToCustomer(Customer existsCustomer, CustomerEditDto dto)
 		{
 			existsCustomer.Name = dto.Name.Trim();
 			existsCustomer.TaxId = dto.TaxId.Trim();

@@ -1,56 +1,39 @@
-﻿using AutoMapper;
-using InvoiceDesigner.Application.Authorization;
+﻿using InvoiceDesigner.Application.Authorization;
 using InvoiceDesigner.Application.Commands;
 using InvoiceDesigner.Application.DTOs.Company;
 using InvoiceDesigner.Application.DTOs.User;
-using InvoiceDesigner.Application.Interfaces.Admin;
 using InvoiceDesigner.Application.Interfaces.AdminInterfaces;
+using InvoiceDesigner.Application.Mapper;
 using InvoiceDesigner.Application.Responses;
+using InvoiceDesigner.Application.Services.Abstract;
+using InvoiceDesigner.Domain.Shared.Filters;
 using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
-using InvoiceDesigner.Domain.Shared.QueryParameters;
-using InvoiceDesigner.Domain.Shared.Records;
 using InvoiceDesigner.Localization;
 
 namespace InvoiceDesigner.Application.Services.AdminService
 {
-	public class AdminUserService : IAdminUserInterface
+	public class AdminUserService : ABaseService<User>, IAdminUserService
 	{
 		private static string _controllerBaseUrl = "/Admin/Users";
-		private readonly IUserRepository _repoUser;
-		private readonly IMapper _mapper;
-		private readonly ICompanyService _companyService;
 
-		public AdminUserService(IUserRepository repoUser,
-								IMapper mapper,
-								ICompanyService companyService)
+		private readonly IUserRepository _repository;
+		private readonly ICompanyRepository _repositoryCompany;
+
+		public AdminUserService(IUserRepository repository, ICompanyRepository repositoryCompany) : base(repository)
 		{
-			_repoUser = repoUser;
-			_mapper = mapper;
-			_companyService = companyService;
+			_repository = repository;
+			_repositoryCompany = repositoryCompany;
 		}
 
-		public async Task<ResponsePaged<UserViewDto>> GetPagedEntitiesAsync(QueryPaged queryPaged)
+		public async Task<ResponsePaged<UserViewDto>> GetPagedEntitiesAsync(PagedCommand pagedCommand)
 		{
-			queryPaged.PageSize = Math.Max(queryPaged.PageSize, 1);
-			queryPaged.Page = Math.Max(queryPaged.Page, 1);
+			var (entities, total) = await GetEntitiesAndCountAsync(pagedCommand);
 
-			var usersTask = _repoUser.GetEntitiesAsync(queryPaged, queryPaged.SortLabel);
-
-			var recordGetCount = new GetCountFilter
-			{
-				ShowArchived = queryPaged.ShowArchived,
-				ShowDeleted = queryPaged.ShowDeleted,
-			};
-			var totalCountTask = _repoUser.GetCountAsync(recordGetCount);
-
-			await Task.WhenAll(usersTask, totalCountTask);
-
-			var usersDtos = _mapper.Map<IReadOnlyCollection<UserViewDto>>(await usersTask);
 			return new ResponsePaged<UserViewDto>
 			{
-				Items = usersDtos,
-				TotalCount = await totalCountTask
+				Items = UserMapper.ToViewDto(entities),
+				TotalCount = total
 			};
 		}
 
@@ -59,7 +42,7 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			var existUser = new User();
 			await MapUser(existUser, dto);
 
-			var entityId = await _repoUser.CreateAsync(existUser);
+			await _repository.CreateAsync(existUser);
 
 			return new ResponseRedirect
 			{
@@ -70,7 +53,7 @@ namespace InvoiceDesigner.Application.Services.AdminService
 		public async Task<AdminUserEditDto> GetEditDtoByIdAsync(int id)
 		{
 			var entity = await ValidateExistsEntityAsync(id);
-			return _mapper.Map<AdminUserEditDto>(entity);
+			return UserMapper.ToEditAdminUserDto(entity);
 		}
 
 		public async Task<ResponseRedirect> UpdateAsync(int userId, AdminUserEditDto dto)
@@ -80,7 +63,7 @@ namespace InvoiceDesigner.Application.Services.AdminService
 
 			await MapUser(existEntity, dto);
 
-			await _repoUser.UpdateAsync(existEntity);
+			await _repository.UpdateAsync(existEntity);
 
 			return new ResponseRedirect
 			{
@@ -88,28 +71,6 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			};
 		}
 
-		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(DeleteEntityCommand deleteEntityCommand)
-		{
-			var existsEntity = await ValidateExistsEntityAsync(deleteEntityCommand.EntityId);
-
-			if (!deleteEntityCommand.MarkAsDeleted)
-			{
-				return new ResponseBoolean
-				{
-					Result = await _repoUser.DeleteAsync(existsEntity)
-				};
-			}
-			else
-			{
-				existsEntity.IsDeleted = true;
-				await _repoUser.UpdateAsync(existsEntity);
-
-				return new ResponseBoolean
-				{
-					Result = true
-				};
-			}
-		}
 
 		public async Task<ResponseBoolean> CheckLoginName(string loginName)
 		{
@@ -120,7 +81,7 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			}
 			else
 			{
-				var existsUser = await _repoUser.GetByLoginAsync(loginName);
+				var existsUser = await _repository.GetByLoginAsync(loginName);
 				result.Result = existsUser != null;
 			}
 
@@ -129,7 +90,7 @@ namespace InvoiceDesigner.Application.Services.AdminService
 
 		private async Task<User> ValidateExistsEntityAsync(int id)
 		{
-			var user = await _repoUser.GetByIdAsync(id)
+			var user = await _repository.GetByIdAsync(new GetByIdFilter { Id = id })
 						?? throw new InvalidOperationException("User not found");
 			return user;
 		}
@@ -169,7 +130,7 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			List<Company> result = new List<Company>();
 			foreach (var item in companyAutocompleteDtos)
 			{
-				var company = await _companyService.GetByIdAsync(item.Id);
+				var company = await _repositoryCompany.GetByIdAsync(new GetByIdFilter { Id = item.Id });
 				if (company != null)
 					result.Add(company);
 			}

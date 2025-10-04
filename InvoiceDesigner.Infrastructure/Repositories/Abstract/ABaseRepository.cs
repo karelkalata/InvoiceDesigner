@@ -1,6 +1,5 @@
-﻿using InvoiceDesigner.Domain.Shared.Interfaces.Abstract;
-using InvoiceDesigner.Domain.Shared.QueryParameters;
-using InvoiceDesigner.Domain.Shared.Records;
+﻿using InvoiceDesigner.Domain.Shared.Filters;
+using InvoiceDesigner.Domain.Shared.Interfaces.Abstract;
 using InvoiceDesigner.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,49 +16,57 @@ namespace InvoiceDesigner.Infrastructure.Repositories.Abstract
 			_dbSet = _context.Set<T>();
 		}
 
-		public virtual async Task<IReadOnlyCollection<T>> GetEntitiesAsync(QueryPaged queryPaged, string sortLabel)
+		public virtual async Task<IReadOnlyCollection<T>> GetEntitiesAsync(PagedFilter pagedFilter)
 		{
-			int skip = (queryPaged.Page - 1) * queryPaged.PageSize;
+			int skip = (pagedFilter.Page - 1) * pagedFilter.PageSize;
 
 			IQueryable<T> query = _dbSet.AsNoTracking();
 
-			if (!queryPaged.ShowDeleted)
+			if (!pagedFilter.ShowDeleted)
 			{
 				query = query.Where(e => e.IsDeleted == false);
 			}
 
-			if (!string.IsNullOrEmpty(queryPaged.SearchString))
+			if (!string.IsNullOrEmpty(pagedFilter.SearchString))
 			{
-				var searchString = queryPaged.SearchString.ToLower();
+				var searchString = pagedFilter.SearchString.ToLower();
 				query = query.Where(c => c.Name.ToLower().Contains(searchString));
 			}
 
-			query = GetOrdering(sortLabel)(query);
+			if (!string.IsNullOrEmpty(pagedFilter.ExcludeString))
+			{
+				var excludeString = pagedFilter.ExcludeString.ToLower();
+				query = query.Where(c => !c.Name.ToLower().Contains(excludeString));
+			}
+
+			if (!string.IsNullOrEmpty(pagedFilter.SortLabel))
+			{
+				query = GetOrdering(pagedFilter.SortLabel)(query);
+			}
 
 			return await query
 				.Skip(skip)
-				.Take(queryPaged.PageSize)
+				.Take(pagedFilter.PageSize)
 				.ToListAsync();
 		}
 
-		public virtual async Task<int> CreateAsync(T entity)
+		public virtual async Task CreateAsync(T entity)
 		{
 			await _dbSet.AddAsync(entity);
 			await _context.SaveChangesAsync();
-			return entity.Id;
 		}
 
-		public virtual async Task<T?> GetByIdAsync(int id)
+		public virtual async Task<T?> GetByIdAsync(GetByIdFilter getByIdFilter)
 		{
 			return await _dbSet
-				.Where(a => a.Id == id)
+				.Where(a => a.Id == getByIdFilter.Id)
 				.FirstOrDefaultAsync();
 		}
 
-		public virtual async Task UpdateAsync(T entity)
+		public virtual async Task<bool> UpdateAsync(T entity)
 		{
 			_dbSet.Update(entity);
-			await _context.SaveChangesAsync();
+			return await _context.SaveChangesAsync() > 0;
 		}
 
 		public virtual async Task<bool> DeleteAsync(T entity)
@@ -68,16 +75,16 @@ namespace InvoiceDesigner.Infrastructure.Repositories.Abstract
 			return await _context.SaveChangesAsync() > 0;
 		}
 
-		public virtual async Task<int> GetCountAsync(GetCountFilter recordGetCount)
+		public virtual async Task<int> GetCountAsync(GetCountFilter _getCountFilter)
 		{
 			IQueryable<T> query = _dbSet;
 
-			if (!recordGetCount.ShowDeleted)
+			if (!_getCountFilter.ShowDeleted)
 			{
 				query = query.Where(e => e.IsDeleted == false);
 			}
 
-			if (!recordGetCount.ShowArchived)
+			if (!_getCountFilter.ShowArchived)
 			{
 				query = query.Where(e => e.IsArchived == false);
 			}

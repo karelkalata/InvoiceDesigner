@@ -1,11 +1,11 @@
 ﻿using InvoiceDesigner.Domain.Shared.Enums;
+using InvoiceDesigner.Domain.Shared.Models.Abstract;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
 
 namespace InvoiceDesigner.Domain.Shared.Models.Documents
 {
-	public class Invoice
+	public class Invoice : ABaseEntity
 	{
-		public int Id { get; init; }
 		public EStatus Status { get; set; }
 		public int Number { get; set; }
 		public DateTime DateTime { get; set; } = DateTime.UtcNow;
@@ -23,8 +23,7 @@ namespace InvoiceDesigner.Domain.Shared.Models.Documents
 		public Customer Customer { get; set; } = null!;
 
 		public decimal Amount { get; set; } = decimal.Zero;
-		public bool IsDeleted { get; set; }
-		public bool IsArchived { get; set; }
+
 		public DateTime DueDate { get; set; }
 		public string PONumber { get; set; } = null!;
 		public decimal Vat { get; set; } = decimal.Zero;

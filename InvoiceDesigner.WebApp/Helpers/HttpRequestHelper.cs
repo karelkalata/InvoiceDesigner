@@ -3,6 +3,7 @@ using InvoiceDesigner.Application.Responses;
 using InvoiceDesigner.Localization.Resources;
 using InvoiceDesigner.WebApp.Components.Pages;
 using InvoiceDesigner.WebApp.Components.Pages.Dialogs;
+using InvoiceDesigner.WebApp.Records;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
@@ -19,6 +20,7 @@ namespace InvoiceDesigner.WebApp.Helpers
 		private readonly NavigationManager? _navigationManager;
 		private readonly IDialogService? _dialogService;
 		private readonly IStringLocalizer<Resource> _localizer;
+
 
 		public HttpRequestHelper(QueryHttpRequestHelper query)
 		{
@@ -185,6 +187,54 @@ namespace InvoiceDesigner.WebApp.Helpers
 			return new T();
 
 		}
+
+
+		public async Task<TGet?> SendRequest2<TSend, TGet>(RecordSendPost<TSend> sendPost)
+		{
+			try
+			{
+				var httpClient = await CreateHttpClient();
+				HttpResponseMessage response;
+
+				if (sendPost.IsUpdate)
+				{
+					response = await httpClient.PutAsJsonAsync($"api/{sendPost.Url}", sendPost.ModelSend);
+				}
+				else
+				{
+					response = await httpClient.PostAsJsonAsync($"api/{sendPost.Url}", sendPost.ModelSend);
+				}
+
+				switch (response.StatusCode)
+				{
+					case System.Net.HttpStatusCode.OK:
+					case System.Net.HttpStatusCode.Created:
+						var result = await response.Content.ReadFromJsonAsync<TGet>();
+						return result;
+
+					case System.Net.HttpStatusCode.Forbidden:
+						_snackbar.Add("Access Denied", Severity.Warning);
+						break;
+
+					case System.Net.HttpStatusCode.Unauthorized:
+						_navigationManager?.NavigateTo("/Authorization/Login", true);
+						break;
+
+					default:
+						string errorContent = await response.Content.ReadAsStringAsync();
+						_snackbar.Add($"Error: {response.StatusCode} - {errorContent}", Severity.Error);
+						break;
+
+				}
+
+			}
+			catch (Exception ex)
+			{
+				//_snackbar.Add($"Exception: {ex.Message}", Severity.Error);
+			}
+			return default;
+		}
+
 
 		public async Task<int?> SendRequest<T>(string url, T model, bool isUpdate, string? navUrl = null)
 		{

@@ -808,15 +808,6 @@ namespace InvoiceDesigner.Localization.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Trial Balance.
-        /// </summary>
-        public static string TrialBalance {
-            get {
-                return ResourceManager.GetString("TrialBalance", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Users.
         /// </summary>
         public static string Users {

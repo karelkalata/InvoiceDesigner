@@ -2,7 +2,7 @@
 using InvoiceDesigner.Application.DTOs.Company;
 using InvoiceDesigner.Application.DTOs.Currency;
 using InvoiceDesigner.Application.DTOs.Customer;
-using InvoiceDesigner.Application.DTOs.InvoiceDTOs;
+using InvoiceDesigner.Application.DTOs.Invoice;
 using InvoiceDesigner.Application.DTOs.InvoiceItem;
 using InvoiceDesigner.Application.Helpers.Currency;
 

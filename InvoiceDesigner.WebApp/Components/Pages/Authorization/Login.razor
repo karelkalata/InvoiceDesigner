@@ -1,26 +1,27 @@
 ﻿@page "/Login"
-@using InvoiceDesigner.Application.DTOs.User
+@using InvoiceDesigner.Application.QueryParameters
 @using InvoiceDesigner.Application.Responses
 @using InvoiceDesigner.WebApp.Helpers;
+@using InvoiceDesigner.WebApp.Records
 @using Microsoft.AspNetCore.Localization
 
 
 <MudContainer>
 	<MudPaper Class="d-flex justify-center align-content-center flex-grow-1 gap-4" Elevation="0">
-		<EditForm Model="@_userLogin" OnValidSubmit="OnValidSubmit">
+		<EditForm Model="@_queryUserLogin" OnValidSubmit="OnValidSubmit">
 			<DataAnnotationsValidator />
 			<MudGrid>
 				<MudItem>
 					<MudCard>
 						<MudCardContent>
 							<MudTextField Label="Login"
-							@bind-Value="_userLogin.Login"
-							For="@(() => _userLogin.Login)" />
+										  @bind-Value="_queryUserLogin.Login"
+										  For="@(() => _queryUserLogin.Login)" />
 							<MudTextField Label="Password"
-							InputType="InputType.Password"
-							Class="mt-3"
-							@bind-Value="_userLogin.Password"
-							For="@(() => _userLogin.Password)" />
+										  InputType="InputType.Password"
+										  Class="mt-3"
+										  @bind-Value="_queryUserLogin.Password"
+										  For="@(() => _queryUserLogin.Password)" />
 						</MudCardContent>
 						<MudCardActions>
 							<MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Login</MudButton>
@@ -33,28 +34,27 @@
 </MudContainer>
 
 @code {
-	private UserLoginDto _userLogin = new UserLoginDto();
+	private QueryUserLogin _queryUserLogin = new QueryUserLogin();
 
 	private async Task OnValidSubmit(EditContext context)
 	{
-		var httpClient = HttpClientFactory.CreateClient("ApiClient");
-		HttpResponseMessage response = await httpClient.PostAsJsonAsync($"api/Login", _userLogin);
-
-		if (response.IsSuccessStatusCode)
+		var sendPost = new RecordSendPost<QueryUserLogin>
 		{
-			var result = await response.Content.ReadFromJsonAsync<ResponseJwtToken>();
-			if (result != null && !string.IsNullOrEmpty(result.JwtToken))
-			{
-				await LocalStorageService.SetItemAsync<string>("jwtToken", result.JwtToken);
-				var redirectUri = Uri.UnescapeDataString(Nav.BaseUri);
-				Nav.NavigateTo($"{httpClient.BaseAddress}api/Culture/Set?culture={result.Locale}&redirectUri={redirectUri}",forceLoad: true);
-			}
-			else
-			{
-				_userLogin.Password = "";
-				Snackbar.Add(@localizer["InvalidCredentials"], Severity.Success);
-			}
-
+			Url = "Login",
+			ModelSend = _queryUserLogin
+		};
+		
+		var result = await HttpHelper.SendRequest2<QueryUserLogin, ResponseJwtToken>(sendPost);
+		if (result != null)
+		{
+			await LocalStorageService.SetItemAsync<string>("jwtToken", result.JwtToken);
+			var redirectUri = Uri.UnescapeDataString(Nav.BaseUri);
+			Nav.NavigateTo($"{HttpClientFactory.CreateClient("ApiClient").BaseAddress}api/Culture/Set?culture={result.Locale}&redirectUri={redirectUri}", true);
+		}
+		else
+		{
+			_queryUserLogin.Password = string.Empty;
+			Snackbar.Add(@localizer["InvalidCredentials"], Severity.Error);
 		}
 	}
 }

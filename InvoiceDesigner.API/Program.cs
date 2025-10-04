@@ -67,8 +67,6 @@ builder.Services.AddControllersWithViews()
 	});
 #endregion
 
-//	AutoMapper is used solely to convert models to DTOs.
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("ConnectionSqLite")));
 //  create migration
@@ -81,7 +79,6 @@ builder.Services.AddScoped<ValidateUserIdFilter>();
 
 builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 builder.Services.AddScoped<ICompanyService, CompanyService>();
-builder.Services.AddScoped<ICompanyServiceHelper, CompanyServiceHelper>();
 
 builder.Services.AddScoped<ICurrencyRepository, CurrencyRepository>();
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();
@@ -94,12 +91,10 @@ builder.Services.AddScoped<ICustomerService, CustomerService>();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<IProductServiceHelper, ProductServiceHelper>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IAdminUserInterface, AdminUserService>();
+builder.Services.AddScoped<IAdminUserService, AdminUserService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IUserServiceHelper, UserServiceHelper>();
 builder.Services.AddScoped<IUserAuthorizedDataService, UserAuthorizedDataService>();
 builder.Services.AddScoped<IAuthorizationUserService, AuthorizationUserService>();
 
@@ -116,7 +111,6 @@ builder.Services.AddScoped<IPrintInvoiceService, PrintInvoiceService>();
 #region Documents
 builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 builder.Services.AddScoped<IInvoiceService, InvoiceService>();
-builder.Services.AddScoped<IInvoiceServiceHelper, InvoiceServiceHelper>();
 #endregion
 
 builder.Logging.ClearProviders();

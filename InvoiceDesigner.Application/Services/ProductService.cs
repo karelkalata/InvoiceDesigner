@@ -1,67 +1,46 @@
-﻿
-using AutoMapper;
-using InvoiceDesigner.Application.Commands;
+﻿using InvoiceDesigner.Application.Commands;
 using InvoiceDesigner.Application.DTOs.Product;
 using InvoiceDesigner.Application.Interfaces;
-using InvoiceDesigner.Application.Interfaces.Admin;
+using InvoiceDesigner.Application.Mapper;
 using InvoiceDesigner.Application.Responses;
+using InvoiceDesigner.Application.Services.Abstract;
+using InvoiceDesigner.Domain.Shared.Filters;
 using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
+using InvoiceDesigner.Domain.Shared.Interfaces.Documents;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
-using InvoiceDesigner.Domain.Shared.QueryParameters;
-using InvoiceDesigner.Domain.Shared.Records;
 
 namespace InvoiceDesigner.Application.Services
 {
-	public class ProductService : IProductService
+	public class ProductService : ABaseService<Product>, IProductService
 	{
-		private readonly IProductRepository _repoProduct;
-		private readonly IMapper _mapper;
-		private readonly IInvoiceServiceHelper _invoiceServiceHelper;
-		private readonly ICurrencyService _currencyService;
+		private readonly IProductRepository _repository;
+		private readonly IInvoiceRepository _invoiceRepository;
+		private readonly ICurrencyRepository _repositoryCurrency;
 
-		public ProductService(IProductRepository repoProduct,
-								IMapper mapper,
-								IInvoiceServiceHelper invoiceServiceHelper,
-								ICurrencyService currencyService)
+		public ProductService(IProductRepository repository, IInvoiceRepository invoiceRepository, ICurrencyRepository repositoryCurrency) : base(repository)
 		{
-			_repoProduct = repoProduct;
-			_mapper = mapper;
-			_invoiceServiceHelper = invoiceServiceHelper;
-			_currencyService = currencyService;
+			_repository = repository;
+			_invoiceRepository = invoiceRepository;
+			_repositoryCurrency = repositoryCurrency;
 		}
 
-		public async Task<ResponsePaged<ProductsViewDto>> GetPagedAsync(QueryPaged queryPaged)
+		public async Task<ResponsePaged<ProductsViewDto>> GetPagedEntitiesAsync(PagedCommand pagedCommand)
 		{
-			queryPaged.PageSize = Math.Max(queryPaged.PageSize, 1);
-			queryPaged.Page = Math.Max(queryPaged.Page, 1);
+			var (entities, total) = await GetEntitiesAndCountAsync(pagedCommand);
+			var dtos = ProductMapper.ToViewDto(entities);
 
-			var productsTask = _repoProduct.GetEntitiesAsync(queryPaged, queryPaged.SortLabel);
-
-			var recordGetCount = new GetCountFilter
+			return new ResponsePaged<ProductsViewDto>
 			{
-				ShowArchived = queryPaged.ShowArchived,
-				ShowDeleted = queryPaged.ShowDeleted,
+				Items = dtos,
+				TotalCount = total
 			};
-			var totalCountTask = _repoProduct.GetCountAsync(recordGetCount);
-
-			await Task.WhenAll(productsTask, totalCountTask);
-
-			var productsDto = _mapper.Map<IReadOnlyCollection<ProductsViewDto>>(await productsTask);
-			var result = new ResponsePaged<ProductsViewDto>
-			{
-				Items = productsDto,
-				TotalCount = await totalCountTask
-			};
-
-			return result;
 		}
 
 		public async Task<ResponseRedirect> CreateAsync(int userId, ProductEditDto productEditDto)
 		{
 			var existsProduct = new Product();
 			await MapProduct(existsProduct, productEditDto);
-
-			var entityId = await _repoProduct.CreateAsync(existsProduct);
+			await _repository.CreateAsync(existsProduct);
 
 			return new ResponseRedirect
 			{
@@ -74,7 +53,7 @@ namespace InvoiceDesigner.Application.Services
 		public async Task<ProductEditDto> GetEditDtoByIdAsync(int id)
 		{
 			var existsProduct = await ValidateExistsEntityAsync(id);
-			return _mapper.Map<ProductEditDto>(existsProduct);
+			return ProductMapper.ToEditDto(existsProduct);
 		}
 
 		public async Task<ResponseRedirect> UpdateAsync(int userId, ProductEditDto productEditDto)
@@ -82,7 +61,7 @@ namespace InvoiceDesigner.Application.Services
 			var existsProduct = await ValidateExistsEntityAsync(productEditDto.Id);
 			await MapProduct(existsProduct, productEditDto);
 
-			await _repoProduct.UpdateAsync(existsProduct);
+			await _repository.UpdateAsync(existsProduct);
 
 			return new ResponseRedirect
 			{
@@ -90,51 +69,32 @@ namespace InvoiceDesigner.Application.Services
 			};
 		}
 
-		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(DeleteEntityCommand deleteEntityCommand)
+		public override async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(DeleteEntityCommand deleteEntityCommand)
 		{
 			var existsEntity = await ValidateExistsEntityAsync(deleteEntityCommand.EntityId);
-
-			if (!deleteEntityCommand.MarkAsDeleted)
-			{
-				if (await _invoiceServiceHelper.IsProductUsedInInvoiceItems(deleteEntityCommand.EntityId))
-					throw new InvalidOperationException($"{existsEntity.Name} is in use in Invoices and cannot be deleted.");
-
-				return new ResponseBoolean
-				{
-					Result = await _repoProduct.DeleteAsync(existsEntity)
-				};
-			}
-			else
-			{
-				existsEntity.IsDeleted = true;
-				await _repoProduct.UpdateAsync(existsEntity);
-
-				return new ResponseBoolean
-				{
-					Result = true
-				};
-			}
+			return await base.DeleteOrMarkAsDeletedAsync(deleteEntityCommand);
 		}
 
-		public Task<int> GetCountAsync() => _repoProduct.GetCountAsync(new GetCountFilter());
+		public Task<int> GetCountAsync() => _repository.GetCountAsync(new GetCountFilter());
 
 		public async Task<IReadOnlyCollection<ProductAutocompleteDto>> FilteringData(string searchText)
 		{
-			var queryPaged = new QueryPaged
+			var pagedFilter = new PagedFilter
 			{
 				PageSize = 10,
 				Page = 1,
-				SearchString = searchText
+				SearchString = searchText,
+				SortLabel = "Name",
 			};
 
-			var products = await _repoProduct.GetEntitiesAsync(queryPaged, "Name");
+			var products = await _repository.GetEntitiesAsync(pagedFilter);
 
-			return _mapper.Map<IReadOnlyCollection<ProductAutocompleteDto>>(products);
+			return ProductMapper.ToAutocompleteDto(products);
 		}
 
 		private async Task<Product> ValidateExistsEntityAsync(int id)
 		{
-			var existsProduct = await _repoProduct.GetByIdAsync(id)
+			var existsProduct = await _repository.GetByIdAsync(new GetByIdFilter { Id = id })
 				?? throw new InvalidOperationException("Item not found");
 			return existsProduct;
 		}
@@ -147,7 +107,7 @@ namespace InvoiceDesigner.Application.Services
 
 			foreach (var productPrice in dto.ProductPrice)
 			{
-				var currency = await _currencyService.GetByIdAsync(productPrice.Currency.Id)
+				var currency = await _repositoryCurrency.GetByIdAsync(new GetByIdFilter { Id = productPrice.Currency.Id })
 								?? throw new InvalidOperationException($"Currency with ID {productPrice.Id} not found.");
 
 				newProductPrices.Add(new ProductPrice
@@ -160,5 +120,6 @@ namespace InvoiceDesigner.Application.Services
 			}
 			existsProduct.ProductPrice = newProductPrices;
 		}
+
 	}
 }

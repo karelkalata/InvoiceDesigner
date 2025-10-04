@@ -369,9 +369,6 @@
   <data name="DateStart" xml:space="preserve">
     <value>Дата начала</value>
   </data>
-  <data name="TrialBalance" xml:space="preserve">
-    <value>Оборотная ведомость</value>
-  </data>
   <data name="Reports" xml:space="preserve">
     <value>Отчеты</value>
   </data>

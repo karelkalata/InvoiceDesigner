@@ -1,4 +1,4 @@
-﻿namespace InvoiceDesigner.Domain.Shared.Records
+﻿namespace InvoiceDesigner.Domain.Shared.Filters
 {
 	public record GetCountFilter
 	{

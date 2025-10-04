@@ -369,9 +369,6 @@
   <data name="DateStart" xml:space="preserve">
     <value>Data Początkowa</value>
   </data>
-  <data name="TrialBalance" xml:space="preserve">
-    <value>Bilans Próbny</value>
-  </data>
   <data name="Reports" xml:space="preserve">
     <value>Raporty</value>
   </data>

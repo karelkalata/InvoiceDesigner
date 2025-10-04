@@ -1,58 +1,39 @@
-﻿using AutoMapper;
-using InvoiceDesigner.Application.Commands;
+﻿using InvoiceDesigner.Application.Commands;
 using InvoiceDesigner.Application.DTOs.Company;
-using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Application.Interfaces.Admin;
-using InvoiceDesigner.Application.Interfaces.InterfacesUser;
+using InvoiceDesigner.Application.Mapper;
 using InvoiceDesigner.Application.Responses;
+using InvoiceDesigner.Application.Services.Abstract;
+using InvoiceDesigner.Domain.Shared.Filters;
 using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
+using InvoiceDesigner.Domain.Shared.Interfaces.Documents;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
-using InvoiceDesigner.Domain.Shared.QueryParameters;
-using InvoiceDesigner.Domain.Shared.Records;
 
 namespace InvoiceDesigner.Application.Services.AdminService
 {
-	public class CompanyService : ICompanyService
+	public class CompanyService : ABaseService<Company>, ICompanyService
 	{
-		private readonly ICompanyRepository _repoCompany;
-		private readonly IMapper _mapper;
-		private readonly ICurrencyService _currencyService;
-		private readonly IInvoiceServiceHelper _invoiceServiceHelper;
-		private readonly IUserAuthorizedDataService _userAuthorizedData;
+		private readonly ICompanyRepository _repository;
+		private readonly IInvoiceRepository _repositoryInvoice;
+		private readonly ICurrencyRepository _repositoryCurrency;
+		private readonly IUserRepository _repositoryUser;
 
-		public CompanyService(ICompanyRepository repoCompany,
-								IMapper mapper,
-								ICurrencyService currencyService,
-								IInvoiceServiceHelper invoiceServiceHelper,
-								IUserAuthorizedDataService userAuthorizedData)
+		public CompanyService(ICompanyRepository repository, IInvoiceRepository invoiceRepository, ICurrencyRepository currencyRepository, IUserRepository repositoryUser) : base(repository)
 		{
-			_repoCompany = repoCompany;
-			_mapper = mapper;
-			_currencyService = currencyService;
-			_invoiceServiceHelper = invoiceServiceHelper;
-			_userAuthorizedData = userAuthorizedData;
+			_repository = repository;
+			_repositoryInvoice = invoiceRepository;
+			_repositoryCurrency = currencyRepository;
+			_repositoryUser = repositoryUser;
 		}
 
-		public async Task<ResponsePaged<CompanyViewDto>> GetPagedEntitiesAsync(QueryPaged queryPaged)
+		public async Task<ResponsePaged<CompanyViewDto>> GetPagedEntitiesAsync(PagedCommand pagedCommand)
 		{
-			queryPaged.PageSize = Math.Max(queryPaged.PageSize, 1);
-			queryPaged.Page = Math.Max(queryPaged.Page, 1);
-
-			var companiesTask = _repoCompany.GetEntitiesAsync(queryPaged, queryPaged.SortLabel);
-
-			var recordGetCount = new GetCountFilter
-			{
-				ShowArchived = queryPaged.ShowArchived,
-				ShowDeleted = queryPaged.ShowDeleted,
-			};
-			var totalCountTask = _repoCompany.GetCountAsync(recordGetCount);
-
-			await Task.WhenAll(companiesTask, totalCountTask);
+			var (companies, total) = await GetEntitiesAndCountAsync(pagedCommand);
 
 			return new ResponsePaged<CompanyViewDto>
 			{
-				Items = _mapper.Map<IReadOnlyCollection<CompanyViewDto>>(await companiesTask),
-				TotalCount = await totalCountTask
+				Items = CompanyMapper.ToViewDto(companies),
+				TotalCount = total
 			};
 		}
 
@@ -63,7 +44,7 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			var company = new Company();
 			await MapCompany(company, companyEditDto, currency);
 
-			var entityId = await _repoCompany.CreateAsync(company);
+			await _repository.CreateAsync(company);
 
 			return new ResponseRedirect
 			{
@@ -76,7 +57,7 @@ namespace InvoiceDesigner.Application.Services.AdminService
 		public async Task<CompanyEditDto> GetEditDtoByIdAsync(int id)
 		{
 			var company = await ValidateExistsEntityAsync(id);
-			return _mapper.Map<CompanyEditDto>(company);
+			return CompanyMapper.ToEditDto(company);
 		}
 
 		public async Task<ResponseRedirect> UpdateAsync(int userId, CompanyEditDto companyEditDto)
@@ -91,7 +72,7 @@ namespace InvoiceDesigner.Application.Services.AdminService
 
 			await MapCompany(existingCompany, companyEditDto, currency);
 
-			await _repoCompany.UpdateAsync(existingCompany);
+			await _repository.UpdateAsync(existingCompany);
 
 			return new ResponseRedirect
 			{
@@ -99,71 +80,59 @@ namespace InvoiceDesigner.Application.Services.AdminService
 			};
 		}
 
-		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(DeleteEntityCommand deleteEntityCommand)
-		{
-			var existsEntity = await ValidateExistsEntityAsync(deleteEntityCommand.EntityId);
 
-			if (!deleteEntityCommand.MarkAsDeleted)
-			{
-				if (await _invoiceServiceHelper.IsCompanyUsedInInvoices(deleteEntityCommand.EntityId))
-					throw new InvalidOperationException($"{existsEntity.Name} is in use in Invoices and cannot be deleted.");
-
-				return new ResponseBoolean
-				{
-					Result = await _repoCompany.DeleteAsync(existsEntity)
-				};
-			}
-			else
-			{
-				existsEntity.IsDeleted = true;
-				await _repoCompany.UpdateAsync(existsEntity);
-
-				return new ResponseBoolean
-				{
-					Result = true
-				};
-			}
-		}
-
-		public async Task<int> GetCountAsync() => await _repoCompany.GetCountAsync(new GetCountFilter());
+		public async Task<int> GetCountAsync() => await _repository.GetCountAsync(new GetCountFilter());
 
 		public async Task<IReadOnlyCollection<Company>> GetAuthorizedCompaniesAsync(int userId, bool isAdmin)
 		{
-			var companies = isAdmin
-				? await _repoCompany.GetAllCompaniesDto()
-				: await _userAuthorizedData.GetAuthorizedCompaniesAsync(userId);
-
-			return companies.ToList();
+			if (isAdmin)
+			{
+				var pagedFilter = new PagedFilter
+				{
+					PageSize = 9999999,
+					Page = 0,
+				};
+				return await _repository.GetEntitiesAsync(pagedFilter);
+			}
+			else
+			{
+				var user = await _repositoryUser.GetByIdAsync(new GetByIdFilter { Id = userId });
+				if (user != null)
+					return user.Companies.ToList();
+			}
+			return new List<Company>();
 		}
 
 		public async Task<IReadOnlyCollection<CompanyAutocompleteDto>> GetAllAutocompleteDto(int userId, bool isAdmin)
 		{
-			return _mapper.Map<IReadOnlyCollection<CompanyAutocompleteDto>>(await GetAuthorizedCompaniesAsync(userId, isAdmin));
+			var companies = await GetAuthorizedCompaniesAsync(userId, isAdmin);
+			return CompanyMapper.ToAutocompleteDto(companies);
 		}
 
 		public async Task<IReadOnlyCollection<CompanyAutocompleteDto>> FilteringData(string searchText)
 		{
-			var queryPaged = new QueryPaged
+			var pagedFilter = new PagedFilter
 			{
 				PageSize = 10,
 				Page = 1,
-				SearchString = searchText
+				SearchString = searchText,
+				SortLabel = "Name"
 			};
 
-			var companies = await _repoCompany.GetEntitiesAsync(queryPaged, "Name");
-			return _mapper.Map<IReadOnlyCollection<CompanyAutocompleteDto>>(companies);
+			var companies = await _repository.GetEntitiesAsync(pagedFilter);
+			return CompanyMapper.ToAutocompleteDto(companies);
 		}
 
 		private async Task<Company> ValidateExistsEntityAsync(int id)
 		{
-			var existsCompany = await _repoCompany.GetByIdAsync(id)
+			var existsCompany = await _repository.GetByIdAsync(new GetByIdFilter { Id = id })
 							?? throw new InvalidOperationException("Company not found");
 			return existsCompany;
 		}
 
 		private async Task<Currency> ValidateInputAsync(CompanyEditDto dto)
 		{
-			var currency = await _currencyService.GetByIdAsync(dto.Currency.Id)
+			var currency = await _repositoryCurrency.GetByIdAsync(new GetByIdFilter { Id = dto.Currency.Id })
 							?? throw new InvalidOperationException($"Currency with ID {dto.Currency.Id} not found.");
 			return currency;
 		}
@@ -197,7 +166,7 @@ namespace InvoiceDesigner.Application.Services.AdminService
 					};
 
 				}
-				var bankCurrency = await _currencyService.GetByIdAsync(item.Currency.Id)
+				var bankCurrency = await _repositoryCurrency.GetByIdAsync(new GetByIdFilter { Id = item.Currency.Id })
 									?? throw new InvalidOperationException($"Currency with ID {item.Currency.Id} not found.");
 
 				existsBank.CurrencyId = bankCurrency.Id;

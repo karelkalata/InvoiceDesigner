@@ -5,7 +5,7 @@ namespace InvoiceDesigner.Domain.Shared.Interfaces.Directories
 {
 	public interface ICompanyRepository : IABaseRepository<Company>
 	{
-		Task<IReadOnlyCollection<Company>> GetAllCompaniesDto();
-		Task<bool> IsCurrencyUsedInCompany(int currencyId);
+		Task<IReadOnlyCollection<Company>> GetAllCompanies();
+		Task<bool> IsCurrencyUsedI(int currencyId);
 	}
 }

@@ -1,4 +1,5 @@
-﻿using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
+﻿using InvoiceDesigner.Domain.Shared.Filters;
+using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Infrastructure.Data;
 using InvoiceDesigner.Infrastructure.Repositories.Abstract;
@@ -10,10 +11,10 @@ namespace InvoiceDesigner.Infrastructure.Repositories.Directories
 	{
 		public UserRepository(DataContext context) : base(context) { }
 
-		public override async Task<User?> GetByIdAsync(int id)
+		public override async Task<User?> GetByIdAsync(GetByIdFilter getByIdFilter)
 		{
 			return await _dbSet
-				.Where(u => u.Id == id)
+				.Where(u => u.Id == getByIdFilter.Id)
 				.Include(u => u.Companies)
 					.ThenInclude(company => company.Currency)
 				.Include(u => u.Companies)

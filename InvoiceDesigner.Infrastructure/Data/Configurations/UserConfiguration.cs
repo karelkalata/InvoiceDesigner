@@ -1,4 +1,4 @@
-using InvoiceDesigner.Domain.Shared.Models.Directories; 
+using InvoiceDesigner.Domain.Shared.Models.Directories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

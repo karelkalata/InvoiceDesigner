@@ -40,7 +40,7 @@
 							<PropertyColumn Property="x => x.Currency" Title="@localizer["Currency"]">
 								<EditTemplate>
 									<MudAutocomplete T="CurrencyAutocompleteDto" Required Dense Clearable
-													 Value="context.Item.Currency"
+													 Value="@context.Item.Currency"
 													 ValueChanged="@(currency => OnCurrencySelected(currency, context.Item))"
 													 Placeholder="@localizer["Currency"]"
 													 SearchFunc="@((value, token) => FilteringDataWithApi<CurrencyAutocompleteDto>(value, "UserCurrencies", token))"
@@ -51,7 +51,7 @@
 
 							<PropertyColumn Property="x => x.Price" Title="@localizer["Price"]">
 								<EditTemplate>
-									<MudNumericField @bind-Value="context.Item.Price"/>
+									<MudNumericField @bind-Value="context.Item.Price" />
 								</EditTemplate>
 							</PropertyColumn>
 
@@ -115,18 +115,28 @@
 	}
 
 
-	private void AddInvoiceItems()
-	{
-		_productEditDto?.ProductPrice.Add(new ProductPriceEditDto());
-	}
-
 	private void OnCurrencySelected(CurrencyAutocompleteDto selectedCurrency, ProductPriceEditDto item)
 	{
+		if (selectedCurrency == null)
+		{
+			_selectedCurrencies.Remove(item.Currency);
+			item.Currency = null!;
+			item.Price = 0;
+			return;
+		}
+
+
 		if (!_selectedCurrencies.Contains(selectedCurrency))
 		{
 			_selectedCurrencies.Add(selectedCurrency);
 			item.Currency = selectedCurrency;
 		}
+	}
+
+
+	private void AddInvoiceItems()
+	{
+		_productEditDto?.ProductPrice.Add(new ProductPriceEditDto());
 	}
 
 	private void DeleteSelectedItems()
@@ -145,17 +155,10 @@
 		await _httpHelper.SendRequest("Products", _productEditDto, id.HasValue && id > 0);
 	}
 
-
 	private async Task<IEnumerable<T>> FilteringDataWithApi<T>(string value, string apiUrl, CancellationToken token) where T : IHasIdAndName
 	{
-		var allResults = await _httpHelper.GetDataFromAPI<IEnumerable<T>>($"api/{apiUrl}/FilteringData?f={value}");
-
-		var filteredResults = allResults.Cast<CurrencyAutocompleteDto>()
-			.Where(result => !_selectedCurrencies.Any(selected => selected.Id == result.Id))
-			.Cast<T>();
-
-		return filteredResults;
-
+		var result = await _httpHelper.GetDataFromAPI<IEnumerable<T>>($"api/{apiUrl}/FilteringData");
+		return result.Where(result => !_selectedCurrencies.Any(selected => selected.Id == result.Id)).Cast<T>().ToList();
 	}
 
 }

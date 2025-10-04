@@ -7,18 +7,18 @@ namespace InvoiceDesigner.API.Controllers.User
 {
 	public class UserCurrenciesController : RESTController
 	{
-		private readonly ICurrencyService _serviceCurrency;
+		private readonly ICurrencyService _service;
 
-		public UserCurrenciesController(ICurrencyService serviceCurrency)
+		public UserCurrenciesController(ICurrencyService service)
 		{
-			_serviceCurrency = serviceCurrency;
+			_service = service;
 		}
 
 		[HttpGet("FilteringData")]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<CurrencyAutocompleteDto>))]
 		public async Task<IActionResult> FilteringData(string f = "")
 		{
-			var result = await _serviceCurrency.FilteringData(f);
+			var result = await _service.FilteringData(f);
 			return Ok(result);
 		}
 	}

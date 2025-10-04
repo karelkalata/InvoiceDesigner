@@ -1,14 +1,13 @@
 ﻿@page "/Invoices/{id:int}"
 @using InvoiceDesigner.Application.DTOs
-@using InvoiceDesigner.Application.DTOs.DtoFormDesigners
-
-@using InvoiceDesigner.Application.DTOs.InvoiceItem
 @using InvoiceDesigner.Application.DTOs.Bank
 @using InvoiceDesigner.Application.DTOs.Company
 @using InvoiceDesigner.Application.DTOs.Currency
 @using InvoiceDesigner.Application.DTOs.Customer
+@using InvoiceDesigner.Application.DTOs.DtoFormDesigners
+@using InvoiceDesigner.Application.DTOs.Invoice
+@using InvoiceDesigner.Application.DTOs.InvoiceItem
 @using InvoiceDesigner.Application.DTOs.Product
-@using InvoiceDesigner.Application.DTOs.InvoiceDTOs
 @using InvoiceDesigner.Application.Responses
 @using InvoiceDesigner.Domain.Shared.Enums
 @using InvoiceDesigner.Domain.Shared.Interfaces.Abstract
@@ -360,40 +359,54 @@
 
 	private void OnCompanyChanged(CompanyAutocompleteDto company)
 	{
-		var selectedCompany = _companiesAutocomplete.FirstOrDefault(c => c.Id == company.Id);
-
-		if (selectedCompany != null)
+		if (company == null)
 		{
+			_invoiceEditDto.Company = null!;
+			_invoiceEditDto.DueDate = DateTime.UtcNow;
+			_invoiceEditDto.Currency = null!;
+			_invoiceEditDto.Bank = null!;
+			_selectedCurrency = new();
+			_banksAutocomplete = new();
+		}
+		else
+		{
+			var selectedCompany = _companiesAutocomplete.FirstOrDefault(c => c.Id == company.Id);
+
+			if (selectedCompany == null) // WTF ??????
+				return;
 
 			_invoiceEditDto.DateTime = DateTime.UtcNow;
 			_invoiceEditDto.DueDate = DateTime.UtcNow.AddDays(selectedCompany.PaymentTerms);
 			_invoiceEditDto.Company = selectedCompany;
 			_invoiceEditDto.Vat = selectedCompany.DefaultVat;
 			_invoiceEditDto.Currency = selectedCompany.Currency;
-
 			_selectedCurrency = selectedCompany.Currency;
-
 			_banksAutocomplete = _invoiceEditDto.Company.Banks.ToList();
 
-			OnCurrencyChanged(selectedCompany.Currency);
 		}
+		OnCurrencyChanged(_invoiceEditDto.Currency);
 	}
 
 	private void OnCurrencyChanged(CurrencyAutocompleteDto currency)
 	{
 		if (currency == null)
-			return;
+		{
+			_invoiceEditDto.Currency = null!;
+			_invoiceEditDto.Bank = null!;
+			_selectedCurrency = new();
+		}
+		else
+		{
+			_invoiceEditDto.Currency = currency;
+			_selectedCurrency = currency;
 
-		_invoiceEditDto.Currency = currency;
-		_selectedCurrency = currency;
+			_filteredBanksAutocomplete = _banksAutocomplete
+				.Where(bank => bank.CurrencyId == currency.Id)
+				.ToList();
 
-		_filteredBanksAutocomplete = _banksAutocomplete
-			.Where(bank => bank.CurrencyId == currency.Id)
-			.ToList();
-
-		var firstFilteredBank = _filteredBanksAutocomplete.FirstOrDefault();
-
-		_invoiceEditDto.Bank = firstFilteredBank == null ? new BankAutocompleteDto() : firstFilteredBank;
+			var firstFilteredBank = _filteredBanksAutocomplete.FirstOrDefault();
+			_invoiceEditDto.Bank = firstFilteredBank == null ? new BankAutocompleteDto() : firstFilteredBank;
+		}
 
 		StateHasChanged();
 	}
@@ -415,10 +428,19 @@
 
 	private void OnProductSelected(ProductAutocompleteDto product, InvoiceItemDto item)
 	{
-		if (product != null && _invoiceEditDto.Currency != null)
+		if (product == null)
+		{
+			item.Item = null!;
+			item.Price = 0;
+			item.Quantity = 0;
+		}
+		else
 		{
 			item.Item = product;
-			item.Price = product.PriceByCurrency.GetValueOrDefault(_invoiceEditDto.Currency.Id, 0);
+			if (_invoiceEditDto.Currency != null)
+			{
+				item.Price = product.PriceByCurrency.GetValueOrDefault(_invoiceEditDto.Currency.Id, 0);
+			}
 		}
 	}
 

@@ -1,9 +1,9 @@
-﻿using AutoMapper;
-using InvoiceDesigner.Application.DTOs.InvoiceDTOs;
+﻿using InvoiceDesigner.Application.DTOs.Invoice;
 using InvoiceDesigner.Application.Helpers;
 using InvoiceDesigner.Application.Interfaces;
 using InvoiceDesigner.Application.Interfaces.Documents;
 using InvoiceDesigner.Application.Interfaces.InterfacesFormDesigner;
+using InvoiceDesigner.Application.Mapper;
 using InvoiceDesigner.Application.Responses;
 using InvoiceDesigner.Domain.Shared.Enums;
 using InvoiceDesigner.Domain.Shared.Interfaces;
@@ -22,7 +22,6 @@ namespace InvoiceDesigner.Application.Services
 		private InvoicePrintDto _invoicePrintDto = null!;
 		private readonly IPrintInvoiceRepository _repository;
 		private readonly IInvoiceService _invoiceService;
-		private readonly IMapper _mapper;
 		private readonly IFormDesignersService _formDesignersService;
 
 		public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
@@ -30,12 +29,10 @@ namespace InvoiceDesigner.Application.Services
 
 		public PrintInvoiceService(IPrintInvoiceRepository repository,
 									IInvoiceService invoiceService,
-									IMapper mapper,
 									IFormDesignersService formDesignersService)
 		{
 			_repository = repository;
 			_invoiceService = invoiceService;
-			_mapper = mapper;
 			_formDesignersService = formDesignersService;
 		}
 
@@ -60,7 +57,7 @@ namespace InvoiceDesigner.Application.Services
 			}
 			else
 			{
-				_invoicePrintDto = _mapper.Map<InvoicePrintDto>(invoice);
+				_invoicePrintDto = InvoiceMapper.ToPrintDto(invoice);
 			}
 
 			var formDesigner = await _formDesignersService.GetByIdAsync(printform)

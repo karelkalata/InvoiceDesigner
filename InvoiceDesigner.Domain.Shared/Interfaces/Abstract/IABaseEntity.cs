@@ -2,7 +2,7 @@
 {
 	public interface IABaseEntity
 	{
-		public int Id { get; set; }
+		public int Id { get; init; }
 		public string Name { get; set; }
 		public bool IsDeleted { get; set; }
 		public bool IsArchived { get; set; }

@@ -1,6 +1,4 @@
 ﻿@page "/Logout"
-@using InvoiceDesigner.Application.Responses
-
 
 <MudContainer>
 	<MudPaper Class="d-flex justify-center align-content-center flex-grow-1 gap-4" Elevation="0">
@@ -9,10 +7,8 @@
 </MudContainer>
 
 @code {
-	protected override async Task OnInitializedAsync()
+	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		var res = await _httpHelper.GetAsync<ResponseBoolean>("Logout");
-
 		await LocalStorageService.ClearAsync();
 		Nav.NavigateTo("/Login", true);
 	}

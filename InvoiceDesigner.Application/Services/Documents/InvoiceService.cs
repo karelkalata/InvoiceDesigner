@@ -1,86 +1,107 @@
-﻿using AutoMapper;
-using InvoiceDesigner.Application.Commands;
+﻿using InvoiceDesigner.Application.Commands;
 using InvoiceDesigner.Application.DTOs;
-using InvoiceDesigner.Application.DTOs.InvoiceDTOs;
-using InvoiceDesigner.Application.Interfaces;
-using InvoiceDesigner.Application.Interfaces.Admin;
+using InvoiceDesigner.Application.DTOs.Invoice;
 using InvoiceDesigner.Application.Interfaces.Documents;
+using InvoiceDesigner.Application.Mapper;
 using InvoiceDesigner.Application.Responses;
+using InvoiceDesigner.Application.Services.Abstract;
 using InvoiceDesigner.Domain.Shared.Enums;
+using InvoiceDesigner.Domain.Shared.Filters;
+using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
 using InvoiceDesigner.Domain.Shared.Interfaces.Documents;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Domain.Shared.Models.Documents;
-using InvoiceDesigner.Domain.Shared.QueryParameters;
 
 namespace InvoiceDesigner.Application.Services.Documents
 {
-	public class InvoiceService : IInvoiceService
+	public class InvoiceService : ABaseService<Invoice>, IInvoiceService
 	{
 		private readonly IInvoiceRepository _repository;
-		private readonly IMapper _mapper;
-		private readonly ICompanyService _serviceCompany;
-		private readonly ICurrencyService _currencyService;
-		private readonly IProductService _productService;
-		private readonly IBankService _bankService;
-		private readonly ICustomerService _customerService;
+		private readonly ICompanyRepository _repositoryCompany;
+		private readonly IProductRepository _repositoryProduct;
+		private readonly ICurrencyRepository _repositoryCurrency;
+		private readonly IBankRepository _repositoryBank;
+		private readonly ICustomerRepository _repositoryCustomer;
+		private readonly IUserRepository _repositoryUser;
 
 		public InvoiceService(IInvoiceRepository repository,
-								IMapper mapper,
-								ICompanyService companyService,
-								ICurrencyService currencyService,
-								IProductService productService,
-								IBankService bankService,
-								ICustomerService customerService)
+								ICompanyRepository repositoryCompany,
+								IProductRepository repositoryProduct,
+								ICurrencyRepository repositoryCurrency,
+								IBankRepository repositoryBank,
+								ICustomerRepository epositoryCustomer,
+								IUserRepository repositoryUser
+			) : base(repository)
 		{
 			_repository = repository;
-			_mapper = mapper;
-			_serviceCompany = companyService;
-			_currencyService = currencyService;
-			_productService = productService;
-			_bankService = bankService;
-			_customerService = customerService;
+			_repositoryCompany = repositoryCompany;
+			_repositoryProduct = repositoryProduct;
+			_repositoryCurrency = repositoryCurrency;
+			_repositoryBank = repositoryBank;
+			_repositoryCustomer = epositoryCustomer;
+			_repositoryUser = repositoryUser;
 		}
 
-		public async Task<InfoForNewInvoiceDto> GetInfoForNewInvoice(int userId, bool isAdmin, int invoiceId)
+		public override async Task<(IReadOnlyCollection<Invoice> Entities, int TotalCount)> GetEntitiesAndCountAsync(PagedCommand pagedCommand)
 		{
-			InfoForNewInvoiceDto result = new();
 
-			var companies = _serviceCompany.GetAllAutocompleteDto(userId, isAdmin);
-			var currencies = _currencyService.GetAutocompleteDto();
+			var pagedFilter = new PagedFilter
+			{
+				PageSize = pagedCommand.PageSize,
+				Page = pagedCommand.Page,
+				ShowDeleted = pagedCommand.ShowDeleted,
+				ShowArchived = pagedCommand.ShowArchived,
+				SearchString = pagedCommand.SearchString,
+				SortLabel = pagedCommand.SortLabel,
+				UserAuthorizedCompanies = await GetAuthorizedCompaniesAsync(pagedCommand.UserId, pagedCommand.IsAdmin),
+			};
 
-			await Task.WhenAll(companies, currencies);
+			var entitiesTask = _repository.GetEntitiesAsync(pagedFilter);
+			var totalCountTask = _repository.GetCountAsync(new GetCountFilter
+			{
+				ShowDeleted = pagedCommand.ShowDeleted,
+				ShowArchived = pagedCommand.ShowArchived
+			});
 
-			result.Companies = await companies;
-			result.Currencies = await currencies;
+			await Task.WhenAll(entitiesTask, totalCountTask);
 
-			return result;
+			return (await entitiesTask, await totalCountTask);
 		}
 
-
-		public async Task<ResponsePaged<InvoicesViewDto>> GetPagedAsync(QueryPaged queryPaged)
+		public async Task<ResponsePaged<InvoicesViewDto>> GetPagedEntitiesAsync(PagedCommand pagedCommand)
 		{
-			queryPaged.PageSize = Math.Max(queryPaged.PageSize, 1);
-			queryPaged.Page = Math.Max(queryPaged.Page, 1);
-
-			var userAuthorizedCompanies = await _serviceCompany.GetAuthorizedCompaniesAsync(queryPaged.UserId, queryPaged.IsAdmin);
-
-			var invoices = _repository.GetAsync(queryPaged, GetOrdering(queryPaged.SortLabel), userAuthorizedCompanies);
-			var totalCount = _repository.GetCountAsync(queryPaged, userAuthorizedCompanies);
-
-			await Task.WhenAll(invoices, totalCount);
+			var (entities, total) = await GetEntitiesAndCountAsync(pagedCommand);
+			var dtos = InvoiceMapper.ToViewDto(entities);
 
 			return new ResponsePaged<InvoicesViewDto>
 			{
-				Items = _mapper.Map<IReadOnlyCollection<InvoicesViewDto>>(await invoices),
-				TotalCount = await totalCount
+				Items = dtos,
+				TotalCount = total
 			};
 		}
+
+
+
+		public async Task<InfoForNewInvoiceDto> GetInfoForNewInvoice(int userId, bool isAdmin, int invoiceId)
+		{
+			var companies = await GetAuthorizedCompaniesAsync(userId, isAdmin);
+			var currencies = await _repositoryCurrency.GetAllAsync();
+
+			return new InfoForNewInvoiceDto
+			{
+				Companies = CompanyMapper.ToAutocompleteDto(companies),
+				Currencies = CurrencyMapper.ToAutocompleteDto(currencies)
+			};
+		}
+
+
+
 
 		public async Task<ResponseRedirect> CreateAsync(int userId, bool isAdmin, InvoiceEditDto invoiceDto)
 		{
 			var (currency, company, bank, customer) = await ValidateInputAsync(invoiceDto);
 
-			var userAuthorizedCompanies = await _serviceCompany.GetAuthorizedCompaniesAsync(userId, isAdmin);
+			var userAuthorizedCompanies = await GetAuthorizedCompaniesAsync(userId, isAdmin);
 			if (!userAuthorizedCompanies.Any(c => c.Id == company.Id))
 				throw new InvalidOperationException("Access Denied");
 
@@ -90,26 +111,30 @@ namespace InvoiceDesigner.Application.Services.Documents
 			};
 
 			await MapDtoToEntity(existsInvoice, invoiceDto, company, currency, bank, customer);
-
-			var entityId = await _repository.CreateAsync(existsInvoice);
+			await _repository.CreateAsync(existsInvoice);
 
 			return new ResponseRedirect
 			{
 				RedirectUrl = string.Empty,
-				entityId = entityId
+				entityId = existsInvoice.Id
 			};
 		}
 
 		public async Task<Invoice?> GetByIdAsync(int userId, bool isAdmin, int id)
 		{
-			var userAuthorizedCompanies = await _serviceCompany.GetAuthorizedCompaniesAsync(userId, isAdmin);
-			return await _repository.GetByIdAsync(id, userAuthorizedCompanies);
+			var userAuthorizedCompanies = await GetAuthorizedCompaniesAsync(userId, isAdmin);
+			var getByIdFilter = new GetByIdFilter
+			{
+				Id = id,
+				userAuthorizedCompanies = userAuthorizedCompanies
+			};
+			return await _repository.GetByIdAsync(getByIdFilter);
 		}
 
 		public async Task<InvoiceEditDto> GetDtoByIdAsync(int userId, bool isAdmin, int id)
 		{
 			var invoice = await ValidateExistsEntityAsync(userId, isAdmin, id);
-			return _mapper.Map<InvoiceEditDto>(invoice);
+			return InvoiceMapper.ToEditDto(invoice);
 		}
 
 		public async Task<ResponseRedirect> UpdateAsync(int userId, bool isAdmin, InvoiceEditDto invoiceDto)
@@ -119,12 +144,12 @@ namespace InvoiceDesigner.Application.Services.Documents
 
 			await MapDtoToEntity(existsEntity, invoiceDto, company, currency, bank, customer);
 
-			var entityId = await _repository.UpdateAsync(existsEntity);
+			await _repository.UpdateAsync(existsEntity);
 
 			return new ResponseRedirect
 			{
 				RedirectUrl = string.Empty,
-				entityId = entityId
+				entityId = existsEntity.Id
 			};
 		}
 
@@ -138,23 +163,6 @@ namespace InvoiceDesigner.Application.Services.Documents
 			};
 		}
 
-		public async Task<ResponseBoolean> DeleteOrMarkAsDeletedAsync(int userId, bool isAdmin, int id, int modeDelete)
-		{
-			var existsEntity = await ValidateExistsEntityAsync(userId, isAdmin, id);
-
-			if (modeDelete == 0)
-			{
-				existsEntity.IsDeleted = true;
-				await _repository.UpdateAsync(existsEntity);
-
-				return new ResponseBoolean
-				{
-					Result = true
-				};
-			}
-
-			return await DeleteAsync(userId, isAdmin, id);
-		}
 
 		public async Task<ResponseBoolean> OnChangeProperty(ChangePropertyCommand changePropertyCommand)
 		{
@@ -178,8 +186,12 @@ namespace InvoiceDesigner.Application.Services.Documents
 
 		private async Task<Invoice> ValidateExistsEntityAsync(int userId, bool isAdmin, int id)
 		{
-			var userAuthorizedCompanies = await _serviceCompany.GetAuthorizedCompaniesAsync(userId, isAdmin);
-			var existsInvoice = await _repository.GetByIdAsync(id, userAuthorizedCompanies)
+			var getByIdFilter = new GetByIdFilter
+			{
+				Id = id,
+				userAuthorizedCompanies = await GetAuthorizedCompaniesAsync(userId, isAdmin)
+			};
+			var existsInvoice = await _repository.GetByIdAsync(getByIdFilter)
 							?? throw new InvalidOperationException("Invoice not found");
 
 			return existsInvoice;
@@ -187,16 +199,16 @@ namespace InvoiceDesigner.Application.Services.Documents
 
 		private async Task<(Currency, Company, Bank, Customer)> ValidateInputAsync(InvoiceEditDto invoiceDto)
 		{
-			var company = await _serviceCompany.GetByIdAsync(invoiceDto.Company.Id)
+			var company = await _repositoryCompany.GetByIdAsync(new GetByIdFilter { Id = invoiceDto.Company.Id })
 							?? throw new InvalidOperationException($"Company: {invoiceDto.Company.Id} not found.");
 
-			var currency = await _currencyService.GetByIdAsync(invoiceDto.Currency.Id)
+			var currency = await _repositoryCurrency.GetByIdAsync(new GetByIdFilter { Id = invoiceDto.Currency.Id })
 							?? throw new InvalidOperationException($"Company: {invoiceDto.Currency.Id} not found.");
 
-			var bank = await _bankService.GetByIdAsync(invoiceDto.Bank.Id)
+			var bank = await _repositoryBank.GetByIdAsync(new GetByIdFilter { Id = invoiceDto.Bank.Id })
 							?? throw new InvalidOperationException($"Bank: {invoiceDto.Bank.Id} not found.");
 
-			var customer = await _customerService.GetByIdAsync(invoiceDto.Customer.Id)
+			var customer = await _repositoryCustomer.GetByIdAsync(new GetByIdFilter { Id = invoiceDto.Customer.Id })
 							?? throw new InvalidOperationException($"CustomerId: {invoiceDto.Customer.Id} not found.");
 
 			return (currency, company, bank, customer);
@@ -234,7 +246,8 @@ namespace InvoiceDesigner.Application.Services.Documents
 			List<InvoiceItem> invoiceItem = new();
 			foreach (var item in dto.InvoiceItems)
 			{
-				var product = await _productService.GetByIdAsync(item.Item.Id);
+				var product = await _repositoryProduct.GetByIdAsync(new GetByIdFilter { Id = item.Item.Id })
+						?? throw new InvalidOperationException($"Product with ID {item.Item.Id} not found.");
 				invoiceItem.Add(new InvoiceItem
 				{
 					ItemId = product.Id,
@@ -248,18 +261,20 @@ namespace InvoiceDesigner.Application.Services.Documents
 			existsEntity.Amount = CalculateTotalAmount(existsEntity.InvoiceItems, existsEntity.EnabledVat, existsEntity.Vat);
 		}
 
-		private static Func<IQueryable<Invoice>, IOrderedQueryable<Invoice>> GetOrdering(string sortLabel)
+		private async Task<IReadOnlyCollection<Company>> GetAuthorizedCompaniesAsync(int userId, bool isAdmin)
 		{
-			var orderingOptions = new Dictionary<string, Func<IQueryable<Invoice>, IOrderedQueryable<Invoice>>>
+			if (isAdmin)
 			{
-				{"Id_desc", q => q.OrderByDescending(e => e.Id)},
-				{"DateTime", q => q.OrderBy(e => e.DateTime)},
-				{"DateTime_desc", q => q.OrderByDescending(e => e.DateTime)}
-			};
-
-			return orderingOptions.GetValueOrDefault(sortLabel, q => q.OrderBy(e => e.Id));
+				return await _repositoryCompany.GetAllCompanies();
+			}
+			else
+			{
+				var user = await _repositoryUser.GetByIdAsync(new GetByIdFilter { Id = userId });
+				if (user != null)
+					return user.Companies.ToList();
+			}
+			return new List<Company>();
 		}
-
 	}
 
 }

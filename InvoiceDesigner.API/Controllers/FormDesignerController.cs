@@ -84,18 +84,10 @@ namespace InvoiceDesigner.API.Controllers
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> DeleteAsync(int id)
 		{
-			try
-			{
-				var result = await _service.DeleteAsync(UserId, id);
-				return Ok(result);
-			}
-			catch (InvalidOperationException ex)
-			{
-				return BadRequest(new
-				{
-					message = ex.Message
-				});
-			}
+
+			var result = await _service.DeleteAsync(UserId, id);
+			return Ok(result);
+
 		}
 
 

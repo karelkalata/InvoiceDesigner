@@ -1,70 +1,62 @@
-﻿using InvoiceDesigner.Domain.Shared.Interfaces.Documents;
-using InvoiceDesigner.Domain.Shared.Models.Directories;
+﻿using InvoiceDesigner.Domain.Shared.Filters;
+using InvoiceDesigner.Domain.Shared.Interfaces.Documents;
 using InvoiceDesigner.Domain.Shared.Models.Documents;
-using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Infrastructure.Data;
+using InvoiceDesigner.Infrastructure.Repositories.Abstract;
 using Microsoft.EntityFrameworkCore;
 
 namespace InvoiceDesigner.Infrastructure.Repositories.Documents
 {
-	public class InvoiceRepository : IInvoiceRepository
+	public class InvoiceRepository : ABaseRepository<Invoice>, IInvoiceRepository
 	{
-		private readonly DataContext _context;
+		public InvoiceRepository(DataContext context) : base(context) { }
 
-		public InvoiceRepository(DataContext context)
+		public override async Task<IReadOnlyCollection<Invoice>> GetEntitiesAsync(PagedFilter pagedFilter)
 		{
-			_context = context;
-		}
+			int skip = (pagedFilter.Page - 1) * pagedFilter.PageSize;
+
+			IQueryable<Invoice> query = _context.Invoices.AsNoTracking();
 
 
-		public async Task<IReadOnlyCollection<Invoice>> GetAsync(QueryPaged queryPaged,
-																			Func<IQueryable<Invoice>, IOrderedQueryable<Invoice>> orderBy,
-																			IReadOnlyCollection<Company> userAuthorizedCompanies)
-		{
-			int skip = (queryPaged.Page - 1) * queryPaged.PageSize;
-
-			IQueryable<Invoice> query = _context.Invoices.AsNoTracking()
-												.AsNoTracking()
-												.Where(invoice => userAuthorizedCompanies.Contains(invoice.Company))
-												.Include(a => a.Company)
-												.Include(b => b.Currency)
-												.Include(c => c.Customer);
-
-			if (!queryPaged.ShowDeleted)
+			if (!pagedFilter.ShowDeleted)
 			{
 				query = query.Where(e => e.IsDeleted == false);
 			}
 
-			if (!queryPaged.ShowArchived)
+			if (!pagedFilter.ShowArchived)
 			{
 				query = query.Where(e => e.IsArchived == false);
 			}
 
-			if (!string.IsNullOrEmpty(queryPaged.SearchString))
+			if (!string.IsNullOrEmpty(pagedFilter.SearchString))
 			{
-				queryPaged.SearchString = queryPaged.SearchString.ToLower();
-				query = query.Where(c => c.Company.Name.ToLower().Contains(queryPaged.SearchString) || c.Customer.Name.ToLower().Contains(queryPaged.SearchString));
+				var searchString = pagedFilter.SearchString.ToLower();
+				query = query.Where(c => c.Company.Name.ToLower().Contains(pagedFilter.SearchString) || c.Customer.Name.ToLower().Contains(pagedFilter.SearchString));
 			}
 
-			query = orderBy(query);
+			if (!string.IsNullOrEmpty(pagedFilter.SortLabel))
+			{
+				query = GetOrdering(pagedFilter.SortLabel)(query);
+			}
+
+			if (pagedFilter.UserAuthorizedCompanies != null)
+			{
+				query = query.Where(invoice => pagedFilter.UserAuthorizedCompanies.Contains(invoice.Company));
+			}
 
 			return await query
+				.Include(a => a.Company)
+				.Include(b => b.Currency)
+				.Include(c => c.Customer)
 				.Skip(skip)
-				.Take(queryPaged.PageSize)
+				.Take(pagedFilter.PageSize)
 				.ToListAsync();
 		}
 
-		public async Task<int> CreateAsync(Invoice entity)
-		{
-			await _context.Invoices.AddAsync(entity);
-			await _context.SaveChangesAsync();
-			return entity.Id;
-		}
-
-		public async Task<Invoice?> GetByIdAsync(int id, IReadOnlyCollection<Company> userAuthorizedCompanies)
+		public override async Task<Invoice?> GetByIdAsync(GetByIdFilter getByIdFilter)
 		{
 			return await _context.Invoices
-				.Where(invoice => userAuthorizedCompanies.Contains(invoice.Company))
+				.Where(invoice => getByIdFilter.userAuthorizedCompanies.Contains(invoice.Company))
 				.Include(a => a.Currency)
 				.Include(b => b.Bank)
 				.Include(c => c.Customer)
@@ -72,42 +64,10 @@ namespace InvoiceDesigner.Infrastructure.Repositories.Documents
 					.ThenInclude(ii => ii.Item)
 				.Include(e => e.Company)
 					.ThenInclude(f => f.Currency)
-				.Where(c => c.Id == id)
+				.Where(c => c.Id == getByIdFilter.Id)
 				.SingleOrDefaultAsync();
 		}
 
-		public async Task<int> UpdateAsync(Invoice entity)
-		{
-			_context.Invoices.Update(entity);
-			await _context.SaveChangesAsync();
-			return entity.Id;
-		}
-
-		public async Task<bool> DeleteAsync(Invoice entity)
-		{
-			_context.Invoices
-				.Remove(entity);
-			return await _context.SaveChangesAsync() > 0;
-		}
-
-		public async Task<int> GetCountAsync(QueryPaged queryPaged, IReadOnlyCollection<Company> userAuthorizedCompanies)
-		{
-			IQueryable<Invoice> query = _context.Invoices.AsNoTracking();
-
-			if (!queryPaged.ShowDeleted)
-			{
-				query = query.Where(e => e.IsDeleted == false);
-			}
-
-			if (!queryPaged.ShowArchived)
-			{
-				query = query.Where(e => e.IsArchived == false);
-			}
-
-			return await query
-						.Where(invoice => userAuthorizedCompanies.Contains(invoice.Company))
-						.CountAsync();
-		}
 
 		public async Task<int> GetNextNumberForCompanyAsync(int companyId)
 		{
@@ -140,9 +100,19 @@ namespace InvoiceDesigner.Infrastructure.Repositories.Documents
 			return await _context.Invoices.AnyAsync(a => a.CurrencyId == currencyId);
 		}
 
-		public async Task<bool> IsProductUsedInInvoiceItems(int productId)
+		public async Task<bool> IsProductUsed(int productId)
 		{
 			return await _context.InvoiceItems.AnyAsync(x => x.ItemId == productId);
+		}
+
+		public Task<IReadOnlyCollection<Invoice>> GetAsync(PagedFilter pagedFilter, Func<IQueryable<Invoice>, IOrderedQueryable<Invoice>> orderBy)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<int> GetCountAsync(PagedFilter pagedFilter)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

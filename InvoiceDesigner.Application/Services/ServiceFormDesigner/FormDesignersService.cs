@@ -1,6 +1,6 @@
-﻿using AutoMapper;
-using InvoiceDesigner.Application.DTOs.DtoFormDesigners;
+﻿using InvoiceDesigner.Application.DTOs.DtoFormDesigners;
 using InvoiceDesigner.Application.Interfaces.InterfacesFormDesigner;
+using InvoiceDesigner.Application.Mapper;
 using InvoiceDesigner.Application.Responses;
 using InvoiceDesigner.Domain.Shared.Enums;
 using InvoiceDesigner.Domain.Shared.Helpers;
@@ -14,22 +14,18 @@ namespace InvoiceDesigner.Application.Services.ServiceFormDesigner
 	{
 
 		private readonly IFormDesignersRepository _repository;
-		private readonly IMapper _mapper;
 		private readonly IDropItemsService _dropItemsService;
 
-		public FormDesignersService(IFormDesignersRepository repository,
-									IMapper mapper,
-									IDropItemsService dropItemsService)
+		public FormDesignersService(IFormDesignersRepository repository, IDropItemsService dropItemsService)
 		{
 			_repository = repository;
-			_mapper = mapper;
 			_dropItemsService = dropItemsService;
 		}
 
 		public async Task<IReadOnlyCollection<FormDesignersAutocompleteDto>> GetAllAutocompleteDto(EAccountingDocument typeDocument)
 		{
 			var formDesigners = await _repository.GetAllFormDesignersAsync();
-			return _mapper.Map<IReadOnlyCollection<FormDesignersAutocompleteDto>>(formDesigners);
+			return FormDesignerMapper.ToAutocompleteDto(formDesigners);
 		}
 
 		public async Task<ResponseRedirect> CreateAsync(int userId, FormDesignerEditDto formDesignerEditDto)
@@ -72,7 +68,7 @@ namespace InvoiceDesigner.Application.Services.ServiceFormDesigner
 			var formDesigner = await ValidateExistsEntityAsync(id);
 			formDesigner.DropItems = _dropItemsService.CreateListDropItems(formDesigner);
 
-			return _mapper.Map<FormDesignerEditDto>(formDesigner);
+			return FormDesignerMapper.ToEditDto(formDesigner);
 		}
 
 		public async Task<ResponseRedirect> UpdateAsync(int userId, FormDesignerEditDto formDesignerEditDto)
@@ -103,14 +99,14 @@ namespace InvoiceDesigner.Application.Services.ServiceFormDesigner
 		public DropItemEditDto AddEmptyBox()
 		{
 			var item = _dropItemsService.AddEmptyBox();
-			return _mapper.Map<DropItemEditDto>(item);
+			return DropItemMapper.ToEditDto(item);
 		}
 
 
 		public async Task<IReadOnlyCollection<FormDesignersAutocompleteDto>> FilteringData(QueryFiltering queryFilter)
 		{
 			var entities = await _repository.FilteringData(queryFilter);
-			return _mapper.Map<IReadOnlyCollection<FormDesignersAutocompleteDto>>(entities);
+			return FormDesignerMapper.ToAutocompleteDto(entities);
 		}
 
 		private async Task<FormDesigner> ValidateExistsEntityAsync(int id)

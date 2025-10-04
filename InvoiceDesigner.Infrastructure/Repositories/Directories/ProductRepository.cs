@@ -1,6 +1,6 @@
-﻿using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
+﻿using InvoiceDesigner.Domain.Shared.Filters;
+using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
-using InvoiceDesigner.Domain.Shared.QueryParameters;
 using InvoiceDesigner.Infrastructure.Data;
 using InvoiceDesigner.Infrastructure.Repositories.Abstract;
 using Microsoft.EntityFrameworkCore;
@@ -11,37 +11,40 @@ namespace InvoiceDesigner.Infrastructure.Repositories.Directories
 	{
 		public ProductRepository(DataContext context) : base(context) { }
 
-		public override async Task<IReadOnlyCollection<Product>> GetEntitiesAsync(QueryPaged queryPaged, string sortLabel)
+		public override async Task<IReadOnlyCollection<Product>> GetEntitiesAsync(PagedFilter pagedFilter)
 		{
-			int skip = (queryPaged.Page - 1) * queryPaged.PageSize;
+			int skip = (pagedFilter.Page - 1) * pagedFilter.PageSize;
 
 			IQueryable<Product> query = _dbSet.AsNoTracking();
 
-			if (!queryPaged.ShowDeleted)
+			if (!pagedFilter.ShowDeleted)
 			{
 				query = query.Where(e => e.IsDeleted == false);
 			}
 
-			if (!string.IsNullOrEmpty(queryPaged.SearchString))
+			if (!string.IsNullOrEmpty(pagedFilter.SearchString))
 			{
-				query = query.Where(c => c.Name.ToLower().Contains(queryPaged.SearchString.ToLower()));
+				query = query.Where(c => c.Name.ToLower().Contains(pagedFilter.SearchString.ToLower()));
 			}
 
-			query = GetOrdering(sortLabel)(query);
+			if (!string.IsNullOrEmpty(pagedFilter.SortLabel))
+			{
+				query = GetOrdering(pagedFilter.SortLabel)(query);
+			}
 
 			return await query
 				.Include(a => a.ProductPrice)
 				.Skip(skip)
-				.Take(queryPaged.PageSize)
+				.Take(pagedFilter.PageSize)
 				.ToListAsync();
 		}
 
-		public override async Task<Product?> GetByIdAsync(int id)
+		public override async Task<Product?> GetByIdAsync(GetByIdFilter getByIdFilter)
 		{
 			return await _dbSet
 				.Include(a => a.ProductPrice)
 					.ThenInclude(c => c.Currency)
-				.Where(c => c.Id == id)
+				.Where(c => c.Id == getByIdFilter.Id)
 				.SingleOrDefaultAsync();
 		}
 

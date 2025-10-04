@@ -21,80 +21,80 @@
 					<MudGrid Spacing="2">
 						<MudItem xs="4">
 							<MudTextField @bind-Value="_companyEditDto.Name" Class="d-flex pa-2"
-							Label="@localizer["Name"]"
-							Required
-							For="(() => _companyEditDto.Name)" />
+										  Label="@localizer["Name"]"
+										  Required
+										  For="(() => _companyEditDto.Name)" />
 						</MudItem>
 						<MudItem xs="8">
 							<MudTextField @bind-Value="_companyEditDto.Address" Class="d-flex pa-2"
-							Label="@localizer["Address"]"
-							For="(() => _companyEditDto.Address)" />
+										  Label="@localizer["Address"]"
+										  For="(() => _companyEditDto.Address)" />
 						</MudItem>
 					</MudGrid>
 
 					<MudGrid Spacing="2">
 						<MudItem xs="2">
 							<MudTextField @bind-Value="_companyEditDto.TaxId" Class="d-flex pa-2"
-							Label="@localizer["TaxId"]"
-							Required
-							For="(() => _companyEditDto.TaxId)" />
+										  Label="@localizer["TaxId"]"
+										  Required
+										  For="(() => _companyEditDto.TaxId)" />
 						</MudItem>
 						<MudItem xs="2">
 							<MudTextField @bind-Value="_companyEditDto.VatId" Class="d-flex pa-2"
-							Label="@localizer["VatId"]"
-							For="(() => _companyEditDto.VatId)" />
+										  Label="@localizer["VatId"]"
+										  For="(() => _companyEditDto.VatId)" />
 						</MudItem>
 						<MudItem xs="2">
 							<MudNumericField @bind-Value="_companyEditDto.DefaultVat" Class="d-flex pa-2"
-							Label="@localizer["DefaultVat"]"
-							For="(() => _companyEditDto.DefaultVat)" />
+											 Label="@localizer["DefaultVat"]"
+											 For="(() => _companyEditDto.DefaultVat)" />
 						</MudItem>
 						<MudItem xs="2">
 							<MudNumericField @bind-Value="_companyEditDto.PaymentTerms" Class="d-flex pa-2" Required
-							Label="@localizer["PaymentTerms"]"
-							For="(() => _companyEditDto.PaymentTerms)" />
+											 Label="@localizer["PaymentTerms"]"
+											 For="(() => _companyEditDto.PaymentTerms)" />
 						</MudItem>
 						<MudItem xs="4">
 							<MudAutocomplete T="CurrencyAutocompleteDto" Class="d-flex pa-2" Required Dense Clearable
-							@bind-Value="_companyEditDto.Currency"
-							Label="@localizer["Currency"]"
-							SearchFunc="@((value, token) => FilteringDataWithApi<CurrencyAutocompleteDto>(value, "Currencies", token))"
-							ToStringFunc="@(c => c?.Name ?? "")"
-							For="(() => _companyEditDto.Currency)" />
+											 @bind-Value="_companyEditDto.Currency"
+											 Label="@localizer["Currency"]"
+											 SearchFunc="@((value, token) => FilteringDataWithApi<CurrencyAutocompleteDto>(value, "Currencies", token))"
+											 ToStringFunc="@(c => c?.Name ?? "")"
+											 For="(() => _companyEditDto.Currency)" />
 						</MudItem>
 					</MudGrid>
 
 					<MudGrid Spacing="2">
 						<MudItem xs="4">
 							<MudTextField @bind-Value="_companyEditDto.WWW" Class="d-flex pa-2"
-							Label="www"
-							For="(() => _companyEditDto.WWW)" />
+										  Label="www"
+										  For="(() => _companyEditDto.WWW)" />
 						</MudItem>
 						<MudItem xs="4">
 							<MudTextField @bind-Value="_companyEditDto.Email" Class="d-flex pa-2"
-							Label="email"
-							For="(() => _companyEditDto.Email)" />
+										  Label="email"
+										  For="(() => _companyEditDto.Email)" />
 						</MudItem>
 						<MudItem xs="4">
 							<MudTextField @bind-Value="_companyEditDto.Phone" Class="d-flex pa-2"
-							Label="phone"
-							For="(() => _companyEditDto.Phone)" />
+										  Label="phone"
+										  For="(() => _companyEditDto.Phone)" />
 						</MudItem>
 					</MudGrid>
 
 					<MudGrid Spacing="2">
 						<MudTextField @bind-Value="_companyEditDto.Info" Class="d-flex pa-2"
-						Label="@localizer["AdditionalInfo"]"
-						For="(() => _companyEditDto.Info)" />
+									  Label="@localizer["AdditionalInfo"]"
+									  For="(() => _companyEditDto.Info)" />
 					</MudGrid>
 
 					<MudDataGrid T="BankEditDto" Class="pa-2" Dense Hover Striped
-					Items="_companyEditDto.Banks"
-					Context="context"
-					SortMode="SortMode.None"
-					ReadOnly="false"
-					EditMode="DataGridEditMode.Form"
-					EditTrigger="DataGridEditTrigger.Manual">
+								 Items="_companyEditDto.Banks"
+								 Context="context"
+								 SortMode="SortMode.None"
+								 ReadOnly="false"
+								 EditMode="DataGridEditMode.Form"
+								 EditTrigger="DataGridEditTrigger.Manual">
 						<ColGroup>
 							<col style="width: auto;" />
 							<col style="width: auto;" />
@@ -124,18 +124,18 @@
 							<TemplateColumn>
 								<CellTemplate>
 									<MudIconButton OnClick="() => AddInvoiceItems(context.Item)"
-									Icon="@Icons.Material.Filled.Edit"
-									Size="Size.Small"
-									Color="Color.Default" />
+												   Icon="@Icons.Material.Filled.Edit"
+												   Size="Size.Small"
+												   Color="Color.Default" />
 								</CellTemplate>
 							</TemplateColumn>
 
 							<TemplateColumn>
 								<CellTemplate>
 									<MudIconButton OnClick="() => DeleteBank(context.Item)"
-									Icon="@Icons.Material.Filled.DeleteForever"
-									Size="Size.Small"
-									Color="Color.Default">
+												   Icon="@Icons.Material.Filled.DeleteForever"
+												   Size="Size.Small"
+												   Color="Color.Default">
 									</MudIconButton>
 								</CellTemplate>
 							</TemplateColumn>
@@ -147,8 +147,8 @@
 				</MudCardContent>
 				<MudCardActions>
 					<MudButton Size="Size.Small"
-					StartIcon="@Icons.Material.Filled.AddCircle"
-					OnClick="() => AddInvoiceItems(null)">
+							   StartIcon="@Icons.Material.Filled.AddCircle"
+							   OnClick="() => AddInvoiceItems(null)">
 						<MudText>@localizer["AddBankAccount"]</MudText>
 					</MudButton>
 					<MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit" Class="ml-auto">

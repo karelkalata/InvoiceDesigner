@@ -1,8 +1,9 @@
-﻿using AutoMapper;
-using InvoiceDesigner.Application.Authorization;
+﻿using InvoiceDesigner.Application.Authorization;
 using InvoiceDesigner.Application.DTOs.User;
 using InvoiceDesigner.Application.Interfaces.InterfacesUser;
+using InvoiceDesigner.Application.Mapper;
 using InvoiceDesigner.Application.Responses;
+using InvoiceDesigner.Domain.Shared.Filters;
 using InvoiceDesigner.Domain.Shared.Interfaces.Directories;
 using InvoiceDesigner.Domain.Shared.Models.Directories;
 using InvoiceDesigner.Localization;
@@ -12,18 +13,16 @@ namespace InvoiceDesigner.Application.Services.ServiceUser
 	public class UserService : IUserService
 	{
 		private readonly IUserRepository _repoUser;
-		private readonly IMapper _mapper;
 
-		public UserService(IUserRepository repoUser, IMapper mapper)
+		public UserService(IUserRepository repoUser)
 		{
 			_repoUser = repoUser;
-			_mapper = mapper;
 		}
 
 		public async Task<UserEditDto> GetEditDtoByIdAsync(int id)
 		{
 			var entity = await ValidateExistsEntityAsync(id);
-			return _mapper.Map<UserEditDto>(entity);
+			return UserMapper.ToEditDto(entity);
 		}
 
 		public async Task<ResponseRedirect> UpdateAsync(int userId, UserEditDto dto)
@@ -32,7 +31,7 @@ namespace InvoiceDesigner.Application.Services.ServiceUser
 			ValidateInputAsync(dto);
 
 			var existEntity = await ValidateExistsEntityAsync(dto.Id);
-			MapUser(existEntity, dto);
+			MapToUser(existEntity, dto);
 
 			await _repoUser.UpdateAsync(existEntity);
 
@@ -44,7 +43,7 @@ namespace InvoiceDesigner.Application.Services.ServiceUser
 
 		private async Task<User> ValidateExistsEntityAsync(int id)
 		{
-			var user = await _repoUser.GetByIdAsync(id)
+			var user = await _repoUser.GetByIdAsync(new GetByIdFilter { Id = id })
 						?? throw new InvalidOperationException("User not found");
 			return user;
 		}
@@ -55,7 +54,7 @@ namespace InvoiceDesigner.Application.Services.ServiceUser
 				throw new InvalidOperationException($"Name can't be empty");
 		}
 
-		private void MapUser(User existUser, UserEditDto dto)
+		private void MapToUser(User existUser, UserEditDto dto)
 		{
 			existUser.Name = dto.Name.Trim();
 			var existsLocalization = Locale.SupportedCultures.FirstOrDefault(c => c.Name.Equals(dto.Locale.Trim(), StringComparison.OrdinalIgnoreCase));

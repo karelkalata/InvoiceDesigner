@@ -369,9 +369,6 @@
   <data name="DateStart" xml:space="preserve">
     <value>Datum Zahájení</value>
   </data>
-  <data name="TrialBalance" xml:space="preserve">
-    <value>Zkušební Bilance</value>
-  </data>
   <data name="Reports" xml:space="preserve">
     <value>Zprávy</value>
   </data>

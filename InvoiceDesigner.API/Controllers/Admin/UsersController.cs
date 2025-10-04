@@ -3,8 +3,8 @@ using InvoiceDesigner.Application.Authorization;
 using InvoiceDesigner.Application.Commands;
 using InvoiceDesigner.Application.DTOs.User;
 using InvoiceDesigner.Application.Interfaces.AdminInterfaces;
+using InvoiceDesigner.Application.QueryParameters;
 using InvoiceDesigner.Application.Responses;
-using InvoiceDesigner.Domain.Shared.QueryParameters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,29 +14,31 @@ namespace InvoiceDesigner.API.Controllers.Admin
 	[Route("api/Admin/[controller]")]
 	public class UsersController : RESTController
 	{
-		private readonly IAdminUserInterface _serviceAdminUser;
+		private readonly IAdminUserService _service;
 
-		public UsersController(IAdminUserInterface serviceAdminUser)
+		public UsersController(IAdminUserService service)
 		{
-			_serviceAdminUser = serviceAdminUser;
+			_service = service;
 		}
 
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponsePaged<UserViewDto>))]
 		public async Task<IActionResult> Index([FromQuery] QueryPaged queryPaged)
 		{
-			try
+			var pagedCommand = new PagedCommand
 			{
-				var result = await _serviceAdminUser.GetPagedEntitiesAsync(queryPaged);
-				return Ok(result);
-			}
-			catch (InvalidOperationException ex)
-			{
-				return BadRequest(new
-				{
-					message = ex.Message
-				});
-			}
+				UserId = UserId,
+				IsAdmin = IsAdmin,
+				PageSize = queryPaged.PageSize,
+				Page = queryPaged.Page,
+				SearchString = queryPaged.SearchString,
+				SortLabel = queryPaged.SortLabel,
+				ShowDeleted = queryPaged.ShowDeleted,
+				ShowArchived = queryPaged.ShowArchived,
+			};
+
+			var result = await _service.GetPagedEntitiesAsync(pagedCommand);
+			return Ok(result);
 		}
 
 		[HttpPost]
@@ -46,7 +48,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 		{
 			try
 			{
-				var result = await _serviceAdminUser.CreateUserAsync(UserId, adminUserEditDto);
+				var result = await _service.CreateUserAsync(UserId, adminUserEditDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -65,7 +67,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 		{
 			try
 			{
-				var result = await _serviceAdminUser.GetEditDtoByIdAsync(id);
+				var result = await _service.GetEditDtoByIdAsync(id);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -84,7 +86,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 		{
 			try
 			{
-				var result = await _serviceAdminUser.UpdateAsync(UserId, adminUserEditDto);
+				var result = await _service.UpdateAsync(UserId, adminUserEditDto);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
@@ -98,29 +100,16 @@ namespace InvoiceDesigner.API.Controllers.Admin
 
 		[HttpDelete("{id:int}/{modeDelete:int}")]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResponseBoolean))]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> DeleteOrMarkAsDeletedAsync(int id, int modeDelete)
 		{
-			try
+			var deleteEntityCommand = new DeleteEntityCommand
 			{
-				var deleteEntityCommand = new DeleteEntityCommand
-				{
-					UserId = UserId,
-					IsAdmin = IsAdmin,
-					EntityId = id,
-					MarkAsDeleted = modeDelete == 0
-				};
-
-				var result = await _serviceAdminUser.DeleteOrMarkAsDeletedAsync(deleteEntityCommand);
-				return Ok(result);
-			}
-			catch (InvalidOperationException ex)
-			{
-				return BadRequest(new
-				{
-					message = ex.Message
-				});
-			}
+				UserId = UserId,
+				IsAdmin = IsAdmin,
+				EntityId = id,
+				MarkAsDeleted = modeDelete == 0
+			};
+			return Ok(await _service.DeleteOrMarkAsDeletedAsync(deleteEntityCommand));
 		}
 
 		[HttpGet("CheckLoginName")]
@@ -130,7 +119,7 @@ namespace InvoiceDesigner.API.Controllers.Admin
 		{
 			try
 			{
-				var result = await _serviceAdminUser.CheckLoginName(f);
+				var result = await _service.CheckLoginName(f);
 				return Ok(result);
 			}
 			catch (InvalidOperationException ex)
